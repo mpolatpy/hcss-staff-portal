@@ -1,4 +1,4 @@
-import firestore from '../../firebase/firebase.utils';
+import {firestore} from '../../firebase/firebase.utils';
 
 const calculateDomainAverage = (domain) => {
     let total = 0;
@@ -25,10 +25,15 @@ const calculateObservationScore = (observation) => {
     };
 }
 
-let updateObservationScore = (prev, newScore) => {
+export const getUpdatedObservationScore = (prevData, observation) => {
     const domains = [ 'domainOne', 'domainTwo', 'domainThree', 'domainFour' ];
+    const newScore = calculateObservationScore(observation);
 
-    const updateDomainScore = (domain) => {
+    const prev = prevData.data();
+
+    console.log(prev);
+
+    const updateDomainScore = (prev, newScore, domain) => {
         if(!newScore[domain]) {
             return prev[domain];
         } 
@@ -38,41 +43,51 @@ let updateObservationScore = (prev, newScore) => {
         const score = (prev[domain].score * num + newDomainScore)/(num+1);
 
         return ({
-            numOfObservations: num+1,
+            numScores: num+1,
             score: score
         });
     };
 
     const updatedScores = {}
-    domains.forEach( domain => updatedScores[domain] = updateDomainScore(domain));
+    domains.forEach( domain => updatedScores[domain] = updateDomainScore(prev, newScore, domain));
     return updatedScores;
 }
 
-export const createScoreDocument = async (teacherId, observationType) => {
+export const getOrCreateScoreDocument = async (teacher, observationType) => {
+    const teacherId = teacher.id;
+    const observationTypeMap = {
+        'Weekly Observation': 'weeklyObservationScores',
+        'Full Class Observation': 'fullClassObservationScores',
+        'Quarter Evaluation': 'quarterScores',
+        'Midyear Evaluation': 'midyearScores',
+        'End of Year Evaluation': 'endOfYearScores'
+    };
 
-    const scoreRef = firestore.doc(`observationScores/${teacherId}/${observationType}/${teacherId}`);
+    const collectionType = observationTypeMap[observationType];
+    const scoreRef = firestore.doc(`${collectionType}/${teacherId}`);
     const snapShot = await scoreRef.get();
 
     if (!snapShot.exists) {
         try {
             await scoreRef.set({
-                domainOne: {
-                    score: 0,
-                    numScores: 0
-                },
-                domainTwo: {
-                    score: 0,
-                    numScores: 0
-                },
-                domainThree: {
-                    score: 0,
-                    numScores: 0
-                },
-                domainFour: {
-                    score: 0,
-                    numScores: 0
-                },
-            })
+                    teacher: teacher,
+                    domainOne: {
+                        score: 0,
+                        numScores: 0
+                    },
+                    domainTwo: {
+                        score: 0,
+                        numScores: 0
+                    },
+                    domainThree: {
+                        score: 0,
+                        numScores: 0
+                    },
+                    domainFour: {
+                        score: 0,
+                        numScores: 0
+                    },
+                })
         } catch(e) {
             console.log('error creating score document', e.message);
         }
@@ -80,9 +95,3 @@ export const createScoreDocument = async (teacherId, observationType) => {
 
     return scoreRef;
 }
-
-// const observationScore = calculateObservationScore(observation);
-// const { observationDetails } = observation;
-// const teacherId = observationDetails.teacher.id;
-// const observerId = observationDetails.observer.id;
-// const { observationType } = observationDetails
