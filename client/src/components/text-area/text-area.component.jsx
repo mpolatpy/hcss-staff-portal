@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { selectObservationNotes } from '../../redux/observation-form/oservation-form.selectors';
-import { setObservationNotes } from '../../redux/observation-form/oservation-form.actions';
+import { selectObservationNotes } from '../../redux/observation-form/observation-form.selectors';
+import { setObservationNotes } from '../../redux/observation-form/observation-form.actions';
 
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import { makeStyles } from '@material-ui/core/styles';

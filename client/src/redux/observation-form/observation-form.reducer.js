@@ -1,4 +1,4 @@
-import ObservationFormActionTypes from './oservation-form.types';
+import ObservationFormActionTypes from './observation-form.types';
 
 const INITIAL_STATE = {
     isSavedObservation: false,
@@ -64,7 +64,11 @@ const observationFormReducer = (state=INITIAL_STATE, action) => {
                 },
                 observationDetails: {
                     ...action.payload.observationDetails,
-                    observationDate: action.payload.observationDetails.observationDate.toDate()
+                    observationDate: (
+                        action.payload.observationDetails.observationDate?
+                        new Date(action.payload.observationDetails.observationDate.seconds*1000):
+                        null
+                        ) 
                 }
             };
         case ObservationFormActionTypes.SET_OBSERVATION_DETAILS:

@@ -22,18 +22,19 @@ const useStyles = makeStyles({
     }
 });
 
-export default function StarRating({ name, value, handleStarChange, readOnly}) {
+export default function StarRating({ name, value, handleStarChange, precision, hideRating, size, readOnly}) {
     const [hover, setHover] = React.useState(-1);
     const classes = useStyles();
-
+    const precisionValue = precision ? precision : 1;
+    const starSize = size ? size: 'large';
     return (
         <div className={classes.root}>
             <Rating
                 readOnly={readOnly}
-                size="large"
+                size={starSize}
                 name={name}
                 value={value}
-                precision={1}
+                precision={precisionValue}
                 max={4}
                 onClick={(event) => event.stopPropagation()}
                 onFocus={(event) => event.stopPropagation()}
@@ -42,9 +43,13 @@ export default function StarRating({ name, value, handleStarChange, readOnly}) {
                     setHover(newHover);
                 }}
             />
-            <div className={classes.hoverRating}>
-                {value !== null && <Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>}
-            </div>
+            {
+                hideRating ?
+                null:
+                <div className={classes.hoverRating}>
+                    {value !== null && <Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>}
+                </div>
+            }
         </div>
     );
 }

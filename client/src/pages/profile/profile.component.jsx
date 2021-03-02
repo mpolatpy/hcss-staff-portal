@@ -19,7 +19,7 @@ const ProfilePage = ({ currentUser }) => {
                 .then(courses => setCourses(courses))
                 .catch((err) => {
                     console.log(err);
-                });
+                }); 
         }
         
         handleGetCourses();
@@ -38,7 +38,8 @@ const ProfilePage = ({ currentUser }) => {
             <h2>Canvas Courses</h2>
                 {
                     courses.length>0 && 
-                    courses.map( (course, index) => ( 
+                    courses.filter ( course => course.enrollments[0].type === 'teacher')
+                    .map( (course, index) => ( 
                         <li key={index}>
                             {course.name}
                         </li>

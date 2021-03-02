@@ -42,7 +42,7 @@ const HomePage = () => {
                     title='Grade Policy'
                     header="Grade Policy"
                     buttonText="View Grade Policy"
-                    to="/observations"
+                    to="#"
                 >
                     {/* <Typography>View observations here</Typography> */}
                 </CustomCard>
@@ -54,7 +54,7 @@ const HomePage = () => {
                     title='Observations'
                     header="Student Achievement"
                     buttonText="View Student Achievement"
-                    to="/observations"
+                    to="#"
                 >
                     {/* <p>View observations here</p> */}
                 </CustomCard>
@@ -66,7 +66,7 @@ const HomePage = () => {
                     title='Observations'
                     header="Tutoring"
                     buttonText="View Tutoring Data"
-                    to="/observations"
+                    to="#"
                 >
                     {/* <p>View observations here</p> */}
                 </CustomCard>

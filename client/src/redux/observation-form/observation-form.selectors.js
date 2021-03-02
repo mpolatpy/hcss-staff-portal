@@ -11,6 +11,10 @@ export const selectStandardOne = createSelector(
     [selectObservationForm], observationForm => observationForm.domainOne
 );
 
+export const selectIsSavedObservation = createSelector(
+    [selectObservationForm], observationForm => observationForm.isSavedObservation
+);
+
 export const selectStandardTwo = createSelector(
     [selectObservationForm], observationForm => observationForm.domainTwo
 );

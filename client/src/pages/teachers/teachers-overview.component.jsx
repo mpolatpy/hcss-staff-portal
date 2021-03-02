@@ -7,6 +7,7 @@ import { selectTeacherList, selectTeachersIsLoading, selectIsTeachersLoaded } fr
 import TeacherTableContainer from './teacher-list.component';
 import TeacherDetails from './teacher-details.component';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
+import EvaluationOverview from '../evaluation-overview/evaluation-overview.component';
 import { fetchTeachersAsync } from '../../redux/teachers/teachers.actions';
 
 const TeacherTableWithSpinner = WithSpinner(TeacherTableContainer);
@@ -22,7 +23,7 @@ const TeacherListOverview = (props) => {
 
     return ( 
     <div>
-        <Route 
+        {/* <Route 
             exact 
             path={`${match.path}`} 
             render={(props) =>  <TeacherTableWithSpinner 
@@ -31,7 +32,8 @@ const TeacherListOverview = (props) => {
                                     {...props}
                                 />
                     }
-        />
+        /> */}
+        <Route exact path={`${match.path}`} component={EvaluationOverview} />
         <Route 
             path={`${match.path}/:teacherId`} 
             render={(props) => <TeacherDetailsWithSpinner 

@@ -1,5 +1,5 @@
 import TeacherActionTypes from './teachers.types';
-import { firestore, convertTeacherSnapshotToMap } from '../../firebase/firebase.utils';
+import { firestore, convertCollectionSnapshotDataToMap } from '../../firebase/firebase.utils';
 
 const fetchTeachersStart = () => ({
     type: TeacherActionTypes.FETCH_TEACHERS_START
@@ -23,7 +23,7 @@ export const fetchTeachersAsync = () => {
         collectionRef
             .get()
             .then( snapshot => {
-                const teachersMap = convertTeacherSnapshotToMap(snapshot);
+                const teachersMap = convertCollectionSnapshotDataToMap(snapshot);
                 dispatch(fetchTeachersSuccess(teachersMap))
             }) 
             .catch(err => dispatch(fetchTeachersFailure(err.message)))

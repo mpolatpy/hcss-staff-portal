@@ -38,27 +38,6 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
     return userRef;
 };
 
-export const convertTeacherSnapshotToMap = (teachers) => {
-    const transformedCollection = teachers.docs.map(doc => {
-        const { firstName, lastName, email, role, department, school } = doc.data();
-
-        return ({
-            id: doc.id,
-            firstName, 
-            lastName,
-            email,
-            role,
-            department,
-            school
-        });
-    });
-
-    return transformedCollection.reduce((accumulator, collection) => {
-        accumulator[collection.id] = collection;
-        return accumulator;
-    }, {})
-}
-
 export const convertCollectionSnapshotDataToMap = (snapShot) => {
     const transformedCollection = snapShot.docs.map(doc => ({
             id: doc.id,

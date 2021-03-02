@@ -19,6 +19,7 @@ import Observations from './pages/observations/observations.component';
 import UserRegistrationPage from './pages/register/register.component';
 import TeacherListOverview from './pages/teachers/teachers-overview.component';
 
+
 const Users = () => {
   return ( 
     <div>
@@ -59,7 +60,7 @@ function App(props) {
 
 
   return (
-    <div className="App">
+    <div>
           <Route exact path="/" 
             render={ () => ( 
               currentUser ?

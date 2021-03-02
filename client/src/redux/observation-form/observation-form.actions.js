@@ -1,4 +1,4 @@
-import ObservationFormActionTypes from './oservation-form.types';
+import ObservationFormActionTypes from './observation-form.types';
 import { firestore } from '../../firebase/firebase.utils';
 import { getUpdatedObservationScore, getOrCreateScoreDocument } from './observation.utils';
 
@@ -59,22 +59,65 @@ const submitObservationFormFail = errorMessage => ({
     payload: errorMessage
 });
 
-export const submitObservationFormAsync = (observationFormData, collectionName) => {
-    const isSavedObservation = collectionName === 'savedObservations';
-    const { observationDetails, domainOne, domainTwo,
-        domainThree, domainFour, observationNotes } = observationFormData;
-    
+
+export const saveObservationForm = (observationFormData) => {
+    const {isSavedObservation, firestoreRef,observationDetails, 
+        domainOne, domainTwo, domainThree, domainFour, observationNotes} = observationFormData;
     const observerId = observationDetails.observer.id;
     const {observationDate, observationType, teacher} = observationDetails;
     const teacherId= teacher.id;
-    const newObservationRef = firestore.collection(collectionName).doc();
+
+    const newObservationRef = isSavedObservation? firestore.collection('savedObservations').doc(firestoreRef.id) :firestore.collection('savedObservations').doc();
     
     const observationForm = {
         observerId: observerId,
         teacherid: teacherId,
         observationType: observationType,
         observationDate: observationDate,
-        firestoreRef: newObservationRef.id,
+        firestoreRef: newObservationRef,
+        isSavedObservation: true,
+        submittedAt: new Date(),
+        observationDetails,
+        domainOne,
+        domainTwo,
+        domainThree,
+        domainFour,
+        observationNotes
+    };
+
+    return async dispatch => {
+        dispatch(submitObservationFormStart());
+        try{
+            if(isSavedObservation){
+                await newObservationRef.update(observationForm);
+                console.log("Saved Form is updated")
+            }else{
+                await newObservationRef.set(observationForm)
+                console.log("New for is saved")
+            }
+            dispatch(submitObservationFormSuccess());
+        } catch(e) {
+            dispatch(submitObservationFormFail(e.message));
+        }
+    }
+
+}
+
+export const submitObservationFormAsync = (observationFormData) => {
+    const {isSavedObservation, observationDetails, domainOne, domainTwo, 
+        domainThree, domainFour, observationNotes} = observationFormData;
+    const observerId = observationDetails.observer.id;
+    const {observationDate, observationType, teacher} = observationDetails;
+    const teacherId= teacher.id;
+
+    const newObservationRef = firestore.collection('observations').doc();
+    
+    const observationForm = {
+        observerId: observerId,
+        teacherid: teacherId,
+        observationType: observationType,
+        observationDate: observationDate,
+        firestoreRef: newObservationRef,
         isSavedObservation: isSavedObservation,
         submittedAt: new Date(),
         observationDetails,
@@ -96,11 +139,12 @@ export const submitObservationFormAsync = (observationFormData, collectionName) 
                 transaction.set(newObservationRef, observationForm);
 
                 if (observationFormData.isSavedObservation) {
-                    const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef);
+                    const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef.id);
                     transaction.delete(prevRef);
                 }
                 transaction.update(scoreRef, updatedScore)
             });
+            
             dispatch(submitObservationFormSuccess()); 
         } catch(e) {
             dispatch(submitObservationFormFail(e.message));
@@ -144,7 +188,7 @@ export const deleteObservationForm = (observationForm) => {
     return dispatch => {
         dispatch(deleteObservationFormStart());
 
-        firestore.collection('savedObservations').doc(firestoreRef)
+        firestore.collection('savedObservations').doc(firestoreRef.id)
                 .delete()
                 .then(() => dispatch(deleteObservationFormSuccess()))
                 .catch(e => dispatch(deleteObservationFormFail(e.message)))

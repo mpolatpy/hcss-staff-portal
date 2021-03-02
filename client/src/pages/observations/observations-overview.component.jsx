@@ -18,8 +18,8 @@ import TocIcon from '@material-ui/icons/Toc';
 import { Typography } from '@material-ui/core';
 
 import CustomizedSnackbar from '../../components/snack-bar/snack-bar.component';
-import { selectObservationFormSubmissionMessage } from '../../redux/observation-form/oservation-form.selectors';
-import { resetSubmissionMessage } from '../../redux/observation-form/oservation-form.actions';
+import { selectObservationFormSubmissionMessage } from '../../redux/observation-form/observation-form.selectors';
+import { resetSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 
 const useStyles = makeStyles((theme) => ({
     root: {

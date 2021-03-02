@@ -2,9 +2,8 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 
 import { selectSingleSavedObservation } from '../../redux/saved-observations/saved-observations.selectors';
-import { setObservationForm } from '../../redux/observation-form/oservation-form.actions';
-import { resetObservationForm } from '../../redux/observation-form/oservation-form.actions';
-import ObservationPage from '../observation-form/observation-form.component';
+import { setObservationForm, resetObservationForm } from '../../redux/observation-form/observation-form.actions';
+import ObservationPage from '../../components/observation-form/observation-form.component';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 
 const SavedObservationDetail = ({ observation, match, setObservationForm, isLoading, fetchTeachersAsync, ...otherProps}) => {
@@ -14,7 +13,8 @@ const SavedObservationDetail = ({ observation, match, setObservationForm, isLoad
             fetchTeachersAsync();
         }
         setObservationForm(observation);
-    },[observation, setObservationForm]);
+        
+    },[ observation, setObservationForm]);
     
     return (
         <>

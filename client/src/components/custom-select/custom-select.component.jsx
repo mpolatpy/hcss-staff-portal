@@ -17,12 +17,12 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function CustomSelect({label, variant, options, name, value, handleSelect, ...otherProps}) {
+export default function CustomSelect({label, variant, style, options, name, value, handleSelect, ...otherProps}) {
     const classes = useStyles();
 
     return (
         <div>
-            <FormControl variant={variant} className={classes.formControl}>
+            <FormControl variant={variant} style={style} className={classes.formControl}>
                 <InputLabel id={`select-for-${label}-label`}>{label}</InputLabel>
                 <Select
                     labelId={`select-for-${label}-label`}

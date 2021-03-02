@@ -7,12 +7,12 @@ import {
     setStandardTwo,
     setStandardThree,
     setStandardFour,
-} from '../../redux/observation-form/oservation-form.actions';
+} from '../../redux/observation-form/observation-form.actions';
 
-import ObservationFormDetails from '../../components/observation-form-components/observation-details/observation-details.component';
-import ObservationStandardComponent from '../../components/observation-form-components/standards/observation-standard.component';
-import { rubric } from '../../components/observation-form-components/observationRubric';
-import CustomTextArea from '../../components/text-area/text-area.component';
+import ObservationFormDetails from '../observation-form-components/observation-details/observation-details.component';
+import ObservationStandardComponent from '../observation-form-components/standards/observation-standard.component';
+import { rubric } from '../observation-form-components/observationRubric';
+import CustomTextArea from '../text-area/text-area.component';
 
 export function getSteps() {
     return ['Observation Details', 'Domain I', 'Domain II', 'Domain III', 'Domain IV', 'Observavtion Notes'];

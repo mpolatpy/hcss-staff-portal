@@ -3,16 +3,17 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'; 
 import { createStructuredSelector } from 'reselect';
 
-import { submitObservationFormAsync, deleteObservationForm } from '../../redux/observation-form/oservation-form.actions'; 
+import { submitObservationFormAsync, deleteObservationForm, saveObservationForm } from '../../redux/observation-form/observation-form.actions'; 
 import { 
     selectIsObservationFormSubmitting,
     selectObservationForm
-} from '../../redux/observation-form/oservation-form.selectors';
+} from '../../redux/observation-form/observation-form.selectors';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
+import CustomModal from '../../components/modal/modal.component';
 
-import Stepper from '@material-ui/core/Stepper';
+import Stepper from '@material-ui/core/Stepper'; 
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
@@ -20,6 +21,7 @@ import Button from '@material-ui/core/Button';
 
 import ObservationStep, { getSteps } from './observation-form.utils';
 import { useStyles } from './observation-form.styles';
+import { Typography } from '@material-ui/core';
 
 const ObservationPage = (props) => {
     const { 
@@ -27,7 +29,8 @@ const ObservationPage = (props) => {
         currentUser,
         currentYear,
         deleteObservationForm,
-        submitObservationForm, 
+        submitObservationForm,
+        saveObservationForm, 
         resetSubmissionMessage,
         resetObservationForm,
         history,
@@ -58,13 +61,13 @@ const ObservationPage = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        submitObservationForm(observationForm, 'observations');
+        submitObservationForm(observationForm);
         history.push('/observations');
     };
 
     const handleSave = (e) => {
         e.preventDefault();
-        submitObservationForm(observationForm, 'savedObservations');
+        saveObservationForm(observationForm);
         history.push('/observations');
     };
 
@@ -116,15 +119,32 @@ const ObservationPage = (props) => {
                                 <div className={classes.resetSaveButtons}>
                                         {
                                             observationForm.isSavedObservation ?
-                                                (<Button
-                                                    type="submit"
-                                                    variant="contained"
+                                                (
+                                                <CustomModal
+                                                    buttonStyle={classes.button}
+                                                    buttonText="Delete"
                                                     color="secondary"
-                                                    onClick={handleDelete}
-                                                    className={classes.button}
-                                                >
-                                                    Delete
-                                                </Button>) : (
+                                                    modalBody={( 
+                                                        <div>
+                                                            <Typography variant="h5">
+                                                                Please Confirm Delete
+                                                            </Typography>
+                                                            <p>Once deleted, you will not be able to retrieve this observaton back</p>
+                                                            <div>
+                                                            <Button
+                                                            type="submit"
+                                                            variant="contained"
+                                                            color="secondary"
+                                                            onClick={handleDelete}
+                                                            className={classes.button}
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                />
+                                                ) : (
                                                 <Button
                                                     // disabled={activeStep === 0}
                                                     variant="outlined"
@@ -168,7 +188,8 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = dispatch => ({
     submitObservationForm: (observationForm, collectionName) => dispatch(submitObservationFormAsync(observationForm, collectionName)),
-    deleteObservationForm: (observationForm) => dispatch(deleteObservationForm(observationForm))
+    deleteObservationForm: (observationForm) => dispatch(deleteObservationForm(observationForm)),
+    saveObservationForm: (observationForm) => dispatch(saveObservationForm(observationForm)), 
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WithSpinner(withRouter(ObservationPage)));

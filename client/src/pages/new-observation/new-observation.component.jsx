@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { resetObservationForm } from '../../redux/observation-form/oservation-form.actions';
-import { selectObservationForm } from '../../redux/observation-form/oservation-form.selectors'
+import { resetObservationForm } from '../../redux/observation-form/observation-form.actions';
+import { selectObservationForm } from '../../redux/observation-form/observation-form.selectors'
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
-import ObservationPage from '../observation-form/observation-form.component';
+import ObservationPage from '../../components/observation-form/observation-form.component';
 
 const NewObservationPage = (props) => {
     const { resetObservationForm, currentUser, currentYear, observationForm, ...otherProps } = props;

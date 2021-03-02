@@ -6,10 +6,11 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
+        // backgroundColor: theme.palette.background.paper
     },
     appBar: {
         zIndex: theme.zIndex.drawer + 1,
-        backgroundColor: theme.palette.info.dark,
+        backgroundColor: theme.palette.primary.dark,
         color: theme.palette.info.contrastText,
         transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
@@ -64,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
     content: {
         flexGrow: 1,
         padding: theme.spacing(4),
+        // backgroundColor: theme.palette.background.paper
     },
     upperMenu: {
         display: 'flex',
@@ -80,7 +82,7 @@ const useStyles = makeStyles((theme) => ({
         color: 'inherit',
     },
     menuIcon: {
-        color: theme.palette.info.dark
+        color: theme.palette.primary.dark
     }
 }));
 

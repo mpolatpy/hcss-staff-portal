@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import axios from 'axios';
 
 import CustomSelect from '../../custom-select/custom-select.component';
+// import CustomAutocomplete from '../../custom-autocomplete/autocomplete.component';
 import DatePicker from '../../date-picker/date-picker.component';
 import WithSpinner from '../../with-spinner/with-spinner.component';
+import {selectIsSavedObservation} from '../../../redux/observation-form/observation-form.selectors';
 import { 
     selectTeachersIsLoading, 
     selectTeacherOptions,
+    selectTeacherList,
     selectTeachersObjWithNameKeys
  } from '../../../redux/teachers/teachers.selectors';
 import { fetchTeachersAsync } from '../../../redux/teachers/teachers.actions';
@@ -18,35 +22,56 @@ const ObservationFormDetails = (props) => {
     const classes = useStyles();
     const { 
         observationDetails,
+        isSavedObservation, 
         currentUser, 
         setObservationFormDetails, 
         fetchTeachersAsync,
         teachers,
+        // teachersList,
         teacherOptions,
         readOnly      
      } = props;
     
-    const [selectedTeacher, setSelectedTeacher] = useState('');
+    const [ courses, setCourses ] = useState([]);
 
+    console.log(courses);                                   
     useEffect(() => { 
         if (teacherOptions.length === 0) {
             fetchTeachersAsync();
         } 
-        if(observationDetails.teacher){
-            setSelectedTeacher(`${observationDetails.teacher.lastName}, ${observationDetails.teacher.firstName}`)
-        }
-
+        if(isSavedObservation){
+            setCourses([observationDetails.course]);
+        }                                
     }, [teacherOptions, observationDetails])
 
+    const getCourses = (teacher) => {
+        axios({
+            url: '/canvas-courses',
+            method: 'post',
+            data: {
+                teacherId: teacher.canvasId,
+            }
+        }).then(response => response.data)
+            .then(courses => ( courses
+                                .filter ( course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox'))
+                                .map(course => course.name)
+            )).then(courses  =>  setCourses(courses))
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+    
 
     const handleChange = e => {
         const { name, value } = e.target;
 
         if (name === 'teacher') {
-            setSelectedTeacher(value);
+            const teacher = teachers[value];
+            console.log(teacher)
+            getCourses(teacher);
             setObservationFormDetails({
                 ...observationDetails,
-                teacher: teachers[value]
+                teacher: teacher
             });
         } else {
             setObservationFormDetails({
@@ -79,7 +104,7 @@ const ObservationFormDetails = (props) => {
                             }
                             name="observationDate"
                             label="Observation Date"
-                            variant="outlined"
+                            // variant="outlined"
                         />
                     </div>
                     <div className={classes.form_items}>
@@ -103,7 +128,6 @@ const ObservationFormDetails = (props) => {
                         <CustomSelect
                             required
                             readOnly={readOnly}
-                            // variant="outlined"
                             label="Department"
                             name="department"
                             handleSelect={handleChange}
@@ -138,7 +162,11 @@ const ObservationFormDetails = (props) => {
                             name="teacher"
                             label="Teacher"
                             handleSelect={handleChange}
-                            value={selectedTeacher}
+                            value={
+                                observationDetails.teacher ?
+                                `${observationDetails.teacher.lastName}, ${observationDetails.teacher.firstName}`
+                                : ''
+                            }
                             options={teacherOptions}
                         />
                     </div>
@@ -166,13 +194,14 @@ const ObservationFormDetails = (props) => {
                         />
                     </div>
                     <div className={classes.form_items}>
+
                         <CustomSelect
                             readOnly={readOnly}
                             name="course"
                             label="Course"
                             handleSelect={handleChange}
                             value={observationDetails.course}
-                            options={[1, 2, 3]}
+                            options={courses}
                         />
                     </div>
                     <div className={classes.form_items}>
@@ -197,6 +226,8 @@ const mapStateToProps = createStructuredSelector({
     isLoading: selectTeachersIsLoading,
     teacherOptions: selectTeacherOptions,
     teachers: selectTeachersObjWithNameKeys,
+    teachersList: selectTeacherList,
+    isSavedObservation: selectIsSavedObservation,
 });
 
 const mapDispatchToProps = dispatch => ({
