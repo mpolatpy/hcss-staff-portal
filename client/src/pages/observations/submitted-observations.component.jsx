@@ -8,10 +8,19 @@ import Button from '@material-ui/core/Button';
 import { DataGrid } from '@material-ui/data-grid';
 import { mapObservationData, observationColumns } from './observations.utils';
 import { Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles'
 
+const useStyles = makeStyles((theme) => ({
+    root: {
+        '& .teacher-list-header': {
+            backgroundColor: theme.palette.primary.dark,
+            color: theme.palette.info.contrastText
+        },
+    }
+}));
 
 const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
-
+    const classes = useStyles();
     const QUERY_LIMIT = 3;
     const [isLoading, setIsLoading] = useState(false);
     const [observationData, setObservationData ] = useState({
@@ -77,7 +86,7 @@ const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
     const columns = rows.length>0 ? Object.keys(rows[0]).map( key => ({ field: key })):[]; 
 
     return ( 
-        <div>
+        <div className={classes.root}>
             { isLoading ? 
             (<h2>Loading...</h2>) : 
             (

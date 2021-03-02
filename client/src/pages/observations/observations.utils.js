@@ -22,13 +22,12 @@ export function mapObservationData(observation, index){
 };
 
 export const observationColumns = [
-    {field: 'teacher', headerName: 'Teacher', width: 130},
-    { field: 'observationDate', headerName: 'Date', width: 110 },
-    { field: 'block', headerName: 'Block', width: 100},
-    { field: 'observationType', headerName: 'Observation Type', width: 150 },
-    { field: 'school', headerName: 'School', width: 110 },
-    { field: 'department', headerName: 'Department', width: 130 },
-    { field: 'course', headerName: 'Course', width: 130 },
-    { field: 'partOfTheClass', headerName: 'Part of the Class', width: 130 },
-    { field: 'observationNotes', headerName: 'Notes', width: 250 },
+    {field: 'teacher', headerName: 'Teacher', headerClassName: 'teacher-list-header',flex: 1.5},
+    { field: 'observationDate', headerName: 'Date', headerClassName: 'teacher-list-header', flex: 1 },
+    { field: 'block', headerName: 'Block', headerClassName: 'teacher-list-header', flex: 0.8},
+    { field: 'observationType', headerName: 'Observation Type', headerClassName: 'teacher-list-header', flex: 1.5 },
+    { field: 'school', headerName: 'School', headerClassName: 'teacher-list-header', flex: 1 },
+    { field: 'department', headerName: 'Department', headerClassName: 'teacher-list-header', flex: 1 },
+    { field: 'course', headerName: 'Course', headerClassName: 'teacher-list-header',flex: 1.5 },
+    { field: 'partOfTheClass', headerName: 'Part of the Class', headerClassName: 'teacher-list-header',flex: 1.2 },
 ];

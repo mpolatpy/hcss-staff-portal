@@ -95,6 +95,7 @@ const ObservationFormDetails = (props) => {
                 <div className={classes.newDiv}>
                     <div className={classes.form_items}>
                         <DatePicker
+                            required
                             readOnly={readOnly}
                             handleDateChange={handleDateChange}
                             selectedDate={
