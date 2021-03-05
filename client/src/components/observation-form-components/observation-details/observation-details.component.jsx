@@ -52,10 +52,11 @@ const ObservationFormDetails = (props) => {
                 teacherId: teacher.canvasId,
             }
         }).then(response => response.data)
-            .then(courses => ( courses
-                                .filter ( course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox'))
-                                .map(course => course.name)
-            )).then(courses  =>  setCourses(courses))
+            .then(courses => {
+                console.log(courses)
+                return courses.filter ( course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox'))
+                        .map(course => course.name)
+            }).then(courses  =>  setCourses(courses))
             .catch((err) => {
                 console.log(err);
             });

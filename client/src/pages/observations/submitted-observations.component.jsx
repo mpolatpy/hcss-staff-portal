@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
     const classes = useStyles();
-    const QUERY_LIMIT = 3;
+    const QUERY_LIMIT = 10;
     const [isLoading, setIsLoading] = useState(false);
     const [observationData, setObservationData ] = useState({
         observations: [],
@@ -96,7 +96,7 @@ const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
                 <DataGrid rows={rows} columns={observationColumns} />
             </div>
             
-            <Button variant="contained" 
+            <Button variant="contained"
             color="primary"
             onClick={() => addPaginatedObservations()}>
             Load more

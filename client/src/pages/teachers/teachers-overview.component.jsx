@@ -23,16 +23,6 @@ const TeacherListOverview = (props) => {
 
     return ( 
     <div>
-        {/* <Route 
-            exact 
-            path={`${match.path}`} 
-            render={(props) =>  <TeacherTableWithSpinner 
-                                    isLoading={isLoading} 
-                                    teacherList={teacherList}
-                                    {...props}
-                                />
-                    }
-        /> */}
         <Route exact path={`${match.path}`} component={EvaluationOverview} />
         <Route 
             path={`${match.path}/:teacherId`} 

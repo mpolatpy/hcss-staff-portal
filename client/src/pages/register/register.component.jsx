@@ -93,4 +93,4 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser
 });
 
-export default connect(mapStateToProps)(UserRegistrationPage);
+export default connect(mapStateToProps)(WithAuthorization(['superadmin'])(UserRegistrationPage));

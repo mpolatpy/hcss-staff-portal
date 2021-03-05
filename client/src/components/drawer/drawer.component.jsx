@@ -109,7 +109,7 @@ export default function MiniDrawer({children}) {
                             <ListItemText primary={"Home"} />
                         </ListItem>
                     </Link>
-                    <Link to="/users" className={classes.links}>
+                    <Link to="/directory" className={classes.links}>
                     <ListItem button key={"users"}>
                         <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
                         <ListItemText primary={"Users"} />

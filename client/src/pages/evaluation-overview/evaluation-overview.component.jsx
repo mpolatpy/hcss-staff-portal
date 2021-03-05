@@ -109,8 +109,10 @@ const EvaluationOverview = ({ match }) => {
             <DataTableWithSpinner
                 isLoading={isLoading} 
                 rows={rows}
+                rowHeight={45}
                 columns={columns}
-                pageSize={20}
+                pageSize={10}
+                rowsPerPageOptions={[5,10,25,100]}
             />
             <div>
             <FormControlLabel

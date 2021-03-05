@@ -11,7 +11,7 @@ export default function DatePicker({ label, name, selectedDate, handleDateChange
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
-                    required
+                    required={required}
                     disableToolbar
                     variant="inline"
                     format="MM/dd/yyyy"
