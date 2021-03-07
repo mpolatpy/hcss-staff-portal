@@ -7,8 +7,21 @@ export const selectTeachers = createSelector(
 );
 
 export const selectTeacherList = createSelector( 
-    [selectTeachers], teachers => 
-    teachers ? Object.keys(teachers).map(key => teachers[key]) : []
+    [selectTeachers], teachers => teachers ? (
+    Object.keys(teachers)
+        .map(key => teachers[key])
+        .sort( (t1, t2) => {
+            const lastName1 = t1.lastName.toLowerCase();
+            const lastName2 = t2.lastName.toLowerCase();
+            if( lastName1 < lastName2 ){
+                return -1;
+            } 
+            if( lastName1 > lastName2 ){
+                return 1;
+            } 
+            return 0;
+        } )
+    ) : []
 );
 
 export const selectTeacher = teacherId => createSelector(

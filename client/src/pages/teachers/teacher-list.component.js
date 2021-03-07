@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { withRouter, Link, Route } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
@@ -10,7 +10,6 @@ import { makeStyles } from '@material-ui/core/styles'
 import { fetchTeachersAsync } from '../../redux/teachers/teachers.actions';
 import AddIcon from '@material-ui/icons/Add';
 import {DataGrid} from '@material-ui/data-grid'
-import UserRegistrationPage from '../../pages/register/register.component';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -32,7 +31,11 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
     const classes = useStyles();
 
     const rows = teacherList.map( teacher => ({
-        name: `${teacher.lastName}, ${teacher.firstName}`,
+        name: {
+            firstName: teacher.firstName,
+            lastName: teacher.lastName,
+            id: teacher.id
+        },
         role: teacher.role,
         department: teacher.department,
         email: teacher.email,
@@ -41,27 +44,27 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
     }));
     
     const columns = [
-        { field: 'name', headerName: 'Name', flex: 1.5, headerClassName: 'teacher-list-header', },
+        { field: 'name', headerName: 'Name', flex: 1.5, headerClassName: 'teacher-list-header', 
+            renderCell: (params) => ( 
+                <Link to={`staff/${params.value.id}`} >
+                    {`${params.value.lastName}, ${params.value.firstName}`}
+                </Link>
+            ),
+            sortComparator: (v1, v2, param1, param2) => {
+                const lastName1 = param1.row.name.lastName.toLowerCase();
+                const lastName2 = param2.row.name.lastName.toLowerCase();
+                if( lastName1 < lastName2 ){
+                    return -1;
+                } 
+                if( lastName1 > lastName2 ){
+                    return 1;
+                } 
+                return 0;
+            }
+        },
         { field: 'department', headerName: 'Department', flex: 1, headerClassName: 'teacher-list-header', },
         { field: 'school', headerName: 'School', flex: 1, headerClassName: 'teacher-list-header', },
         { field: 'email', headerName: 'Email', flex: 1.5, headerClassName: 'teacher-list-header', },
-        { 
-            field: 'id', 
-            headerName: 'Details', 
-            headerClassName: 'teacher-list-header',
-            renderCell: (params) => (
-                    <Button
-                        component={Link}
-                        to={`staff/${params.value}`}
-                        color="primary"
-                        size="small"
-                        style={{ marginLeft: 16 }}
-                    >
-                        details
-                    </Button>
-            ),
-            width: 200
-        }
     ]
 
     return ( 
@@ -69,8 +72,8 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
             {
                 currentUser.role === 'superadmin' ? 
                 (<div className={classes.addUser}>
-                    <Button color="primary" onClick={() => history.push('/register')} >
-                        <AddIcon/> Add User
+                    <Button  variant="outlined" onClick={() => history.push('/register')} >
+                        <AddIcon/> Add New User
                     </Button>
                 </div> )
                 : null
@@ -89,13 +92,11 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
     );
 }
 
-const Directory = ({ match, teacherList, currentUser, isLoading, fetchTeachersAsync }) => {
+const Directory = ({ match, teacherList, currentUser, isLoading, isLoaded, fetchTeachersAsync }) => {
 
     useEffect(() => {
-        fetchTeachersAsync();
-    }, [])
-
-    console.log(match)
+        if(!isLoaded) fetchTeachersAsync();
+    }, [fetchTeachersAsync])
 
     return ( 
         <>
@@ -110,7 +111,6 @@ const Directory = ({ match, teacherList, currentUser, isLoading, fetchTeachersAs
                                 />
                     }
         />
-        {/* <Route path={`${match.path}/register`} component={UserRegistrationPage} /> */}
         </>
     )
 }
@@ -119,6 +119,7 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     teacherList: selectTeacherList,
     isLoading: selectTeachersIsLoading,
+    isLoaded: selectIsTeachersLoaded,
     isLoaded: state => selectIsTeachersLoaded(state)
 });
 

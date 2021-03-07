@@ -95,6 +95,16 @@ const RegistrationForm = (props) => {
                         label="Job Title"
                         variant="outlined"
                     />
+                    <TextField
+                        required
+                        className={classes.textInput}
+                        onChange={handleChange}
+                        value={staff.canvasId}
+                        type="text"
+                        name="canvasId"
+                        label="Canvas ID"
+                        variant="outlined"
+                    />
                     <CustomSelect
                         required
                         label="Role"

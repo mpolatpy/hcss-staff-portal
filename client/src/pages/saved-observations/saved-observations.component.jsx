@@ -28,6 +28,9 @@ const styles = theme => ({
     links: {
         textDecoration: 'none',
         color: 'inherit'
+    },
+    noObservation: {
+        marginTop: theme.spacing(2)
     }
 });
 
@@ -44,6 +47,13 @@ class SavedObservations extends React.Component {
                 <div className={classes.root}>
                     <Typography variant="h4">Saved Observations</Typography>
                     <Divider />
+                    {
+                        observations.length === 0 ? (
+                        <div className={classes.noObservation}>
+                            <Typography>There is no saved observation.</Typography>
+                        </div>
+                        ): null
+                    }
                     <List component="nav" aria-label="saved observation links">
                     {
                         observations.map((observation, index) => (

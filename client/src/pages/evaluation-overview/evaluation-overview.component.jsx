@@ -99,6 +99,7 @@ const EvaluationOverview = ({ match }) => {
                     <CustomSelect
                         label="Observation Type"
                         // variant="outlined"
+                        style={{ width: 150 }}
                         options={observationTypes}
                         name="observationType"
                         value={observation.value}

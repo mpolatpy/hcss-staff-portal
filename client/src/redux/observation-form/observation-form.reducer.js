@@ -1,6 +1,6 @@
 import ObservationFormActionTypes from './observation-form.types';
 
-const INITIAL_STATE = {
+export const INITIAL_STATE = {
     isSavedObservation: false,
     isSubmitting: false,
     submissionMessage: {

@@ -41,6 +41,7 @@ const ObservationFormDetails = (props) => {
         } 
         if(isSavedObservation){
             setCourses([observationDetails.course]);
+            getCourses(observationDetails.teacher);
         }                                
     }, [teacherOptions, observationDetails])
 

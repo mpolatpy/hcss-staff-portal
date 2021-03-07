@@ -18,6 +18,7 @@ const UserRegistrationPage = (props) => {
         role: '',
         jobTitle: '',
         department: '',
+        canvasId:'',
         courses: [],
         submissionMessage: null
     });
@@ -34,7 +35,7 @@ const UserRegistrationPage = (props) => {
 
     const handleSubmit = async event => {
         event.preventDefault();
-        const { firstName, lastName, email, password, school, role,  department, courses} = staff;
+        const { firstName, lastName, email, password, school, role,  department, courses, canvasId} = staff;
 
         try {
             setIsLoading(true);
@@ -45,7 +46,7 @@ const UserRegistrationPage = (props) => {
             );
 
             await createUserProfileDocument(user, 
-                { firstName, lastName, school, role, department, courses });
+                { firstName, lastName, school, role, department, courses, canvasId });
 
             setStaff({
                 firstName: '',
@@ -57,6 +58,7 @@ const UserRegistrationPage = (props) => {
                 jobTitle: '',
                 department: '',
                 courses: [],
+                canvasId:'',
                 submissionMessage: {
                     type: 'success',
                     text: 'User saved successfully.'
