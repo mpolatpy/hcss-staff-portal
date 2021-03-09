@@ -9,6 +9,13 @@ export const useStyles = makeStyles((theme) => ({
         // textAlign: 'center',
         // margin: theme.spacing(2)
     },
+    form_info:{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        padding: theme.spacing(2),
+    },
     card: {
         padding: theme.spacing(1),
         display: 'flex',

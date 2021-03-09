@@ -37,7 +37,6 @@ function ObservationStep(props) {
                 <div>
                     <ObservationFormDetails
                         readOnly={readOnly}
-                    observationDetails={observationForm.observationDetails}
                     setObservationFormDetails={setObservationFormDetails}
                     {...otherProps} 
                     />

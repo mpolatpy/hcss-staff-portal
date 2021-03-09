@@ -3,7 +3,11 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'; 
 import { createStructuredSelector } from 'reselect';
 
-import { submitObservationFormAsync, deleteObservationForm, saveObservationForm } from '../../redux/observation-form/observation-form.actions'; 
+import { 
+    submitObservationFormAsync, 
+    deleteObservationForm, 
+    saveObservationForm 
+} from '../../redux/observation-form/observation-form.actions'; 
 import { 
     selectIsObservationFormSubmitting,
     selectObservationForm
@@ -68,7 +72,7 @@ const ObservationPage = (props) => {
     const handleSave = (e) => {
         e.preventDefault();
         saveObservationForm(observationForm);
-        history.push('/observations');
+        history.push('/observations/saved');
     };
 
     const handleDelete = (e) => {

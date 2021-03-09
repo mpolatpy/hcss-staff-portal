@@ -7,15 +7,16 @@ import CustomSelect from '../../custom-select/custom-select.component';
 // import CustomAutocomplete from '../../custom-autocomplete/autocomplete.component';
 import DatePicker from '../../date-picker/date-picker.component';
 import WithSpinner from '../../with-spinner/with-spinner.component';
-import {selectIsSavedObservation} from '../../../redux/observation-form/observation-form.selectors';
+import {selectIsSavedObservation, selectObservationFormDetails} from '../../../redux/observation-form/observation-form.selectors';
 import { 
     selectTeachersIsLoading, 
     selectTeacherOptions,
     selectTeacherList,
-    selectTeachersObjWithNameKeys
+    selectTeachersObjWithNameKeys 
  } from '../../../redux/teachers/teachers.selectors';
+import { selectCurrentYear } from '../../../redux/school-year/school-year.selectors';
 import { fetchTeachersAsync } from '../../../redux/teachers/teachers.actions';
-
+import OnservationInfoModal from '../../observation-info-modal/observation-info.component';
 import { useStyles } from './observation-details.styles';
 
 const ObservationFormDetails = (props) => {
@@ -29,52 +30,47 @@ const ObservationFormDetails = (props) => {
         teachers,
         // teachersList,
         teacherOptions,
+        currentYear,
         readOnly      
      } = props;
     
     const [ courses, setCourses ] = useState([]);
 
-    console.log(courses);                                   
+    const getCourses = async (teacher) => {
+        try{
+            const response = await axios.post('/canvas-courses', {
+                    teacherId: teacher.canvasId,
+                }
+            );
+            const fetchedCourses  = response.data;
+            const courses = fetchedCourses.filter ( 
+                course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
+            );
+            setCourses(courses);
+        }catch(e){
+            console.log(e.message);
+        }
+
+    }
+    
     useEffect(() => { 
+        const teacher = observationDetails.teacher;
         if (teacherOptions.length === 0) {
             fetchTeachersAsync();
         } 
-        if(isSavedObservation){
-            setCourses([observationDetails.course]);
-            getCourses(observationDetails.teacher);
-        }                                
-    }, [teacherOptions, observationDetails])
-
-    const getCourses = (teacher) => {
-        axios({
-            url: '/canvas-courses',
-            method: 'post',
-            data: {
-                teacherId: teacher.canvasId,
-            }
-        }).then(response => response.data)
-            .then(courses => {
-                console.log(courses)
-                return courses.filter ( course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox'))
-                        .map(course => course.name)
-            }).then(courses  =>  setCourses(courses))
-            .catch((err) => {
-                console.log(err);
-            });
-    }
-    
+        getCourses(teacher);     
+    }, [observationDetails, teacherOptions, fetchTeachersAsync])
 
     const handleChange = e => {
         const { name, value } = e.target;
 
         if (name === 'teacher') {
             const teacher = teachers[value];
-            console.log(teacher)
-            getCourses(teacher);
             setObservationFormDetails({
                 ...observationDetails,
                 teacher: teacher
             });
+            getCourses(teacher);
         } else {
             setObservationFormDetails({
                 ...observationDetails,
@@ -95,7 +91,7 @@ const ObservationFormDetails = (props) => {
         <div className={classes.root}>
             <div className={classes.newDivMain} >
                 <div className={classes.newDiv}>
-                    <div className={classes.form_items}>
+                    <div className={classes.form_info}>
                         <DatePicker
                             required
                             readOnly={readOnly}
@@ -108,6 +104,11 @@ const ObservationFormDetails = (props) => {
                             name="observationDate"
                             label="Observation Date"
                             // variant="outlined"
+                        />
+                        <OnservationInfoModal 
+                        teacher={observationDetails.teacher}
+                        currentYear={currentYear}
+                        courses={courses}
                         />
                     </div>
                     <div className={classes.form_items}>
@@ -203,8 +204,8 @@ const ObservationFormDetails = (props) => {
                             name="course"
                             label="Course"
                             handleSelect={handleChange}
+                            options={ courses.length > 0 ? courses.map( course => course.name) : []}
                             value={observationDetails.course}
-                            options={courses}
                         />
                     </div>
                     <div className={classes.form_items}>
@@ -231,6 +232,8 @@ const mapStateToProps = createStructuredSelector({
     teachers: selectTeachersObjWithNameKeys,
     teachersList: selectTeacherList,
     isSavedObservation: selectIsSavedObservation,
+    currentYear: selectCurrentYear,
+    observationDetails: selectObservationFormDetails
 });
 
 const mapDispatchToProps = dispatch => ({

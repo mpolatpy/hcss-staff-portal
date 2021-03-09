@@ -103,7 +103,7 @@ const ObservationsOverview = ({ match, submissionMessage, resetSubmissionMessage
                     />)
                     : null
 
-            }
+            } 
         </div>
     );
 }

@@ -38,7 +38,7 @@ export const selectIsTeachersLoaded = createSelector(
 
 export const selectTeacherOptions = createSelector( 
     [selectTeacherList], 
-    teacherList => teacherList.filter(teacher => teacher.firstName !== null)
+    teacherList => teacherList.filter(teacher => teacher.firstName && teacher.role === 'teacher' )
                               .map( teacher => `${teacher.lastName}, ${teacher.firstName}` )
 )
 
