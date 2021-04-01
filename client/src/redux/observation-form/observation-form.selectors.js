@@ -7,6 +7,10 @@ export const selectObservationFormDetails = createSelector(
     [selectObservationForm], observationForm => observationForm.observationDetails
 );
 
+export const selectTeacher = createSelector( 
+    [selectObservationFormDetails], observationDetails => observationDetails.teacher
+);
+
 export const selectStandardOne = createSelector(
     [selectObservationForm], observationForm => observationForm.domainOne
 );

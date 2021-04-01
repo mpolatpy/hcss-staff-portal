@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'; 
 import { createStructuredSelector } from 'reselect';
@@ -10,12 +10,15 @@ import {
 } from '../../redux/observation-form/observation-form.actions'; 
 import { 
     selectIsObservationFormSubmitting,
-    selectObservationForm
+    selectObservationForm, 
+    selectIsSavedObservation
 } from '../../redux/observation-form/observation-form.selectors';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 import CustomModal from '../../components/modal/modal.component';
+import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import CustomTextArea from '../text-area/text-area.component';
 
 import Stepper from '@material-ui/core/Stepper'; 
 import Step from '@material-ui/core/Step';
@@ -29,6 +32,7 @@ import { Typography } from '@material-ui/core';
 
 const ObservationPage = (props) => {
     const { 
+        isSavedObservation,
         observationForm,
         currentUser,
         currentYear,
@@ -78,7 +82,7 @@ const ObservationPage = (props) => {
     const handleDelete = (e) => {
         e.preventDefault();
         deleteObservationForm(observationForm);
-        history.push('/observations');
+        history.push('/observations/saved');
     }
 
     return (
@@ -121,49 +125,60 @@ const ObservationPage = (props) => {
                                     </Button>
                                 </div>
                                 <div className={classes.resetSaveButtons}>
-                                        {
-                                            observationForm.isSavedObservation ?
-                                                (
-                                                <CustomModal
-                                                    buttonStyle={classes.button}
-                                                    buttonText="Delete"
-                                                    color="secondary"
-                                                    modalBody={( 
+                                    <CustomModal
+                                        buttonStyle={classes.button}
+                                        buttonText="Notes"
+                                        color="primary"
+                                        modalBody={( 
+                                            <div style={{width: '60vw'}}>
+                                                <CustomTextArea />
+                                            </div>
+                                        )}
+                                    />
+
+                                    {
+                                        observationForm.isSavedObservation ?
+                                            (
+                                            <CustomModal
+                                                buttonStyle={classes.button}
+                                                buttonText="Delete"
+                                                color="secondary"
+                                                modalBody={( 
+                                                    <div>
+                                                        <Typography variant="h5">
+                                                            Please Confirm Delete
+                                                        </Typography>
+                                                        <p>Once deleted, you will not be able to retrieve this observaton back</p>
                                                         <div>
-                                                            <Typography variant="h5">
-                                                                Please Confirm Delete
-                                                            </Typography>
-                                                            <p>Once deleted, you will not be able to retrieve this observaton back</p>
-                                                            <div>
-                                                            <Button
-                                                            type="submit"
-                                                            variant="contained"
-                                                            color="secondary"
-                                                            onClick={handleDelete}
-                                                            className={classes.button}
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                            </div>
+                                                        <Button
+                                                        type="submit"
+                                                        variant="contained"
+                                                        color="secondary"
+                                                        onClick={handleDelete}
+                                                        className={classes.button}
+                                                        >
+                                                            Delete
+                                                        </Button>
                                                         </div>
-                                                    )}
-                                                />
-                                                ) : (
-                                                <Button
-                                                    // disabled={activeStep === 0}
-                                                    variant="outlined"
-                                                    color="secondary"
-                                                    onClick={handleReset}
-                                                    className={classes.button}
-                                                >
-                                                    Reset
-                                                </Button>
-                                                )
-                                        }
+                                                    </div>
+                                                )}
+                                            />
+                                            ) : (
+                                            <Button
+                                                // disabled={activeStep === 0}
+                                                // variant="outlined"
+                                                color="secondary"
+                                                onClick={handleReset}
+                                                className={classes.button}
+                                            >
+                                                Reset
+                                            </Button>
+                                            )
+                                    }
                                     <Button
                                         disabled={activeStep === 0}
                                         type="submit"
-                                        variant="outlined"
+                                        // variant="outlined"
                                         color="primary"
                                         onClick={handleSave}
                                         className={classes.button}
@@ -185,6 +200,7 @@ const ObservationPage = (props) => {
 
 const mapStateToProps = createStructuredSelector({
     observationForm: selectObservationForm,
+    isSavedObservation: selectIsSavedObservation,
     currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,
     isLoading: selectIsObservationFormSubmitting,

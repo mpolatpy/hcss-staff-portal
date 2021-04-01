@@ -9,9 +9,9 @@ import WithSpinner from '../../components/with-spinner/with-spinner.component';
 const SavedObservationDetail = ({ observation, match, setObservationForm, isLoading, fetchTeachersAsync, ...otherProps}) => {
     
     useEffect(() => {
-        if(isLoading){
-            fetchTeachersAsync();
-        }
+        // if(isLoading){
+        //     fetchTeachersAsync();
+        // }
         setObservationForm(observation);
         
     },[ observation, setObservationForm]);

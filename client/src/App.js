@@ -4,6 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
+import { fetchTeachersAsync } from './redux/teachers/teachers.actions';
 import { auth, createUserProfileDocument, fetchCurrentYear } from './firebase/firebase.utils';
 import { setCurrentUser } from './redux/user/user.actions';
 import { selectCurrentUser } from "./redux/user/user.selectors";
@@ -25,7 +26,7 @@ function App(props) {
 
   useEffect( () => {
 
-    const { setCurrentUser, setCurrentYear } = props;
+    const { setCurrentUser, setCurrentYear, fetchTeachersAsync } = props;
 
     const unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
@@ -44,6 +45,10 @@ function App(props) {
 
     fetchCurrentYear(setCurrentYear);
     
+    if(currentUser.role !== 'teacher'){
+      fetchTeachersAsync();
+    }
+
     return () => {
       unsubscribeFromAuth();
     }
@@ -90,6 +95,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
   setCurrentUser: user => dispatch(setCurrentUser(user)),
   setCurrentYear: year => dispatch(setCurrentYear(year)),
+  fetchTeachersAsync: () => dispatch(fetchTeachersAsync())
 });
 
 export default connect(

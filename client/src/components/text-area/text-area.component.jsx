@@ -10,10 +10,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
     observationNotes: {
-        width: '90%',
+        width: '100%',
         padding: '12px 20px',
-        boxSizing: 'border-box',
-        border: '2px solid #ccc',
+        // boxSizing: 'border-box',
+        // border: '2px solid #ccc',
         borderRadius: '4px',
         fontSize: '16px',
     }

@@ -86,7 +86,7 @@ export default function OnservationInfoModal({ teacher, currentYear, courses }) 
             {
                 !teacher ? ( 
                     <Typography>No teacher selected. Please select a teacher to view information.</Typography>
-                ):
+                ):(
                 observations.length === 0 ?
                 ( 
                 <div>
@@ -123,7 +123,7 @@ export default function OnservationInfoModal({ teacher, currentYear, courses }) 
                     <Divider/>
                     <List>
                         {
-                          courses.length ? (
+                          courses && courses.length ? (
                             courses.map( course => (
                                 <ListItem key={course.id}>
                                     <Link href={`https://hcss.instructure.com/courses/${course.id}`} target="_blank" rel="noopener">
@@ -135,7 +135,7 @@ export default function OnservationInfoModal({ teacher, currentYear, courses }) 
                         }
                     </List>
                 </div>
-                )
+                ))
             }
         </div>
         </Fade>

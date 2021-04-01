@@ -13,6 +13,7 @@ import SavedObservationDetail from '../saved-observations/saved-observation-deta
 import SubmittedObservations from './submitted-observations.component';
 import WithAuthorization from '../../components/with-authorization/withAuthorization.component';
 import ObservationTemplatesPage from './observation-template.component';
+import ObservationTemplateEditPage from './observation-template-edit.component';
 
 const Observations = (props) => {
     const { match, currentUser, isTeachersLoaded, fetchTeachersAsync, ...otherProps } = props;
@@ -27,7 +28,8 @@ const Observations = (props) => {
         <div>
             <Route exact path={match.path} component={ObservationsOverview}/>
             <Route path={`${match.path}/submitted`} component={SubmittedObservations} />
-            <Route path={`${match.path}/templates`} component={ObservationTemplatesPage} />
+            <Route exact path={`${match.path}/templates`} component={ObservationTemplatesPage} />
+            <Route path={`${match.path}/templates/edit`} component={ObservationTemplateEditPage} />
             <Route exact path={`${match.path}/new`} component={NewObservationPage}/>
             <Route exact path={`${match.path}/saved`} component={SavedObservations} />
             <Route exact 
