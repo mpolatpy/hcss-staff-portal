@@ -45,7 +45,7 @@ function App(props) {
 
     fetchCurrentYear(setCurrentYear);
     
-    if(currentUser.role !== 'teacher'){
+    if(currentUser && currentUser.role !== 'teacher'){
       fetchTeachersAsync();
     }
 
