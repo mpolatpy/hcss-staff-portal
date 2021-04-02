@@ -2,8 +2,6 @@ import React, {useEffect} from 'react';
 import { Route } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
-import { fetchTeachersAsync } from '../../redux/teachers/teachers.actions';
-import { selectIsTeachersLoaded } from '../../redux/teachers/teachers.selectors';
 import { selectCurrentUser } from "../../redux/user/user.selectors";
 
 import ObservationsOverview from './observations-overview.component';
@@ -16,13 +14,8 @@ import ObservationTemplatesPage from './observation-template.component';
 import ObservationTemplateEditPage from './observation-template-edit.component';
 
 const Observations = (props) => {
-    const { match, currentUser, isTeachersLoaded, fetchTeachersAsync, ...otherProps } = props;
+    const { match, currentUser, ...otherProps } = props;
 
-    useEffect(() => {
-        if(!isTeachersLoaded){
-            fetchTeachersAsync();
-        }
-    },[]);
 
     return ( 
         <div>
@@ -33,9 +26,7 @@ const Observations = (props) => {
             <Route exact path={`${match.path}/new`} component={NewObservationPage}/>
             <Route exact path={`${match.path}/saved`} component={SavedObservations} />
             <Route exact 
-            path={`${match.path}/saved/:observationId`} 
-            isLoading={!isTeachersLoaded}
-            fetchTeachersAsync={fetchTeachersAsync}
+            path={`${match.path}/saved/:observationId`}
             component={SavedObservationDetail} />
         </div>
     );
@@ -43,11 +34,7 @@ const Observations = (props) => {
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
-    isTeachersLoaded: selectIsTeachersLoaded
 });
 
-const mapDispatchToProps = dispatch => ({
-    fetchTeachersAsync: () => dispatch(fetchTeachersAsync())
-})
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithAuthorization(['superadmin', 'dci', 'admin'])(Observations));
+export default connect(mapStateToProps)(WithAuthorization(['superadmin', 'dci', 'admin'])(Observations));

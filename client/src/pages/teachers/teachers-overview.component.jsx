@@ -17,10 +17,6 @@ const TeacherListOverview = (props) => {
 
     const { match, fetchTeachersAsync, isLoading, isLoaded, teacherList } = props;
 
-    useEffect(() => {
-        fetchTeachersAsync();
-    }, [fetchTeachersAsync])
-
     return ( 
     <div>
         <Route exact path={`${match.path}`} component={EvaluationOverview} />

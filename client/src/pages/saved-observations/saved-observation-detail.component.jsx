@@ -2,34 +2,32 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 
 import { selectSingleSavedObservation } from '../../redux/saved-observations/saved-observations.selectors';
-import { setObservationForm, resetObservationForm } from '../../redux/observation-form/observation-form.actions';
+import { setObservationForm } from '../../redux/observation-form/observation-form.actions';
+import { selectObservationForm } from '../../redux/observation-form/observation-form.selectors';
 import ObservationPage from '../../components/observation-form/observation-form.component';
-import WithSpinner from '../../components/with-spinner/with-spinner.component';
 
-const SavedObservationDetail = ({ observation, match, setObservationForm, isLoading, fetchTeachersAsync, ...otherProps}) => {
+const SavedObservationDetail = ({ observation, observationForm, match, setObservationForm, ...otherProps}) => {
     
     useEffect(() => {
-        // if(isLoading){
-        //     fetchTeachersAsync();
-        // }
-        setObservationForm(observation);
-        
+        setObservationForm(observation); 
     },[ observation, setObservationForm]);
     
     return (
         <>
-            <ObservationPage {...otherProps} />:   
+            <ObservationPage 
+            observationForm={observationForm}
+            {...otherProps} />:   
         </>
     );
 }
 
 const mapStateToProps = (state, ownProps) => ({
-    observation: selectSingleSavedObservation(ownProps.match.params.observationId)(state)
+    observation: selectSingleSavedObservation(ownProps.match.params.observationId)(state),
+    observationForm: selectObservationForm(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
     setObservationForm: form => dispatch(setObservationForm(form)),
-    resetObservationForm: (details) => dispatch(resetObservationForm(details)),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(WithSpinner(SavedObservationDetail));
+export default connect(mapStateToProps, mapDispatchToProps)(SavedObservationDetail);

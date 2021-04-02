@@ -93,7 +93,7 @@ class SavedObservations extends React.Component {
                                         />
                                     </div>
                                 </ListItem>
-                                <Divider />
+                                {/* <Divider /> */}
                             </Link>
                         ))
                     }

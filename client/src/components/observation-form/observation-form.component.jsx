@@ -1,23 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom'; 
 import { createStructuredSelector } from 'reselect';
 
-import { 
-    submitObservationFormAsync, 
-    deleteObservationForm, 
-    saveObservationForm 
-} from '../../redux/observation-form/observation-form.actions'; 
-import { 
-    selectIsObservationFormSubmitting,
-    selectObservationForm, 
-    selectIsSavedObservation
-} from '../../redux/observation-form/observation-form.selectors';
+import { submitObservationFormAsync, deleteObservationForm, saveObservationForm} from '../../redux/observation-form/observation-form.actions'; 
+import { selectIsObservationFormSubmitting,selectIsSavedObservation} from '../../redux/observation-form/observation-form.selectors';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 import CustomModal from '../../components/modal/modal.component';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
+// import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import CustomTextArea from '../text-area/text-area.component';
 
 import Stepper from '@material-ui/core/Stepper'; 
@@ -81,8 +73,8 @@ const ObservationPage = (props) => {
 
     const handleDelete = (e) => {
         e.preventDefault();
-        deleteObservationForm(observationForm);
-        history.push('/observations/saved');
+        deleteObservationForm(observationForm)
+        history.push('/observations')
     }
 
     return (
@@ -148,7 +140,7 @@ const ObservationPage = (props) => {
                                                         <Typography variant="h5">
                                                             Please Confirm Delete
                                                         </Typography>
-                                                        <p>Once deleted, you will not be able to retrieve this observaton back</p>
+                                                        <p>Once deleted, you will not be able to retrieve this observation back</p>
                                                         <div>
                                                         <Button
                                                         type="submit"
@@ -199,7 +191,6 @@ const ObservationPage = (props) => {
 }
 
 const mapStateToProps = createStructuredSelector({
-    observationForm: selectObservationForm,
     isSavedObservation: selectIsSavedObservation,
     currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,

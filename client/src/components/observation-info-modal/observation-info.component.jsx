@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function OnservationInfoModal({ teacher, currentYear, courses }) {
+export default function ObservationInfoModal({ teacher, currentYear, courses }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [observations, setObservations ] = useState([]);
@@ -86,8 +86,8 @@ export default function OnservationInfoModal({ teacher, currentYear, courses }) 
             {
                 !teacher ? ( 
                     <Typography>No teacher selected. Please select a teacher to view information.</Typography>
-                ):(
-                observations.length === 0 ?
+                ):
+                (observations.length === 0 ?
                 ( 
                 <div>
                     <Typography>{`There is no saved observation for ${teacher.lastName}, ${teacher.firstName}`}</Typography>  
@@ -107,7 +107,7 @@ export default function OnservationInfoModal({ teacher, currentYear, courses }) 
                             </TableHead>
                             <TableBody>
                                 {
-                                    observations.map( observation => ( 
+                                    observations && observations.map( observation => ( 
                                         <TableRow key={observation.firestoreRef.id}>
                                             <TableCell>{new Date(observation.observationDetails.observationDate.seconds*1000).toLocaleDateString("en-US")}</TableCell>
                                             <TableCell>{observation.observationDetails.block}</TableCell>
@@ -123,9 +123,9 @@ export default function OnservationInfoModal({ teacher, currentYear, courses }) 
                     <Divider/>
                     <List>
                         {
-                          courses && courses.length ? (
-                            courses.map( course => (
-                                <ListItem key={course.id}>
+                          (courses && courses.length > 0) ? (
+                            courses.map( (course, index) => (
+                                <ListItem key={index}>
                                     <Link href={`https://hcss.instructure.com/courses/${course.id}`} target="_blank" rel="noopener">
                                         {course.name}
                                     </Link>

@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { selectCurrentUser } from '../../redux/user/user.selectors';
-import { selectTeacherList, selectTeachersIsLoading, selectIsTeachersLoaded } from "../../redux/teachers/teachers.selectors";
+import { selectTeacherList, selectTeachersIsLoading } from "../../redux/teachers/teachers.selectors";
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles'
-import { fetchTeachersAsync } from '../../redux/teachers/teachers.actions';
 import AddIcon from '@material-ui/icons/Add';
 import {DataGrid} from '@material-ui/data-grid'
 
@@ -92,11 +91,7 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
     );
 }
 
-const Directory = ({ match, teacherList, currentUser, isLoading, isLoaded, fetchTeachersAsync }) => {
-
-    useEffect(() => {
-        if(!isLoaded) fetchTeachersAsync();
-    }, [fetchTeachersAsync])
+const Directory = ({ match, teacherList, currentUser, isLoading }) => {
 
     return ( 
         <>
@@ -118,13 +113,7 @@ const Directory = ({ match, teacherList, currentUser, isLoading, isLoaded, fetch
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     teacherList: selectTeacherList,
-    isLoading: selectTeachersIsLoading,
-    isLoaded: selectIsTeachersLoaded,
-    isLoaded: state => selectIsTeachersLoaded(state)
+    isLoading: selectTeachersIsLoading
 });
 
-const mapDispatchToProps = dispatch => ({
-    fetchTeachersAsync: () => dispatch(fetchTeachersAsync())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Directory);
+export default connect(mapStateToProps)(Directory);
