@@ -47,7 +47,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
         };
 
         fetchSelectedTeachers();
-    }, []);
+    }, [currentUser.id]);
 
     const classes = useStyles();
 

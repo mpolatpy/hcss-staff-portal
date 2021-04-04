@@ -1,21 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { selectTeacherList, selectTeachersIsLoading, selectIsTeachersLoaded } from "../../redux/teachers/teachers.selectors";
-import TeacherTableContainer from './teacher-list.component';
+import { selectIsTeachersLoaded } from "../../redux/teachers/teachers.selectors";
 import TeacherDetails from './teacher-details.component';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 import EvaluationOverview from '../evaluation-overview/evaluation-overview.component';
-import { fetchTeachersAsync } from '../../redux/teachers/teachers.actions';
 
-const TeacherTableWithSpinner = WithSpinner(TeacherTableContainer);
 const TeacherDetailsWithSpinner = WithSpinner(TeacherDetails);
 
 const TeacherListOverview = (props) => {
 
-    const { match, fetchTeachersAsync, isLoading, isLoaded, teacherList } = props;
+    const { match, isLoaded } = props;
 
     return ( 
     <div>
@@ -30,13 +27,7 @@ const TeacherListOverview = (props) => {
 )}
 
 const mapStateToProps = createStructuredSelector({
-    teacherList: selectTeacherList,
-    isLoading: selectTeachersIsLoading,
     isLoaded: state => selectIsTeachersLoaded(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-    fetchTeachersAsync: () => dispatch(fetchTeachersAsync())
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(TeacherListOverview);
+export default connect(mapStateToProps)(TeacherListOverview);

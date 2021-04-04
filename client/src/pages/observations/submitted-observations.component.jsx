@@ -55,7 +55,7 @@ const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
         }
         
         fetchInitialObservationData();
-    },[]);
+    },[currentUser.id, currentYear]);
 
     const addPaginatedObservations = async () => {
         const { queryRef, lastDoc } = observationData;
@@ -83,7 +83,7 @@ const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
         observationData.observations.map( (observation, index) => mapObservationData(observation, index)) 
     : [];
 
-    const columns = rows.length>0 ? Object.keys(rows[0]).map( key => ({ field: key })):[]; 
+    // const columns = rows.length>0 ? Object.keys(rows[0]).map( key => ({ field: key })):[]; 
 
     return ( 
         <div className={classes.root}>

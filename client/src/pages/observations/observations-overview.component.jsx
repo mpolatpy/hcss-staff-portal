@@ -79,7 +79,7 @@ const ObservationsOverview = ({ match, submissionMessage, resetSubmissionMessage
         };
 
         fetchSelectedTeachers();
-    }, []);
+    }, [currentUser.id]);
 
     const handleSaveTemplates = () => {
         setIsLoading(true);

@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Route } from 'react-router-dom';
+import {connect} from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import { selectCurrentUser } from "../../redux/user/user.selectors";
+import { selectCurrentUser } from '../../redux/user/user.selectors';
 
 import ObservationsOverview from './observations-overview.component';
 import NewObservationPage from '../new-observation/new-observation.component';
@@ -13,9 +13,7 @@ import WithAuthorization from '../../components/with-authorization/withAuthoriza
 import ObservationTemplatesPage from './observation-template.component';
 import ObservationTemplateEditPage from './observation-template-edit.component';
 
-const Observations = (props) => {
-    const { match, currentUser, ...otherProps } = props;
-
+const Observations = ({ match, currentUser }) => {
 
     return ( 
         <div>
@@ -33,8 +31,8 @@ const Observations = (props) => {
 }
 
 const mapStateToProps = createStructuredSelector({
-    currentUser: selectCurrentUser,
-});
+    currentUser: selectCurrentUser
+})
 
 
 export default connect(mapStateToProps)(WithAuthorization(['superadmin', 'dci', 'admin'])(Observations));

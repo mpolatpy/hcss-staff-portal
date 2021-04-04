@@ -53,7 +53,7 @@ export const getUpdatedObservationScore = (prevData, observation) => {
     return updatedScores;
 }
 
-export const getOrCreateScoreDocument = async (teacher, observationType) => {
+export const getOrCreateScoreDocument = async (teacher, currentYear, observationType) => {
     const teacherId = teacher.id;
     const observationTypeMap = {
         'Weekly Observation': 'weeklyObservationScores',
@@ -64,7 +64,7 @@ export const getOrCreateScoreDocument = async (teacher, observationType) => {
     };
 
     const collectionType = observationTypeMap[observationType];
-    const scoreRef = firestore.doc(`${collectionType}/${teacherId}`);
+    const scoreRef = firestore.doc(`observationScores/${currentYear}/${collectionType}/${teacherId}`);
     const snapShot = await scoreRef.get();
 
     if (!snapShot.exists) {

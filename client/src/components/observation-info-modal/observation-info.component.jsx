@@ -54,7 +54,7 @@ export default function ObservationInfoModal({ teacher, currentYear, courses }) 
         fetchSavedObservations();
     }
 
-  },[teacher]);
+  },[teacher, currentYear]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -89,13 +89,14 @@ export default function ObservationInfoModal({ teacher, currentYear, courses }) 
                 ):
                 (observations.length === 0 ?
                 ( 
-                <div>
-                    <Typography>{`There is no saved observation for ${teacher.lastName}, ${teacher.firstName}`}</Typography>  
-                </div>
-                ) : ( 
-                <div>
+                  <>
+                  <Typography>{`There is no saved observation for ${teacher.lastName}, ${teacher.firstName}`}</Typography> 
+                  <br/>
+                  </> 
+                ) : (
+                  <>
                     <Typography variant="h6">Scheduled Observations</Typography>
-                    <Divider/>
+                    {/* <Divider/> */}
                     <TableContainer>
                         <Table>
                             <TableHead>
@@ -118,9 +119,15 @@ export default function ObservationInfoModal({ teacher, currentYear, courses }) 
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <br/>
+                    </>
+                ))
+              }
+                { 
+                teacher ? 
+                (
+                <div>
                     <Typography variant="h6">Canvas Links</Typography>
-                    <Divider/>
+                    {/* <Divider/> */}
                     <List>
                         {
                           (courses && courses.length > 0) ? (
@@ -135,8 +142,9 @@ export default function ObservationInfoModal({ teacher, currentYear, courses }) 
                         }
                     </List>
                 </div>
-                ))
-            }
+                )
+                :null 
+              }
         </div>
         </Fade>
       </Modal>

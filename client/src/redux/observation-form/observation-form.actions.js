@@ -90,10 +90,8 @@ export const saveObservationForm = (observationFormData) => {
         try{
             if(isSavedObservation){
                 await newObservationRef.update(observationForm);
-                console.log("Saved Form is updated")
             }else{
                 await newObservationRef.set(observationForm)
-                console.log("New for is saved")
             }
             dispatch(submitObservationFormSuccess());
         } catch(e) {
@@ -131,7 +129,8 @@ export const submitObservationFormAsync = (observationFormData) => {
     return async dispatch => {
         dispatch(submitObservationFormStart());
         try{
-            const scoreRef = await getOrCreateScoreDocument(teacher, observationType);
+            const schoolYear = observationDetails.schoolYear;
+            const scoreRef = await getOrCreateScoreDocument(teacher, schoolYear, observationType);
             const prev = await scoreRef.get();
             const updatedScore = getUpdatedObservationScore(prev, observationFormData);
 
@@ -181,14 +180,12 @@ const deleteObservationFormFail = (errorMessage) => ({
     pay: errorMessage
 });
 
-export const deleteObservationForm = (observationForm) => {
-
-    const firestoreRef = observationForm.firestoreRef;
-
+export const deleteObservationForm = (id) => {
+    
     return dispatch => {
         dispatch(deleteObservationFormStart());
 
-        firestore.collection('savedObservations').doc(firestoreRef.id)
+        firestore.collection('savedObservations').doc(id)
                 .delete()
                 .then(() => dispatch(deleteObservationFormSuccess()))
                 .catch(e => dispatch(deleteObservationFormFail(e.message)))

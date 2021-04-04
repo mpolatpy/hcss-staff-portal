@@ -1,10 +1,10 @@
 
 export function mapObservationData(observation, index){
     const observationDetails = observation.observationDetails;
-    const domainOne = observation.domainOne;
-    const domainTwo = observation.domainTwo;
-    const domainThree = observation.domainThree;
-    const domainFour = observation.domainFour;
+    // const domainOne = observation.domainOne;
+    // const domainTwo = observation.domainTwo;
+    // const domainThree = observation.domainThree;
+    // const domainFour = observation.domainFour;
 
     return {
         id: index,

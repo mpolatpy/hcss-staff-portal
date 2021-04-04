@@ -73,7 +73,7 @@ const ObservationPage = (props) => {
 
     const handleDelete = (e) => {
         e.preventDefault();
-        deleteObservationForm(observationForm)
+        deleteObservationForm(props.match.params.observationId)
         history.push('/observations')
     }
 

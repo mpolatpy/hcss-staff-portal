@@ -31,7 +31,6 @@ export const createRows = (observationScores) => observationScores.map(
         name: `${observation.teacher.lastName}, ${observation.teacher.firstName}`,
         department: observation.teacher.department,
         school: observation.teacher.school,
-        email: observation.teacher.email,
         domainOne: observation.domainOne.score,
         domainTwo: observation.domainTwo.score,
         domainThree: observation.domainThree.score,
@@ -63,12 +62,12 @@ export const RenderRating = ( params, isShowingNumbers ) => (
     <>
         {
             isShowingNumbers ? 
-            <p>{params.value.toFixed(2)}</p>:
+            <p>{(params.value.toFixed(2))}</p>:
             <Rating
-                value={(params.value.toFixed(1))}
+                value={Math.ceil(params.value)}
                 readOnly
                 max={4}
-                precision={0.1}
+                precision={0.25}
             />
         }
     </>

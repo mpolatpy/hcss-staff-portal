@@ -7,10 +7,7 @@ import CustomSelect from '../../custom-select/custom-select.component';
 // import CustomAutocomplete from '../../custom-autocomplete/autocomplete.component';
 import DatePicker from '../../date-picker/date-picker.component';
 import {selectIsSavedObservation, selectObservationFormDetails} from '../../../redux/observation-form/observation-form.selectors';
-import { 
-    selectTeacherOptions,
-    selectTeachersObjWithNameKeys 
- } from '../../../redux/teachers/teachers.selectors';
+import {selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../../redux/teachers/teachers.selectors';
 import { selectCurrentYear } from '../../../redux/school-year/school-year.selectors';
 import ObservationInfoModal from '../../observation-info-modal/observation-info.component';
 import { useStyles } from './observation-details.styles';
@@ -28,9 +25,7 @@ const ObservationFormDetails = (props) => {
         readOnly      
      } = props;
     
-    const [ courses, setCourses ] = useState( 
-        isSavedObservation ? [observationDetails.course] : []
-    );
+    const [ courses, setCourses ] = useState([]);
 
     const getCourses = async (id) => {
         let courses =[];
@@ -60,12 +55,17 @@ const ObservationFormDetails = (props) => {
         const { name, value } = e.target;
 
         if (name === 'teacher') {
-            getCourses(teachers[value].canvasId)
-            .then(fetchedCourses => setCourses(fetchedCourses))
-            .then( setObservationFormDetails({
-                ...observationDetails,
-                teacher: teachers[value]
-            }));
+            const selectedTeacher = teachers[value];
+            if (selectedTeacher){
+                getCourses(selectedTeacher.canvasId)
+                .then(fetchedCourses => setCourses(fetchedCourses))
+                .then( setObservationFormDetails({
+                    ...observationDetails,
+                    teacher: selectedTeacher,
+                    department: selectedTeacher.department,
+                    school: selectedTeacher.school
+                }));
+            } 
         } else {
             setObservationFormDetails({
                 ...observationDetails,
@@ -127,6 +127,21 @@ const ObservationFormDetails = (props) => {
                         <CustomSelect
                             required
                             readOnly={readOnly}
+                            name="teacher"
+                            label="Teacher"
+                            handleSelect={handleChange}
+                            value={
+                                observationDetails.teacher ?
+                                `${observationDetails.teacher.lastName}, ${observationDetails.teacher.firstName}`
+                                : ''
+                            }
+                            options={teacherOptions}
+                        />
+                    </div>
+                    <div className={classes.form_items}>
+                        <CustomSelect
+                            required
+                            readOnly={readOnly}
                             label="Department"
                             name="department"
                             handleSelect={handleChange}
@@ -154,21 +169,6 @@ const ObservationFormDetails = (props) => {
                             ]}
                         />
                     </div>
-                    <div className={classes.form_items}>
-                        <CustomSelect
-                            required
-                            readOnly={readOnly}
-                            name="teacher"
-                            label="Teacher"
-                            handleSelect={handleChange}
-                            value={
-                                observationDetails.teacher ?
-                                `${observationDetails.teacher.lastName}, ${observationDetails.teacher.firstName}`
-                                : ''
-                            }
-                            options={teacherOptions}
-                        />
-                    </div>
                 </div>
                 <div className={classes.newDiv}>
                     <div className={classes.form_items}>
@@ -185,6 +185,11 @@ const ObservationFormDetails = (props) => {
                     <div className={classes.form_items}>
                         <CustomSelect
                             readOnly={readOnly}
+                            disabled={
+                                ['Quarter Evaluation',
+                                'Midyear Evaluation',
+                                'End of Year Evaluation'
+                                ].includes(observationDetails.observationType)}
                             name="block"
                             label="Block"
                             handleSelect={handleChange}
@@ -196,6 +201,11 @@ const ObservationFormDetails = (props) => {
 
                         <CustomSelect
                             readOnly={readOnly}
+                            disabled={
+                                ['Quarter Evaluation',
+                                'Midyear Evaluation',
+                                'End of Year Evaluation'
+                                ].includes(observationDetails.observationType)}
                             name="course"
                             label="Course"
                             handleSelect={handleChange}
@@ -206,6 +216,11 @@ const ObservationFormDetails = (props) => {
                     <div className={classes.form_items}>
                         <CustomSelect
                             readOnly={readOnly}
+                            disabled={
+                                ['Quarter Evaluation',
+                                'Midyear Evaluation',
+                                'End of Year Evaluation'
+                                ].includes(observationDetails.observationType)}
                             name="partOfTheClass"
                             label="Part of the Class"
                             handleSelect={handleChange}
