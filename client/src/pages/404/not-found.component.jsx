@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 
 const NotFound = (props) => {
-    console.log(props);
     
     return (
     <div>

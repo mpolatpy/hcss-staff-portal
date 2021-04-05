@@ -14,7 +14,7 @@ import CustomSelect from '../../components/custom-select/custom-select.component
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { observationTypeMap, applyStyles, 
-    RenderRating, Render_Rating, createRows } from './evaluation-overview.utils';
+    RenderRating, createRows } from './evaluation-overview.utils';
 
 const DataTableWithSpinner = WithSpinnner(DataTable);
 
@@ -47,9 +47,8 @@ const EvaluationOverview = ({ match, currentYear }) => {
 
         return () => {
             unsubscribe();
-            console.log('unsubscribe done')
         }
-    }, [observation]);
+    }, [observation, currentYear]);
 
     const rows = createRows(observationScores);
 

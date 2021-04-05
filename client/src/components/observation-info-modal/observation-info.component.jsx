@@ -5,7 +5,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
-import { Divider, List, Link, ListItem, Typography } from '@material-ui/core';
+import { List, Link, ListItem, Typography } from '@material-ui/core';
 import { firestore } from '../../firebase/firebase.utils';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
