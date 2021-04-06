@@ -5,7 +5,6 @@ import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
 import { fetchTeachersAsync } from './redux/teachers/teachers.actions';
-import { selectIsTeachersLoaded } from './redux/teachers/teachers.selectors';
 import { auth, createUserProfileDocument, fetchCurrentYear } from './firebase/firebase.utils';
 import { setCurrentUser } from './redux/user/user.actions';
 import { selectCurrentUser } from "./redux/user/user.selectors";
@@ -27,7 +26,7 @@ function App(props) {
 
   useEffect( () => {
 
-    const { setCurrentUser, setCurrentYear, fetchTeachersAsync, isTeachersLoaded } = props;
+    const { setCurrentUser, setCurrentYear, fetchTeachersAsync } = props;
 
     const unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
@@ -47,7 +46,6 @@ function App(props) {
     fetchCurrentYear(setCurrentYear);
     fetchTeachersAsync();
  
-
     return () => {
       unsubscribeFromAuth();
     }
@@ -89,7 +87,6 @@ function App(props) {
 const mapStateToProps = createStructuredSelector({
   currentUser: selectCurrentUser,
   currentYear: selectCurrentYear,
-  isTeachersLoaded: selectIsTeachersLoaded
 });
 
 const mapDispatchToProps = dispatch => ({

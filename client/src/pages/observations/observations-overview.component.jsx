@@ -21,6 +21,7 @@ import Divider from '@material-ui/core/Divider';
 import SaveIcon from '@material-ui/icons/Save';
 import TelegramIcon from '@material-ui/icons/Telegram';
 import TocIcon from '@material-ui/icons/Toc';
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import { Typography } from '@material-ui/core';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -54,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
     }, 
 }));
 
-const ObservationsOverview = ({ match, submissionMessage, resetSubmissionMessage, currentYear, currentUser, saveObservationForm }) => {
+const ObservationsOverview = ({ match, history, submissionMessage, resetSubmissionMessage, currentYear, currentUser, saveObservationForm }) => {
     const classes = useStyles();
     const observationForm = { ...INITIAL_STATE };
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
@@ -102,6 +103,7 @@ const ObservationsOverview = ({ match, submissionMessage, resetSubmissionMessage
             saveObservationForm(observation);
         });
         setIsLoading(false);
+        history.push('/observations/saved');
     }
 
 
@@ -132,7 +134,7 @@ const ObservationsOverview = ({ match, submissionMessage, resetSubmissionMessage
                             <ListItemIcon>
                                 <TelegramIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Submitted observations" />
+                            <ListItemText primary="Submitted Observations" />
                         </ListItem>
                     </Link>
                     <ListItem button onClick={handleSaveTemplates}>
@@ -155,6 +157,14 @@ const ObservationsOverview = ({ match, submissionMessage, resetSubmissionMessage
                                 <EditIcon />
                             </ListItemIcon>
                             <ListItemText primary="Update Selected Teachers For Observation Templates" />
+                        </ListItem>
+                    </Link>
+                    <Link to={`${match.path}/lesson-plans`} className={classes.links} >
+                        <ListItem button>
+                            <ListItemIcon>
+                                <PlaylistAddCheckIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Lesson Plan Check for Selected Teachers" />
                         </ListItem>
                     </Link>
                 </List>

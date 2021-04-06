@@ -64,7 +64,7 @@ export const RenderRating = ( params, isShowingNumbers ) => (
             isShowingNumbers ? 
             <p>{(params.value.toFixed(2))}</p>:
             <Rating
-                value={Math.ceil(params.value)}
+                value={Math.round(params.value)}
                 readOnly
                 max={4}
                 precision={0.25}
