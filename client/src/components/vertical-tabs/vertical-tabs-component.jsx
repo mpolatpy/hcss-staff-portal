@@ -18,7 +18,6 @@ function TabPanel(props) {
       {value === index && (
         <Box p={3}>
             {children}
-          {/* <Typography>{children}</Typography> */}
         </Box>
       )}
     </div>
@@ -35,14 +34,14 @@ function a11yProps(index) {
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
+    // backgroundColor: theme.palette.background.paper,
     display: 'flex',
     maxHeight: 480,
     minHeight: 350,
-    border: "1px solid",
-    borderColor: "#d3d3d3",
-    borderRadius: "5px",
-    boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)",
+    // border: "1px solid",
+    // borderColor: "#d3d3d3",
+    // borderRadius: "5px",
+    // boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)",
   },
   tabs: {
     borderRight: `1px solid ${theme.palette.divider}`,
@@ -76,7 +75,7 @@ export default function VerticalTabs({labels, contents}) {
         {
             contents.map( 
                 (item, index) => 
-                (<TabPanel value={value} index={index}>
+                (<TabPanel value={value} key={`tabpanel${index}`} index={index}>
                     {item}
                 </TabPanel>
             ))

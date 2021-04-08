@@ -1,127 +1,85 @@
-import React, { useEffect, useState} from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { firestore } from '../../firebase/firebase.utils';
-import axios from 'axios';
-
 import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
+import { selectTeachersForLPCheck, selectIsLessonPlanChecksLoading } from '../../redux/lesson-plans/lesson-plan.selectors';
+import { setLessonPlans, submitLessonPlanCheck, resetLessonPlanChecks } from '../../redux/lesson-plans/lesson-plan.actions';
+import Content from '../../components/lesson-plan-content/lesson-plan-content.component';
 import VerticalTabs from '../../components/vertical-tabs/vertical-tabs-component';
-import Divider from '@material-ui/core/Divider';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-const Content = ({teacher}) => {
-    
-    const [courses, setCourses ] = useState([]);
-    const [isFetching, setIsFetching ] = useState(false);
+const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoading,
+    setLessonPlans, resetLessonPlans, submitLessonPlanCheck }) => {
 
-    useEffect(() => {
-        setIsFetching(true);
-        const getCourses = async () => {
-            let teacherCourses =[];
-    
-            try{
-                const response = await axios.post('/canvas-courses', {
-                        teacherId: teacher.canvasId,
-                    }
-                );
-                const fetchedCourses  = response.data;
-                teacherCourses = fetchedCourses.filter ( 
-                    course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
-                ); 
-            }catch(e){
-                console.log(e.message);
-            }
-            setCourses(teacherCourses);
-        };
-        
-        getCourses().then(() => setIsFetching(false));
 
-    }, [teacher.canvasId]);
-
-    return ( 
-        <>
-            <h2>{`Lesson Plan Check for ${teacher.firstName} ${teacher.lastName}`}</h2>
-            <Divider/>
-
-            { 
-            isFetching?
-            ( 
-                <div style={{ 
-                    display: 'flex',
-                    justifyContent: 'center', 
-                 }}>
-                    <CircularProgress/> 
-                </div>
-            ): (
-                (courses && courses.length > 0) ? courses.map( 
-                    course => ( 
-                        <a href={`https://hcss.instructure.com/courses/${course.id}`} 
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            key={course.id}>
-                            <h4>{course.name}</h4>
-                        </a>
+    const labels = selectedTeachers.length > 0 ?  
+                    selectedTeachers.map( 
+                        teacher =>  `${teacher.lastName} ${teacher.firstName}`
                     )
-                ) : null
-            )
-            }
-        </>
-    );
-}
+                    : [] ;
 
-const LessonPlanCheckPage = ({ currentUser }) => {
-
-    const [selectedTeachers, setSelectedTeachers ] = useState([]);
-
-    useEffect(() => {
-        const fetchSelectedTeachers = async () => {
-            const ref = firestore.doc(`observationTemplates/${currentUser.id}`);
-            const snapshot = await ref.get();
-
-            if (snapshot.exists){
-                const fetchedData = snapshot.data();
-                if(Object.keys(fetchedData).includes('teachers')){
-                    setSelectedTeachers(fetchedData.teachers)
-                }
-            }
-        };
-
-        fetchSelectedTeachers();
-    }, [currentUser.id]);
-
-    const labels = selectedTeachers.map( 
-        teacher =>  `${teacher.lastName} ${teacher.firstName}`
-    );
-
-    const contents = selectedTeachers.map( 
-        (teacher, index) => ( 
-            <Content key={index} teacher={teacher}/>
-        )
-    );
+    const contents = selectedTeachers.length > 0 ?
+                        selectedTeachers.map( 
+                            (teacher, index) => ( 
+                                <Content 
+                                    key={index} 
+                                    teacher={teacher}
+                                    observer={currentUser}
+                                    teachers={selectedTeachers}
+                                    currentYear={currentYear} 
+                                    submitLessonPlanCheck={submitLessonPlanCheck}
+                                />
+                            )
+                        )
+                        : []
 
     return ( 
         <div>
+            <div>
             {
+                isLoading? (
+                    <div>
+                        <CircularProgress />
+                    </div>
+                ): (
                 selectedTeachers.length > 0 ?
                 (
+                    <>
                     <VerticalTabs labels={labels} contents={contents}/>
+                    <div style={{ marginTop: '20px', display: 'flex', justifyContent:'flex-end'}}>
+                        <Button color="secondary" onClick={() => resetLessonPlans()}>Reset Lesson Plan Checks</Button>
+                    </div>
+                    </>
                 ):( 
                     <div>
-                        <h2>There is no selected teachers</h2>
-                        <Button color="primary" variant="contained" component={Link} to="/observations/templates/edit">Edit Selections</Button>
+                        <h2>No saved lesson plan checks. Create Lesson Plan Checks For Selected Teachers</h2>
+                        <div>
+                        <Button color="primary" variant="contained" onClick={() => setLessonPlans(currentUser.id)}>Create</Button>
+                        <Button color="primary" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
+                        </div>
                     </div>
-                    
-                )
+                ))
             }
+            </div>
         </div>
     );
 }
 
 const mapStateToProps = createStructuredSelector({
-    currentUser: selectCurrentUser
-})
+    currentUser: selectCurrentUser,
+    selectedTeachers: selectTeachersForLPCheck,
+    currentYear: selectCurrentYear, 
+    isLoading: selectIsLessonPlanChecksLoading
+});
 
-export default connect(mapStateToProps)(LessonPlanCheckPage);
+const mapDispatchToProps = dispatch => ({
+    setLessonPlans: (currentUserId) => dispatch(setLessonPlans(currentUserId)),
+    resetLessonPlans: () => dispatch(resetLessonPlanChecks()),
+    submitLessonPlanCheck: (lessonPlan, year, teachers ) => dispatch(submitLessonPlanCheck(lessonPlan, year, teachers))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LessonPlanCheckPage);
 
