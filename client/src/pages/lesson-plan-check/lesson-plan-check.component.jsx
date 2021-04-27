@@ -10,6 +10,7 @@ import Content from '../../components/lesson-plan-content/lesson-plan-content.co
 import VerticalTabs from '../../components/vertical-tabs/vertical-tabs-component';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
 
 const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoading,
     setLessonPlans, resetLessonPlans, submitLessonPlanCheck }) => {
@@ -50,7 +51,10 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
                     <>
                     <VerticalTabs labels={labels} contents={contents}/>
                     <div style={{ marginTop: '20px', display: 'flex', justifyContent:'flex-end'}}>
-                        <Button color="secondary" onClick={() => resetLessonPlans()}>Reset Lesson Plan Checks</Button>
+                        <Button color="secondary" onClick={() => resetLessonPlans()}>
+                            <SettingsBackupRestoreIcon/>
+                            Clear
+                        </Button>
                     </div>
                     </>
                 ):( 

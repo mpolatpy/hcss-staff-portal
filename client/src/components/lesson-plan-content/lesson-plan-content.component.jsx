@@ -21,9 +21,11 @@ const useStyles = makeStyles({
 
 const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teachers }) => {
     const classes = useStyles();
-    const [isFetching, setIsFetching ] = useState(false);
-    const [lessonPlanScores, setLessonPlanScores ] = useState({});
-
+    const [ isFetching, setIsFetching ] = useState(false);
+    const [ lessonPlanScores, setLessonPlanScores ] = useState({
+        courses: {}
+    });
+    
     useEffect(() => {
         setIsFetching(true);
         const getCourses = async () => {
@@ -43,13 +45,25 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                 teacherCourses.forEach(course => {
                     initialScores[course.id] = {
                         course: course.name,
+                        id: course.id,
                         percentSubmitted: '',
                         onTime: ''
                     }
                 });
 
-                setLessonPlanScores(initialScores);
-
+                setLessonPlanScores({
+                    courses: initialScores,
+                    average: {
+                        percentSubmitted: {
+                            rate: 0,
+                            numScores: 0
+                        }, 
+                        onTime: {
+                            rate: 0,
+                            numScores: 0
+                        }, 
+                    }
+                });
             }catch(e){
                 console.log(e.message);
             }
@@ -60,45 +74,86 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
     }, [teacher.canvasId]);
 
     const handleSubmit = async () => {
-        await submitLessonPlanCheck({
+
+        const lessonPlan = {
             teacher: teacher,
             observer: observer,
             date: new Date(),
             scores: lessonPlanScores,
-        }, currentYear, teachers);
+        };
 
-        setLessonPlanScores({});
+        await submitLessonPlanCheck(lessonPlan, currentYear, teachers);
     };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        let courseId, field, averageScore;
 
         if(name.includes('percent')){
-            const courseId = name.split('percent')[0];
-            setLessonPlanScores({
-                ...lessonPlanScores,
-                [courseId]: {
-                    ...lessonPlanScores[courseId],
-                    percentSubmitted: parseInt(value)
-                } 
-            });
+            courseId = name.split('percent')[0];
+            field = 'percentSubmitted';
         } else if(name.includes('onTime')){
-            const courseId = name.split('onTime')[0];
-            setLessonPlanScores({
-                ...lessonPlanScores,
+            courseId = name.split('onTime')[0];
+            field = 'onTime'
+        }
+
+        averageScore = calculateAverageScores(field, value, courseId);
+
+        setLessonPlanScores({
+            courses: {
+                ...lessonPlanScores.courses,
                 [courseId]: {
-                    ...lessonPlanScores[courseId],
-                    onTime: value
+                    ...lessonPlanScores.courses[courseId],
+                    [field]: value
                 } 
-            });
+            },
+            average: {
+                ...lessonPlanScores.average,
+                [field]: averageScore
+            }
+        });
+            
+    }
+
+    const calculateAverageScores = (type, value, courseId) => {
+        const previousScore = lessonPlanScores.average[type];
+        let numScores, rate;
+        let previousCourseScore = lessonPlanScores.courses[courseId][type];
+
+        if( value !== ''){
+            if (previousCourseScore !== ''){
+                numScores = previousScore.numScores;            
+                rate = (numScores*previousScore.rate - previousCourseScore + parseInt(value)) / numScores;
+            } else {
+                numScores = previousScore.numScores + 1;
+                rate = (previousScore.rate * previousScore.numScores + parseInt(value)) / numScores;
+            }
+        } else {
+            const filteredCourses = Object.values(lessonPlanScores.courses).filter(
+                item => (item.percentSubmitted && lessonPlanScores.courses[courseId].id !== item.id)
+            );
+
+            let total = 0;
+            numScores = 0;
+
+            for( let course of filteredCourses ){
+                total += parseInt(course.percentSubmitted);
+                numScores++;
+            }
+
+            rate = (total!==0 && numScores!==0) ? total/numScores : 0;
+        }
+        
+        return {
+            rate,
+            numScores
         }
     }
 
     return ( 
         <>
             <h2>{`Lesson Plan Check for ${teacher.firstName} ${teacher.lastName}`}</h2>
-            {/* <Divider/> */}
-
             { 
             isFetching?
             ( 
@@ -112,80 +167,74 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                 </div>
             ): (
                 <>
-                <form>
-                    <div>
-                    <TableContainer>
-                        <Table className={classes.table} aria-label="lesson-plan-check table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>Course</TableCell>
-                                    <TableCell align="center">% of LP Submitted</TableCell>
-                                    <TableCell align="center">On Time</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                            {
-                                (Object.keys(lessonPlanScores).length > 0) ? 
-                                Object.keys(lessonPlanScores).map( 
-                                    courseId => ( 
-                                    <TableRow hover key={courseId}>
-                                        <TableCell component="th" scope="row">
-                                            <a href={`https://hcss.instructure.com/courses/${courseId}`} 
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                {lessonPlanScores[courseId].course}
-                                            </a>
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <TextField 
-                                                variant="outlined"
-                                                size="small"
-                                                style={{ width: '100px' }}
-                                                onChange={handleChange}
-                                                name={`${courseId}percent`}
-                                                value={lessonPlanScores[courseId].percentSubmitted}
-                                            />
-                                        </TableCell>
-                                        <TableCell align="center">
-                                            <TextField
-                                            select
-                                            style={{ width: '100px'}}
-                                            size="small"
-                                            variant="outlined"
-                                            onChange={handleChange}
-                                            value={lessonPlanScores[courseId].onTime}
-                                            name={`${courseId}onTime`}
-                                            >
-                                                <MenuItem value="yes">Yes</MenuItem>
-                                                <MenuItem value="no">No</MenuItem>
-                                            </TextField>
-                                            
-                                        </TableCell>
-                                    </TableRow>
-                                )
-                                ) : null
-                            }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                        {/* {(courses && courses.length > 0) ? courses.map( 
-                            course => ( 
-                                <div>
-                                    <a href={`https://hcss.instructure.com/courses/${course.id}`} 
+                <div>
+                <TableContainer>
+                <Table className={classes.table} aria-label="lesson-plan-check table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Course</TableCell>
+                            <TableCell align="center">% of LP Submitted</TableCell>
+                            <TableCell align="center">On Time</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    { Object.keys(lessonPlanScores.courses).length > 0 ? 
+                        Object.keys(lessonPlanScores.courses).map( courseId => ( 
+                            <TableRow hover key={courseId}>
+                                <TableCell component="th" scope="row">
+                                    <a href={`https://hcss.instructure.com/courses/${courseId}`} 
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        key={course.id}>
-                                        <h4>{course.name}</h4>
-                                    </a>   
-                              </div>
-                            )
-                        ) : null} */}
-                    </div>
-                    <div style={{ marginTop: '25px'}}>
-                        <Button onClick={handleSubmit} color="primary" variant="contained">Submit</Button>
-                    </div>
-                </form>
+                                    >
+                                        {lessonPlanScores.courses[courseId].course}
+                                    </a>
+                                </TableCell>
+                                <TableCell align="center">
+                                    <TextField 
+                                        variant="outlined"
+                                        size="small"
+                                        style={{ width: '100px' }}
+                                        onChange={handleChange}
+                                        name={`${courseId}percent`}
+                                        value={lessonPlanScores.courses[courseId].percentSubmitted}
+                                    />
+                                </TableCell>
+                                <TableCell align="center">
+                                    <TextField
+                                    select
+                                    style={{ width: '100px'}}
+                                    size="small"
+                                    variant="outlined"
+                                    onChange={handleChange}
+                                    value={lessonPlanScores.courses[courseId].onTime}
+                                    name={`${courseId}onTime`}
+                                    >
+                                        <MenuItem value="100">Yes</MenuItem>
+                                        <MenuItem value="0">No</MenuItem>
+                                    </TextField>
+                                    
+                                </TableCell>
+                            </TableRow>
+                                )
+                            ): null
+                        }
+                    </TableBody>
+                </Table>
+                </TableContainer>
+                </div>
+                <div>
+                    <h4 style={{marginBottom: '0px'}}>Weekly Average Score</h4>
+                    {
+                        lessonPlanScores.average && (
+                        <div style={{ display:'flex', marginTop:'0px' }}>
+                            <p>{`Percent Submitted: ${Math.round(lessonPlanScores.average.percentSubmitted.rate)} %`}</p>
+                            <p style={{marginLeft:'20px'}}>{`On Time: ${Math.round(lessonPlanScores.average.onTime.rate)} %`}</p>
+                        </div>)
+                    }
+                </div>
+                <div style={{ marginTop: '15px'}}>
+                    <Button onClick={handleSubmit} color="primary" variant="contained">Submit</Button>
+                </div>
                 </>
             )
             }

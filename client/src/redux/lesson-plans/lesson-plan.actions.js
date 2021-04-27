@@ -25,8 +25,10 @@ export const setLessonPlans = (currentUserId) => {
 
             if (snapshot.exists){
                 const fetchedData = snapshot.data();
-                if(Object.keys(fetchedData).includes('teachers')){
-                    dispatch(setLessonPlanChecksSuccess(fetchedData.teachers));
+                if( Object.keys(fetchedData).includes('teachers') ){
+                    (fetchedData['teachers'].length > 0) ?
+                    dispatch(setLessonPlanChecksSuccess(fetchedData.teachers)):
+                    dispatch(setLessonPlanChecksFail());
                 }
             }
         } catch (e){
