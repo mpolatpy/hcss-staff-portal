@@ -1,6 +1,12 @@
 import ObservationFormActionTypes from './observation-form.types';
 import { firestore } from '../../firebase/firebase.utils';
-import { getUpdatedObservationScore, getOrCreateScoreDocument } from './observation.utils';
+import { 
+    getUpdatedObservationScore, 
+    getOrCreateScoreDocument, 
+    getOrCreateObservationCountsDocRef,
+    getUpdatedObservationCount,
+    calculateObservationScore
+ } from './observation.utils';
 
 export const setObservationForm = observationForm => ({
     type: ObservationFormActionTypes.SET_OBSERVATION_FORM,
@@ -109,12 +115,14 @@ export const submitObservationFormAsync = (observationFormData) => {
     const teacherId= teacher.id;
 
     const newObservationRef = firestore.collection('observations').doc();
-    
+    const observationScore = calculateObservationScore(observationFormData);
+
     const observationForm = {
-        observerId: observerId,
+        observerId: observerId, 
         teacherid: teacherId,
         observationType: observationType,
         observationDate: observationDate,
+        observationScore: observationScore,
         firestoreRef: newObservationRef,
         isSavedObservation: isSavedObservation,
         submittedAt: new Date(),
@@ -133,9 +141,13 @@ export const submitObservationFormAsync = (observationFormData) => {
             const scoreRef = await getOrCreateScoreDocument(teacher, schoolYear, observationType);
             const prev = await scoreRef.get();
             const updatedScore = getUpdatedObservationScore(prev, observationFormData);
+            const observationCountRef = await getOrCreateObservationCountsDocRef(observerId, teacher, schoolYear);
+            const prevObservationCount = await observationCountRef.get();
+            const updatedObservationCount = getUpdatedObservationCount(prevObservationCount, observationType);
 
             await firestore.runTransaction(async (transaction) => {
                 transaction.set(newObservationRef, observationForm);
+                transaction.set(observationCountRef, updatedObservationCount);
 
                 if (observationFormData.isSavedObservation) {
                     const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef.id);

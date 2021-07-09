@@ -69,7 +69,7 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
             }
             </div>
         </div>
-    );
+    ); 
 }
 
 const mapStateToProps = createStructuredSelector({

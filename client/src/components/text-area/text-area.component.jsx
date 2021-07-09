@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const CustomTextArea = ({ observationNotes, setObservationNotes }) => {
+const CustomTextArea = ({ observationNotes, setObservationNotes,readOnly }) => {
     const classes = useStyles();
 
     const handleChange = (e) => {
@@ -34,6 +34,7 @@ const CustomTextArea = ({ observationNotes, setObservationNotes }) => {
         className={classes.observationNotes} 
         aria-label="observation notes" 
         rowsMin={8}
+        readOnly={readOnly}
         placeholder="Observation Notes" 
          />
     )

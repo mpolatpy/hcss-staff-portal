@@ -107,77 +107,96 @@ const ObservationPage = (props) => {
                                     >
                                         Back
                                     </Button>
-                                    <Button
-                                        type="submit"
-                                        variant="contained"
-                                        color="primary"
-                                        className={classes.button}
-                                    >
-                                        {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-                                    </Button>
-                                </div>
-                                <div className={classes.resetSaveButtons}>
-                                    <CustomModal
-                                        buttonStyle={classes.button}
-                                        buttonText="Notes"
-                                        color="primary"
-                                        modalBody={( 
-                                            <div style={{width: '60vw'}}>
-                                                <CustomTextArea />
-                                            </div>
-                                        )}
-                                    />
-
                                     {
-                                        observationForm.isSavedObservation ?
-                                            (
+                                        readOnly ? (
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                                color="primary"
+                                                disabled={activeStep === steps.length - 1}
+                                                className={classes.button}
+                                            >
+                                                Next
+                                            </Button>
+                                         ) : ( 
+                                            <Button
+                                                type="submit"
+                                                variant="contained"
+                                                color="primary"
+                                                className={classes.button}
+                                            >
+                                                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                                            </Button>
+                                         )
+                                    }
+                                    
+                                </div>
+                                {
+                                    !readOnly ? (
+                                        <div className={classes.resetSaveButtons}>
                                             <CustomModal
                                                 buttonStyle={classes.button}
-                                                buttonText="Delete"
-                                                color="secondary"
+                                                buttonText="Notes"
+                                                color="primary"
                                                 modalBody={( 
-                                                    <div>
-                                                        <Typography variant="h5">
-                                                            Please Confirm Delete
-                                                        </Typography>
-                                                        <p>Once deleted, you will not be able to retrieve this observation back</p>
-                                                        <div>
-                                                        <Button
-                                                        type="submit"
-                                                        variant="contained"
-                                                        color="secondary"
-                                                        onClick={handleDelete}
-                                                        className={classes.button}
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                        </div>
+                                                    <div style={{width: '60vw'}}>
+                                                        <CustomTextArea />
                                                     </div>
                                                 )}
                                             />
-                                            ) : (
+
+                                            {
+                                                observationForm.isSavedObservation ?
+                                                    (
+                                                    <CustomModal
+                                                        buttonStyle={classes.button}
+                                                        buttonText="Delete"
+                                                        color="secondary"
+                                                        modalBody={( 
+                                                            <div>
+                                                                <Typography variant="h5">
+                                                                    Please Confirm Delete
+                                                                </Typography>
+                                                                <p>Once deleted, you will not be able to retrieve this observation back</p>
+                                                                <div>
+                                                                <Button
+                                                                type="submit"
+                                                                variant="contained"
+                                                                color="secondary"
+                                                                onClick={handleDelete}
+                                                                className={classes.button}
+                                                                >
+                                                                    Delete
+                                                                </Button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    />
+                                                    ) : (
+                                                    <Button
+                                                        // disabled={activeStep === 0}
+                                                        // variant="outlined"
+                                                        color="secondary"
+                                                        onClick={handleReset}
+                                                        className={classes.button}
+                                                    >
+                                                        Reset
+                                                    </Button>
+                                                    )
+                                            }
                                             <Button
-                                                // disabled={activeStep === 0}
+                                                disabled={activeStep === 0}
+                                                type="submit"
                                                 // variant="outlined"
-                                                color="secondary"
-                                                onClick={handleReset}
+                                                color="primary"
+                                                onClick={handleSave}
                                                 className={classes.button}
                                             >
-                                                Reset
+                                                Save
                                             </Button>
-                                            )
-                                    }
-                                    <Button
-                                        disabled={activeStep === 0}
-                                        type="submit"
-                                        // variant="outlined"
-                                        color="primary"
-                                        onClick={handleSave}
-                                        className={classes.button}
-                                    >
-                                        Save
-                                    </Button>
-                                </div>
+                                        </div>
+                                    ) : null
+                                }
                             </div>
                             </form>
                         </StepContent>

@@ -14,14 +14,18 @@ const calculateDomainAverage = (domain) => {
     return (count ? (total / count) : null);
 }
 
-const calculateObservationScore = (observation) => {
+export const calculateObservationScore = (observation) => {
     const { domainOne, domainTwo, domainThree, domainFour } = observation;
-
+    const domainOneScore = calculateDomainAverage(domainOne);
+    const domainTwoScore = calculateDomainAverage(domainTwo);
+    const domainThreeScore = calculateDomainAverage(domainThree);
+    const domainFourScore = calculateDomainAverage(domainFour);
+    
     return {
-        domainOne: calculateDomainAverage(domainOne), 
-        domainTwo: calculateDomainAverage(domainTwo), 
-        domainThree: calculateDomainAverage(domainThree), 
-        domainFour: calculateDomainAverage(domainFour)
+        domainOne: domainOneScore, 
+        domainTwo:  domainTwoScore,
+        domainThree: domainThreeScore, 
+        domainFour: domainFourScore,
     };
 }
 
@@ -30,8 +34,6 @@ export const getUpdatedObservationScore = (prevData, observation) => {
     const newScore = calculateObservationScore(observation);
 
     const prev = prevData.data();
-
-    console.log(prev);
 
     const updateDomainScore = (prev, newScore, domain) => {
         if(!newScore[domain]) {
@@ -62,6 +64,7 @@ export const getOrCreateScoreDocument = async (teacher, currentYear, observation
         'Midyear Evaluation': 'midyearScores',
         'End of Year Evaluation': 'endOfYearScores'
     };
+
 
     const collectionType = observationTypeMap[observationType];
     const scoreRef = firestore.doc(`observationScores/${currentYear}/${collectionType}/${teacherId}`);
@@ -94,4 +97,38 @@ export const getOrCreateScoreDocument = async (teacher, currentYear, observation
     }
 
     return scoreRef;
+}
+
+export const getOrCreateObservationCountsDocRef = async (observerId, teacher, currentYear) => {
+    const teacherId = teacher.id;
+    const ref = firestore.doc(`observationCounts/${currentYear}/${observerId}/${teacherId}`);
+    const snapShot = await ref.get();
+
+    if (!snapShot.exists) {
+        try {
+            await ref.set({
+                teacher: teacher,
+                'Weekly Observation': 0,
+                'Full Class Observation': 0,
+                'Quarter Evaluation': 0,
+                'Midyear Evaluation': 0,
+                'End of Year Evaluation': 0,
+            });
+        } catch(e) {
+            console.log('error creating observationCount document', e.message);
+        }
+    }
+
+    return ref;
+}
+
+export const getUpdatedObservationCount = (prevObservationCount, observationType) => {
+    
+    const prevData = prevObservationCount.data();
+    const count = prevData[observationType] + 1;
+
+    return {
+        ...prevData,
+        [observationType]: count
+    }
 }

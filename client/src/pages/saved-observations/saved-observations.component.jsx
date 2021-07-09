@@ -82,8 +82,8 @@ class SavedObservations extends React.Component {
                                         <ListItemText
                                             primary={
                                                 observation.observationDetails.observationDate?
-                                                `Date: ${new Date(observation.observationDetails.observationDate.seconds * 1000).toDateString()}`:
-                                                `Date: ${new Date(observation.submittedAt.seconds * 1000).toDateString()}`
+                                                `Date: ${new Date(observation.observationDetails.observationDate.seconds * 1000).toLocaleDateString("en-US")}`:
+                                                `Date: ${new Date(observation.submittedAt.seconds * 1000).toLocaleDateString("en-US")}`
                                             }
                                         />
                                         <ListItemText

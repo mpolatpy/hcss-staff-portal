@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
             color: theme.palette.info.contrastText
         },
     }
-}));
+})); 
 
 const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
     const classes = useStyles();

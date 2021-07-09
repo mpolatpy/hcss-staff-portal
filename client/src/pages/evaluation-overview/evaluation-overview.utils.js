@@ -38,31 +38,31 @@ export const createRows = (observationScores) => observationScores.map(
     })
 );
 
-export const Render_Rating = (params, isShowingNumbers) => (
-    <div>
-        {
-            isShowingNumbers?
-            <p>{params.value.toFixed(2)}</p>:
-            convertScoreToRating(params.value) !== 'NA' ?
-            (
-                <>
-                    <Typography variant="body2">{convertScoreToRating(params.value)}</Typography> 
-                    <Typography variant="body2">Expectations</Typography>
-                </>
-            ):(
-                <>
-                    <Typography variant="body2">{convertScoreToRating(params.value)}</Typography> 
-                </>
-            )
-        }
-    </div>
-);
+// export const Render_Rating = (params, isShowingNumbers) => (
+//     <div>
+//         {
+//             isShowingNumbers?
+//             <p>{params.value.toFixed(2)}</p>:
+//             convertScoreToRating(params.value) !== 'NA' ?
+//             (
+//                 <>
+//                     <Typography variant="body2">{convertScoreToRating(params.value)}</Typography> 
+//                     <Typography variant="body2">Expectations</Typography>
+//                 </>
+//             ):(
+//                 <>
+//                     <Typography variant="body2">{convertScoreToRating(params.value)}</Typography> 
+//                 </>
+//             )
+//         }
+//     </div>
+// );
 
 export const RenderRating = ( params, isShowingNumbers ) => ( 
     <>
         {
             isShowingNumbers ? 
-            <p>{(params.value.toFixed(2))}</p>:
+            <p>{(params.value ? params.value.toFixed(2) : 0)}</p>:
             <Rating
                 value={Math.round(params.value)}
                 readOnly
