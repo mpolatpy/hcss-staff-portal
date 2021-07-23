@@ -4,10 +4,7 @@ import { connect } from 'react-redux';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { createStructuredSelector } from 'reselect';
 import { selectSavedObservationsList } from '../../redux/saved-observations/saved-observations.selectors';
-import { resetSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
-import { selectObservationFormSubmissionMessage } from '../../redux/observation-form/observation-form.selectors';
 import { Link } from 'react-router-dom';
-import CustomizedSnackbar from '../../components/snack-bar/snack-bar.component';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -44,10 +41,7 @@ class SavedObservations extends React.Component {
     }
 
     render(){
-        const { observations, classes, match, submissionMessage, resetSubmissionMessage } = this.props;
-        const handleClose = () => {
-            resetSubmissionMessage();
-        };
+        const { observations, classes, match } = this.props;
 
         return (
                 <div className={classes.root}>
@@ -98,17 +92,6 @@ class SavedObservations extends React.Component {
                         ))
                     }
                     </List>
-                    {
-                        submissionMessage.status ?
-                            (<CustomizedSnackbar
-                                open={true}
-                                handleClose={handleClose}
-                                severity={submissionMessage.status}
-                                message={submissionMessage.message}
-                            />)
-                            : null
-
-                    } 
                 </div>
 
         );
@@ -118,13 +101,11 @@ class SavedObservations extends React.Component {
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     observations: selectSavedObservationsList,
-    submissionMessage: selectObservationFormSubmissionMessage
 });
 
 const mapDispatchToProps = dispatch => ({
     fetchSavedObservations: (user) => dispatch(fetchSavedObservationsAsync(user)),
     resetSavedObservations: () => dispatch(resetSavedObservations()),
-    resetSubmissionMessage: () => dispatch(resetSubmissionMessage()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SavedObservations));

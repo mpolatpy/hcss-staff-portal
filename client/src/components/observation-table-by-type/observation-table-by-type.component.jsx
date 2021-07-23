@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
             color: theme.palette.info.contrastText
         },
         marginTop: theme.spacing(5),
-        width: '80%'
     },
     switch: {
         display: 'flex',
@@ -33,6 +32,8 @@ const ObservationTableByType = ({observations}) => {
                 new Date(observation.observationDetails.observationDate.seconds * 1000).toLocaleDateString("en-US") :
                 new Date(observation.submittedAt.seconds * 1000).toLocaleDateString("en-US"))
             },
+            course: observation.observationDetails.course,
+            observer: `${observation.observationDetails.observer.firstName} ${observation.observationDetails.observer.lastName}`,
             domainOne: observation.observationScore? observation.observationScore.domainOne : null,
             domainTwo: observation.observationScore? observation.observationScore.domainTwo : null,
             domainThree: observation.observationScore? observation.observationScore.domainThree : null,
@@ -47,6 +48,8 @@ const ObservationTableByType = ({observations}) => {
                 </Link>
             ),
         },
+        {field: 'course', headerName: 'Course', headerClassName: 'teacher-list-header', flex: 1.5,},
+        {field: 'observer', headerName: 'Observer', headerClassName: 'teacher-list-header', flex: 1.2,},
         { field: 'domainOne', headerName: 'Domain I',headerClassName: 'teacher-list-header', flex: 1,
             cellClassName: params => applyStyles(params),
             renderCell: (params) => RenderRating(params, isShowingNumbers)

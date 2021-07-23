@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import {connect} from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
@@ -10,17 +10,26 @@ import SavedObservations from '../saved-observations/saved-observations.componen
 import SavedObservationDetail from '../saved-observations/saved-observation-detail.component';
 // import SubmittedObservations from './submitted-observations.component';
 import SubmittedObservations from '../submitted-observations/submitted-observations.page';
-import WithAuthorization from '../../components/with-authorization/withAuthorization.component';
 import ObservationTemplatesPage from './observation-template.component';
 import ObservationTemplateEditPage from './observation-template-edit.component';
 import LessonPlanCheckPage from '../lesson-plan-check/lesson-plan-check.component';
+import TeacherHomeComponent from '../../components/teacher-home/teacher-home.component';
 
-const Observations = ({ match }) => {
+const Observations = (props) => {
+    const {match, currentUser} = props;
 
     return ( 
         <div>
-            <Route exact path={match.path} component={ObservationsOverview}/>
-            <Route path={`${match.path}/submitted`} component={SubmittedObservations} />
+            <Route exact path={match.path}>
+            {
+                currentUser.role === 'teacher' ? ( 
+                    <Redirect to={`/staff/observations/${currentUser.id}`}/>
+                ) : ( 
+                    <ObservationsOverview {...props} />
+                )
+            }
+            </Route>
+            <Route path={`${match.path}/submitted`} render={(props) => <SubmittedObservations currentUser={currentUser} {...props} />} />
             <Route path={`${match.path}/lesson-plans`} component={LessonPlanCheckPage} />
             <Route exact path={`${match.path}/templates`} component={ObservationTemplatesPage} />
             <Route path={`${match.path}/templates/edit`} component={ObservationTemplateEditPage} />
@@ -38,4 +47,4 @@ const mapStateToProps = createStructuredSelector({
 })
 
 
-export default connect(mapStateToProps)(WithAuthorization(['superadmin', 'dci', 'admin'])(Observations));
+export default connect(mapStateToProps)(Observations);

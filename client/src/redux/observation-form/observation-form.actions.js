@@ -101,6 +101,7 @@ export const saveObservationForm = (observationFormData) => {
             }
             dispatch(submitObservationFormSuccess());
         } catch(e) {
+            console.log(e);
             dispatch(submitObservationFormFail(e.message));
         }
     }

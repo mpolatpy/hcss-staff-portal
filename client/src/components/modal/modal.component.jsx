@@ -4,6 +4,7 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton'
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CustomModal({ modalBody, buttonText, color, buttonStyle}) {
+export default function CustomModal({ modalBody,modalIcon, buttonText,  color, buttonStyle}) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -34,9 +35,14 @@ export default function CustomModal({ modalBody, buttonText, color, buttonStyle}
 
   return (
     <div>
-      <Button type="button" className={buttonStyle} color={color} onClick={handleOpen}>
+      {/* <Button type="button" className={buttonStyle} color={color} onClick={handleOpen}>
         {buttonText}
-      </Button>
+      </Button> */}
+
+      <IconButton onClick={handleOpen}>
+        {modalIcon}
+      </IconButton>
+
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

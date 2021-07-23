@@ -45,7 +45,7 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
     const columns = [
         { field: 'name', headerName: 'Name', flex: 1.5, headerClassName: 'teacher-list-header', 
             renderCell: (params) => ( 
-                <Link to={`staff/${params.value.id}`} >
+                <Link to={`staff/home/${params.value.id}`} >
                     {`${params.value.lastName}, ${params.value.firstName}`}
                 </Link>
             ),

@@ -1,7 +1,13 @@
 import React from 'react';
 import { auth } from '../../firebase/firebase.utils';
-
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 import { Link } from 'react-router-dom';
+
+import CustomizedSnackbar from '../snack-bar/snack-bar.component';
+import { selectObservationFormSubmissionMessage } from '../../redux/observation-form/observation-form.selectors';
+import { resetSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
+import { selectCurrentUser } from '../../redux/user/user.selectors';
 
 import clsx from 'clsx';
 import { useTheme } from '@material-ui/core/styles';
@@ -30,7 +36,7 @@ import EventNoteIcon from '@material-ui/icons/EventNote';
 import LinkIcon from '@material-ui/icons/Link';
 import useStyles from "./drawer.styles";
 
-export default function MiniDrawer({children}) {
+const MiniDrawer = ({children, currentUser, submissionMessage, resetSubmissionMessage}) => {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
@@ -42,6 +48,11 @@ export default function MiniDrawer({children}) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+
+    //snackbar
+    const handleClose = () => {
+        resetSubmissionMessage();
+    }
 
     return (
         <div className={classes.root}>
@@ -109,26 +120,35 @@ export default function MiniDrawer({children}) {
                             <ListItemText primary={"Home"} />
                         </ListItem>
                     </Link>
-                    <Link to="/directory" className={classes.links}>
-                    <ListItem button key={"users"}>
-                        <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
-                        <ListItemText primary={"Users"} />
-                    </ListItem>
-                    </Link>
                     <Link to="/observations" className={classes.links}>
-                        <ListItem button key={"test"}>
+                        <ListItem button key={"observations"}>
                             <ListItemIcon><EventNoteIcon className={classes.menuIcon}/></ListItemIcon>
                             <ListItemText primary={"Observation"} />
                         </ListItem>
                     </Link>
-                    <Link to="/staff" className={classes.links}>
-                        <ListItem button key={"teachers"}>
-                            <ListItemIcon><EqualizerOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
-                            <ListItemText primary={"Evaluation"} />
-                        </ListItem>
-                    </Link>
+
+                    {
+                        currentUser.role !== 'teacher' ? (
+                        <>
+                        <Link to="/directory" className={classes.links}>
+                            <ListItem button key={"users"}>
+                                <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Users"} />
+                            </ListItem>
+                        </Link>
+                        <Link to="/staff" className={classes.links}>
+                            <ListItem button key={"teachers"}>
+                                <ListItemIcon><EqualizerOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
+                                <ListItemText primary={"Evaluation"} />
+                            </ListItem>
+                        </Link>
+                        </>
+                        ): null
+                    
+                    }
+
                     <Link to="#" className={classes.links}>
-                        <ListItem button key={"teachers"}>
+                        <ListItem button key={"links"}>
                             <ListItemIcon><LinkIcon className={classes.menuIcon} /></ListItemIcon>
                             <ListItemText primary={"Important Links"} />
                         </ListItem>
@@ -141,7 +161,29 @@ export default function MiniDrawer({children}) {
                 <Container maxWidth="xl">
                     {children}
                 </Container>
-            </main>
+                {
+                    submissionMessage.status ?
+                        (<CustomizedSnackbar
+                            open={true}
+                            handleClose={handleClose}
+                            severity={submissionMessage.status}
+                            message={submissionMessage.message}
+                        />)
+                        : null
+
+                }
+            </main>    
         </div>
     );
-}
+};
+
+const mapStateToProps = createStructuredSelector({
+    submissionMessage: selectObservationFormSubmissionMessage,
+    currentUser: selectCurrentUser,
+});
+
+const mapDispatchToProps = dispatch => ({
+    resetSubmissionMessage: () => dispatch(resetSubmissionMessage()),
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(MiniDrawer);

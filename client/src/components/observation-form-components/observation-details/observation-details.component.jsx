@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import axios from 'axios';
@@ -24,8 +24,11 @@ const ObservationFormDetails = (props) => {
         currentYear,
         readOnly      
      } = props;
-    
-    const [ courses, setCourses ] = useState([]);
+
+    const [ state, setState ] = useState({
+        courses: [],
+        options: []
+    });
 
     const getCourses = async (id) => {
         let courses =[];
@@ -46,10 +49,15 @@ const ObservationFormDetails = (props) => {
     }
     
     useEffect(() => { 
-        if(isSavedObservation) {
-           getCourses(observationDetails.teacher.canvasId).then(fetchedCourses => setCourses(fetchedCourses));
-        } 
-    }, [isSavedObservation, observationDetails.teacher]);
+        observationDetails.teacher && ( 
+            getCourses(observationDetails.teacher.canvasId)
+            .then(fetchedCourses => setState({
+                courses: fetchedCourses,
+                options: fetchedCourses.map( c => c.name)
+            }))
+        );
+        
+    },[observationDetails.teacher, observationDetails.teacher && observationDetails.teacher.canvasId]);
 
     const handleChange = async e => {
         const { name, value } = e.target;
@@ -58,8 +66,11 @@ const ObservationFormDetails = (props) => {
             const selectedTeacher = teachers[value];
             if (selectedTeacher){
                 getCourses(selectedTeacher.canvasId)
-                .then(fetchedCourses => setCourses(fetchedCourses))
-                .then( setObservationFormDetails({
+                .then(fetchedCourses => setState({
+                    courses: fetchedCourses,
+                    options: fetchedCourses.map( c => c.name)
+                }))
+                .then(() => setObservationFormDetails({
                     ...observationDetails,
                     teacher: selectedTeacher,
                     department: selectedTeacher.department,
@@ -100,11 +111,14 @@ const ObservationFormDetails = (props) => {
                             label="Observation Date"
                             // variant="outlined"
                         />
-                        <ObservationInfoModal 
-                        teacher={observationDetails.teacher}
-                        currentYear={currentYear}
-                        courses={courses}
-                        />
+                        {
+                            !readOnly &&
+                            <ObservationInfoModal 
+                            teacher={observationDetails.teacher}
+                            currentYear={currentYear}
+                            courses={state.courses}
+                            />
+                        }
                     </div>
                     <div className={classes.form_items}>
                         <CustomSelect
@@ -178,8 +192,12 @@ const ObservationFormDetails = (props) => {
                             name="observer"
                             label="Observer"
                             // handleSelect={handleChange}
-                            value={`${currentUser.lastName}, ${currentUser.firstName}`}
-                            options={[`${currentUser.lastName}, ${currentUser.firstName}`]}
+                            value={ observationDetails.observer ?
+                                `${observationDetails.observer.lastName}, ${observationDetails.observer.firstName}`:
+                                `${currentUser.lastName}, ${currentUser.firstName}`}
+                            options={[(observationDetails.observer ?
+                                `${observationDetails.observer.lastName}, ${observationDetails.observer.firstName}`:
+                                `${currentUser.lastName}, ${currentUser.firstName}`)]}
                         />
                     </div>
                     <div className={classes.form_items}>
@@ -209,7 +227,7 @@ const ObservationFormDetails = (props) => {
                             name="course"
                             label="Course"
                             handleSelect={handleChange}
-                            options={ (courses && courses.length > 0) ? courses.map( course => course.name) : []}
+                            options={ state.options }
                             value={observationDetails.course}
                         />
                     </div>

@@ -17,8 +17,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const HomePage = () => {
-
+const TeacherHomeComponent = ({teacher}) => {
     const classes = useStyles();
 
     return (
@@ -29,7 +28,7 @@ const HomePage = () => {
                     title='Observations'
                     header="Observations"
                     buttonText="View Observations"
-                    to="/observations"
+                    to={`/staff/observations/${teacher.id}`}
                 >
                     {/* <Typography>View observations here</Typography> */}
                 </CustomCard>
@@ -75,4 +74,4 @@ const HomePage = () => {
 }
 
 
-export default HomePage;
+export default TeacherHomeComponent;

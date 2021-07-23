@@ -24,11 +24,15 @@ const CustomCard = ({ imageUrl, title, children, to, buttonText, header, history
     return (
         <Card className={classes.root}>
             <CardActionArea onClick={() => history.push(to)}>
-                <CardMedia
-                    className={classes.media}
-                    image={imageUrl}
-                    title={title}
-                />
+                {
+                    imageUrl && (
+                    <CardMedia
+                        className={classes.media}
+                        image={imageUrl}
+                        title={title}
+                    />
+                    )
+                }
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
                         {header}

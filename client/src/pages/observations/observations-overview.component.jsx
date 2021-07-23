@@ -26,10 +26,6 @@ import { Typography } from '@material-ui/core';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-import CustomizedSnackbar from '../../components/snack-bar/snack-bar.component';
-import { selectObservationFormSubmissionMessage } from '../../redux/observation-form/observation-form.selectors';
-import { resetSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
-
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
@@ -55,16 +51,11 @@ const useStyles = makeStyles((theme) => ({
     }, 
 }));
 
-const ObservationsOverview = ({ match, history, submissionMessage, resetSubmissionMessage, currentYear, currentUser, saveObservationForm }) => {
+const ObservationsOverview = ({ match, history, currentYear, currentUser, saveObservationForm }) => {
     const classes = useStyles();
     const observationForm = { ...INITIAL_STATE };
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    //snackbar
-    const handleClose = () => {
-        resetSubmissionMessage();
-    }
 
     useEffect(() => {
         const fetchSelectedTeachers = async () => {
@@ -137,34 +128,37 @@ const ObservationsOverview = ({ match, history, submissionMessage, resetSubmissi
                             <ListItemText primary="Submitted Observations" />
                         </ListItem>
                     </Link>
-                    <ListItem button onClick={handleSaveTemplates}>
-                            <ListItemIcon>
-                                <ListAltIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Create Weekly Observations From Templates" />
-                    </ListItem>
+                    {/* <Divider /> */}
                     <Link to={`${match.path}/templates`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
                                 <TocIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Create Other Observations From Templates" />
+                            <ListItemText primary="Create Observations For Selected Teachers" />
                         </ListItem>
                     </Link>
-                    <Link to={`${match.path}/templates/edit`} className={classes.links} >
-                        <ListItem button>
+                    <ListItem button onClick={handleSaveTemplates}>
                             <ListItemIcon>
-                                <EditIcon />
+                                <ListAltIcon />
                             </ListItemIcon>
-                            <ListItemText primary="Update Selected Teachers For Observation Templates" />
-                        </ListItem>
-                    </Link>
+                            <ListItemText primary="Create Weekly Observations For Selected Teachers (Shortcut)" />
+                    </ListItem>
+                    {/* <Divider /> */}
                     <Link to={`${match.path}/lesson-plans`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
                                 <PlaylistAddCheckIcon />
                             </ListItemIcon>
                             <ListItemText primary="Lesson Plan Check for Selected Teachers" />
+                        </ListItem>
+                    </Link>
+                    {/* <Divider /> */}
+                    <Link to={`${match.path}/templates/edit`} className={classes.links} >
+                        <ListItem button>
+                            <ListItemIcon>
+                                <EditIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Update Selected Teachers" />
                         </ListItem>
                     </Link>
                 </List>
@@ -177,17 +171,6 @@ const ObservationsOverview = ({ match, history, submissionMessage, resetSubmissi
                         </Tooltip>
                     </Link>
                 </div>
-                {
-                    submissionMessage.status ?
-                        (<CustomizedSnackbar
-                            open={true}
-                            handleClose={handleClose}
-                            severity={submissionMessage.status}
-                            message={submissionMessage.message}
-                        />)
-                        : null
-
-                } 
             </>
             )
         }  
@@ -196,13 +179,11 @@ const ObservationsOverview = ({ match, history, submissionMessage, resetSubmissi
 };
 
 const mapStateToProps = createStructuredSelector({
-    submissionMessage: selectObservationFormSubmissionMessage,
     currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,
 });
 
 const mapDispatchToProps = dispatch => ({
-    resetSubmissionMessage: () => dispatch(resetSubmissionMessage()),
     saveObservationForm: observationForm => dispatch(saveObservationForm(observationForm))
 })
 

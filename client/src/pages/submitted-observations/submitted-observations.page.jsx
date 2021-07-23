@@ -1,19 +1,17 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import {connect} from 'react-redux';
-import { createStructuredSelector } from 'reselect';
-import { selectCurrentUser } from '../../redux/user/user.selectors';
 
-import WithAuthorization from '../../components/with-authorization/withAuthorization.component';
+import withAuthorization from '../../components/with-authorization/withAuthorization.component';
 import SubmittedObservationsPage from './submitted-observations.component';
 import SubmittedObservationDetails from './submitted-observation.detail';
 import SubmittedObservation from './single-submitted-observation';
 
-const SubmittedObservations = ({ match }) => {
+const SubmittedObservations = (props) => {
+    const {match, currentUser} = props;
 
     return ( 
         <div>
-            <Route exact path={match.path} component={SubmittedObservationsPage}/>
+            <Route exact path={match.path} render={(props) => <SubmittedObservationsPage currentUser={currentUser} {...props}/>}/>
             <Route path={`${match.path}/observation/:observationId`} component={SubmittedObservation}/>
             <Route 
             path={`${match.path}/weekly/:teacherId`}
@@ -34,9 +32,5 @@ const SubmittedObservations = ({ match }) => {
     );
 }
 
-const mapStateToProps = createStructuredSelector({
-    currentUser: selectCurrentUser
-});
-
-
-export default connect(mapStateToProps)(WithAuthorization(['superadmin', 'dci', 'admin'])(SubmittedObservations));
+// export default withAuthorization(['superadmin', 'dci', 'admin'])(SubmittedObservations);
+export default (SubmittedObservations);

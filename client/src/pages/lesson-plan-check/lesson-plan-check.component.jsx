@@ -11,6 +11,7 @@ import VerticalTabs from '../../components/vertical-tabs/vertical-tabs-component
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
+import Typography from '@material-ui/core/Typography';
 
 const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoading,
     setLessonPlans, resetLessonPlans, submitLessonPlanCheck }) => {
@@ -59,10 +60,10 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
                     </>
                 ):( 
                     <div>
-                        <h2>No saved lesson plan checks. Create Lesson Plan Checks For Selected Teachers</h2>
-                        <div>
-                        <Button color="primary" variant="contained" onClick={() => setLessonPlans(currentUser.id)}>Create</Button>
-                        <Button color="primary" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
+                        <h2>No saved lesson plan checks.</h2>
+                        <div style={{ marginTop: '20px'}}>
+                            <Button color="primary" variant="contained" onClick={() => setLessonPlans(currentUser.id)}>Create</Button>
+                            <Button color="primary" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
                         </div>
                     </div>
                 ))

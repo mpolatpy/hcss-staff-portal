@@ -23,7 +23,8 @@ export const useStyles = makeStyles((theme) => ({
     },
     resetSaveButtons: {
         display: 'flex',
-        alignSelf: 'flex-end'
+        alignSelf: 'flex-end',
+        marginTop: theme.spacing(2),
     },  
     resetContainer: {
         padding: theme.spacing(3),

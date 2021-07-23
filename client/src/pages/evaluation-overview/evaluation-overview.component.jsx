@@ -57,7 +57,7 @@ const EvaluationOverview = ({ match, currentYear }) => {
             headerClassName: 'teacher-list-header',
             renderCell: (params) => (
                     <Link
-                        to={`${match.path}/${params.value}`}
+                        to={`${match.path}/home/${params.value}`}
                     >
                         <OpenInNewIcon size="small" />
                     </Link>

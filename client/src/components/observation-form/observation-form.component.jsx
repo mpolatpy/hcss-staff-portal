@@ -9,8 +9,14 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
 import CustomModal from '../../components/modal/modal.component';
-// import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import CustomTextArea from '../text-area/text-area.component';
+import CustomSpeedDial from '../speed-dial/speed-dial.component';
+
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import SaveIcon from '@material-ui/icons/Save';
+import NotesIcon from '@material-ui/icons/Notes';
+import CachedIcon from '@material-ui/icons/Cached';
 
 import Stepper from '@material-ui/core/Stepper'; 
 import Step from '@material-ui/core/Step';
@@ -69,7 +75,7 @@ const ObservationPage = (props) => {
         e.preventDefault();
         saveObservationForm(observationForm);
         history.push('/observations/saved');
-    };
+    }; 
 
     const handleDelete = (e) => {
         e.preventDefault();
@@ -131,7 +137,73 @@ const ObservationPage = (props) => {
                                     }
                                     
                                 </div>
-                                {
+                                <div className={classes.resetSaveButtons}>
+                                    <CustomSpeedDial 
+                                        hidden={readOnly}
+                                        actions={[
+                                            {icon: (<IconButton
+                                                        aria-label="save"
+                                                        disabled={activeStep === 0}
+                                                        type="submit"
+                                                        onClick={handleSave}
+                                                    >
+                                                        <SaveIcon />
+                                                    </IconButton>), name: 'Save'
+                                            },
+                                            {
+                                                icon: (
+                                                    <CustomModal
+                                                        modalIcon= {( <NotesIcon /> )}
+                                                        modalBody={( 
+                                                            <div style={{width: '60vw'}}>
+                                                                <CustomTextArea />
+                                                            </div>
+                                                        )}
+                                                    />
+                                                 ),
+                                                name: 'Notes'
+                                            }, {
+                                                icon: ( observationForm.isSavedObservation ?
+                                                (
+                                                <CustomModal
+                                                    modalIcon = {( <DeleteIcon /> )}
+                                                    modalBody={( 
+                                                        <div>
+                                                            <Typography variant="h5">
+                                                                Please Confirm Delete
+                                                            </Typography>
+                                                            <p>Once deleted, you will not be able to retrieve this observation back</p>
+                                                            <div>
+                                                            <Button
+                                                            type="submit"
+                                                            variant="contained"
+                                                            color="secondary"
+                                                            onClick={handleDelete}
+                                                            className={classes.button}
+                                                            >
+                                                                Delete
+                                                            </Button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                />
+                                                ) : (
+                                                <IconButton
+                                                    aria-label="reset"
+                                                    onClick={handleReset}
+                                                    className={classes.button}
+                                                >
+                                                    <CachedIcon />
+                                                </IconButton>
+                                                )
+                                                    
+                                                ),
+                                                name: observationForm.isSavedObservation ? 'Delete' : 'Reset'
+                                            }
+                                        ]}
+                                    />
+                                </div>
+                                {/* {
                                     !readOnly ? (
                                         <div className={classes.resetSaveButtons}>
                                             <CustomModal
@@ -196,7 +268,7 @@ const ObservationPage = (props) => {
                                             </Button>
                                         </div>
                                     ) : null
-                                }
+                                } */}
                             </div>
                             </form>
                         </StepContent>

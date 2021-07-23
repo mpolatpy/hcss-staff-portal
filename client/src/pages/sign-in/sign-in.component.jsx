@@ -46,8 +46,8 @@ function SignInForm({ history })  {
 
         <div className={classes.root}>
         <Grid direction="row" container spacing={3}>
-            <Grid item xs={2} sm={2} md={4} lg={4}/>
-            <Grid item className={classes.sign_in_container} xs={8} sm={8} md={4} lg={4}>
+            <Grid item xs={2} sm={3} md={4} lg={4}/>
+            <Grid item className={classes.sign_in_container} xs={8} sm={6} md={4} lg={4}>
             <div className={classes.innerDiv}>
                 <div className={classes.logo}>
                     <img width="125" alt="logo" src="https://east.hampdencharter.org/wp-content/uploads/2020/01/logo-east-big.png" />
@@ -88,7 +88,7 @@ function SignInForm({ history })  {
                 </form>
                 </div>
             </Grid>
-            <Grid item xs={2} md={4} sm={2} lg={4} />
+            <Grid item xs={2} sm={3} md={4} lg={4} />
         </Grid>
     </div>
     );

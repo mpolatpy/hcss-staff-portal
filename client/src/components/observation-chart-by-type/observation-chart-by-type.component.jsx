@@ -65,11 +65,11 @@ const ObservationChartByType = ({score}) => {
 
     return ( 
         <Grid container >
-            <Grid container justifyContent="center" alignItems="center">
-                <Grid item xs={12} md={8} lg={8} justifyContent="center" alignItems="center">
+            <Grid container alignItems="center">
+                <Grid item xs={12}  >
                     <Bar data={data1} options={options}/>
                 </Grid>
-                <Grid item xs={12} md={8} lg={8}>
+                <Grid item xs={12}>
                     <Bar data={data2} options={options}/>
                 </Grid>
             </Grid>

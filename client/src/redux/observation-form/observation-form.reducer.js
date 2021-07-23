@@ -64,6 +64,7 @@ const observationFormReducer = (state=INITIAL_STATE, action) => {
                 },
                 observationDetails: {
                     ...action.payload.observationDetails,
+                    course: action.payload.observationDetails.course,
                     observationDate: (
                         action.payload.observationDetails.observationDate?
                         new Date(action.payload.observationDetails.observationDate.seconds*1000):

@@ -22,7 +22,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
 
- const ObservationTemplateEditPage = ({ teachers, currentUser }) => {
+ const ObservationTemplateEditPage = ({ teachers, currentUser, history }) => {
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -57,6 +57,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
             console.log(e.message)
         }  
         setIsLoading(false);
+        history.push('/observations');
     }
 
     return (
