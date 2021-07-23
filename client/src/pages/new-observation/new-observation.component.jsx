@@ -6,16 +6,16 @@ import { selectObservationForm } from '../../redux/observation-form/observation-
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import ObservationPage from '../../components/observation-form/observation-form.component';
-import withAuthorization from '../../components/with-authorization/withAuthorization.component';
 
 const NewObservationPage = (props) => {
     const { resetObservationForm, currentUser, currentYear, observationForm, ...otherProps } = props;
+    
     useEffect(() => {
         resetObservationForm({
             observer: currentUser,
             schoolYear: currentYear,
         });
-    },[]);
+    },[currentUser, currentYear]);
 
     return (
         <>
@@ -40,4 +40,4 @@ const mapDispatchToProps = (dispatch) => ({
     resetObservationForm: (details) => dispatch(resetObservationForm(details)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAuthorization(['superadmin', 'admin', 'dci'])(NewObservationPage));
+export default connect(mapStateToProps, mapDispatchToProps)(NewObservationPage);
