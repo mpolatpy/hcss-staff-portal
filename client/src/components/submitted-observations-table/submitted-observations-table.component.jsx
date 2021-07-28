@@ -22,7 +22,7 @@ const SubmittedObservationsTable = ({observations, baseUrl}) => {
     const observationColumns = [
         {field: 'teacher', headerName: 'Teacher', headerClassName: 'teacher-list-header', flex: 1.5,
             renderCell: (params) => ( 
-                <Link to={`${baseUrl.replace('observations/submitted', 'staff')}/home/${params.value.id}`} >
+                <Link to={`${baseUrl.replace('observations/submitted', 'staff')}/observations/${params.value.id}`} >
                     {params.value.name}
                 </Link>
             ),

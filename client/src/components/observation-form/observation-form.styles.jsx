@@ -16,15 +16,15 @@ export const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(1),
     },
     actionsContainer: {
-        marginBottom: theme.spacing(2),
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
+        marginTop: theme.spacing(1),
+        // display: 'flex',
+        // flexDirection: 'row',
+        // justifyContent: 'space-between'
     },
     resetSaveButtons: {
         display: 'flex',
         alignSelf: 'flex-end',
-        marginTop: theme.spacing(2),
+        marginTop: theme.spacing(3),
     },  
     resetContainer: {
         padding: theme.spacing(3),

@@ -4,7 +4,6 @@ import { createStructuredSelector } from "reselect";
 import { withRouter } from "react-router-dom";
 
 import { firestore } from '../../firebase/firebase.utils';
-import { selectCurrentUser } from "../../redux/user/user.selectors";
 import { selectTeachers } from "../../redux/teachers/teachers.selectors";
 import { selectCurrentYear } from "../../redux/school-year/school-year.selectors";
 
@@ -14,12 +13,12 @@ import Typography from "@material-ui/core/Typography";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const SubmittedObservationDetails = (props) => {
-    const {match, observationType, currentUser, currentYear, teachers} = props;
+    const {match, observationType, currentYear, teachers} = props;
     const [ state, setState ] = useState({
         observations: [],
         score: null,
-        isLoading: false
     });
+    const [isLoading, setIsLoading] = useState(false);
     const teacherId = match.params.teacherId; 
     const teacher = teachers[teacherId];
 
@@ -36,10 +35,7 @@ const SubmittedObservationDetails = (props) => {
 
         const fetchInitialObservationData = async () => {  
             try{
-                setState({
-                    ...state,
-                    isLoading: true
-                });
+                setIsLoading(true);
 
                 const scoreRef = firestore.doc(`observationScores/${currentYear}/${scoreType}/${teacherId}`);
                 const observationsRef = firestore.collection('observations')
@@ -56,8 +52,8 @@ const SubmittedObservationDetails = (props) => {
                 setState({
                     observations: fetchedObservations,
                     score: score,
-                    isLoading: false
                 });
+                setIsLoading(false);
 
             } catch(e){
                 console.log(e.message);
@@ -70,7 +66,7 @@ const SubmittedObservationDetails = (props) => {
     return ( 
         <div>
             {
-            state.isLoading ? (<CircularProgress />) : (
+            isLoading ? (<CircularProgress />) : (
                 <>
                 <Typography variant="h5"> {`${observationType}s - ${teacher.firstName} ${teacher.lastName}`}</Typography>
                 <ObservationChartByType score={state.score} />
@@ -84,7 +80,6 @@ const SubmittedObservationDetails = (props) => {
 };
 
 const mapStateToProps = createStructuredSelector({
-    currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,
     teachers: selectTeachers
 });

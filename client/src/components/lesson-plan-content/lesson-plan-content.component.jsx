@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
-
+import { connect } from 'react-redux';
+import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,19 +12,22 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import { MenuItem } from '@material-ui/core';
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+    flexGrow: 1,
   },
 });
 
-const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teachers }) => {
+const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teachers, setSubmissionMessage }) => {
     const classes = useStyles();
     const [ isFetching, setIsFetching ] = useState(false);
     const [ lessonPlanScores, setLessonPlanScores ] = useState({
-        courses: {}
+        courses: {},
+        notes: ''
     });
     
     useEffect(() => {
@@ -82,13 +86,38 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
             scores: lessonPlanScores,
         };
 
-        await submitLessonPlanCheck(lessonPlan, currentYear, teachers);
+        try{
+            await submitLessonPlanCheck(lessonPlan, currentYear, teachers);
+            setSubmissionMessage({
+                content: `Successfully submitted lesson plan check for ${teacher.firstName} ${teacher.lastName}`,
+                status: 'success'
+            });
+        } catch(e){
+            setSubmissionMessage({
+                content: e.message,
+                status: 'error'
+            });
+        }
+        
     };
 
+    const handleNoteChange = (e) => {
+        const { value } = e.target;
+
+        setLessonPlanScores({
+            ...lessonPlanScores,
+            notes: value
+        });
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         let courseId, field, averageScore;
+
+        if(isNaN(value) || value === ' '){
+            alert('Please enter numbers only');
+            return;
+        }
 
         if(name.includes('percent')){
             courseId = name.split('percent')[0];
@@ -101,6 +130,7 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
         averageScore = calculateAverageScores(field, value, courseId);
 
         setLessonPlanScores({
+            ...lessonPlanScores,
             courses: {
                 ...lessonPlanScores.courses,
                 [courseId]: {
@@ -153,7 +183,7 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
 
     return ( 
         <>
-            <h2>{`Lesson Plan Check for ${teacher.firstName} ${teacher.lastName}`}</h2>
+            <h2>{`Lesson Plan Check - ${teacher.firstName} ${teacher.lastName}`}</h2>
             { 
             isFetching?
             ( 
@@ -168,7 +198,7 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
             ): (
                 <>
                 <div>
-                <TableContainer>
+                <TableContainer >
                 <Table className={classes.table} aria-label="lesson-plan-check table">
                     <TableHead>
                         <TableRow>
@@ -212,12 +242,32 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                                         <MenuItem value="100">Yes</MenuItem>
                                         <MenuItem value="0">No</MenuItem>
                                     </TextField>
-                                    
                                 </TableCell>
                             </TableRow>
                                 )
                             ): null
                         }
+                        <TableRow>
+                            <TableCell colSpan={3}>
+                                <TextareaAutosize
+                                aria-label="lesson plan notes" 
+                                rowsMin={4}
+                                // readOnly={readOnly}
+                                placeholder="Lesson Plan Notes"
+                                style={{ 
+                                    width: '100%',
+                                    backgroundColor: "inherit",
+                                    padding: '12px 20px',
+                                    borderRadius: '4px',
+                                    fontSize: '16px',
+                                }}
+                                variant="outlined"
+                                onChange={handleNoteChange}
+                                value={lessonPlanScores.notes}
+                                name={`notes`}
+                                />
+                            </TableCell>
+                        </TableRow>
                     </TableBody>
                 </Table>
                 </TableContainer>
@@ -240,6 +290,10 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
             }
         </>
     );
-}
+}; 
 
-export default Content;
+const mapDispatchToProps = (dispatch) => ({
+    setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message))
+});
+
+export default connect(null, mapDispatchToProps)(Content);

@@ -19,13 +19,17 @@ const fetchSavedObservationsFail = (errorMessage) => ({
     payload: errorMessage
 });
 
-export const fetchSavedObservationsAsync = (currentUser) => {
+export const fetchSavedObservationsAsync = (currentUser, currentYear) => {
     return dispatch => {
         const collectionRef = firestore.collection('savedObservations')
                 .where(
                     'observationDetails.observer.id', 
                     '==', 
                     currentUser.id
+                ).where(
+                    'observationDetails.schoolYear', 
+                    '==', 
+                    currentYear
                 ).orderBy('observationDetails.observationDate', 'desc');
 
         dispatch(fetchSavedObservationsStart());

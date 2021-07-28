@@ -14,7 +14,8 @@ export const getOrCreateScoreDocument = async (teacherId, year) => {
                 onTime: {
                     rate: 0,
                     numScores: 0
-                }
+                },
+                teacherId: teacherId
             });
         }catch(e){
             console.log('error creating score document', e.message)
@@ -33,10 +34,11 @@ export const calculateLessonPlanAverage = (scoreRef, lessonPlan) => {
     console.log('previous', previousData);
     console.log('lessonPlan', lessonPlan);
 
-    const percentSubmittedScore = (prePercent.rate + percentSubmitted.rate) / (prePercent.numScores + 1);
-    const onTimeScore = (preOnTime.rate + onTime.rate) / (preOnTime.numScores + 1);
+    const percentSubmittedScore = (prePercent.rate*prePercent.numScores + percentSubmitted.rate) / (prePercent.numScores + 1);
+    const onTimeScore = (preOnTime.rate*preOnTime.numScores + onTime.rate) / (preOnTime.numScores + 1);
 
     return ({
+        ...previousData,
         percentSubmitted: {
             rate: percentSubmittedScore,
             numScores: prePercent.numScores + 1

@@ -31,6 +31,11 @@ export const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(1),
         marginTop: theme.spacing(0)
     },
+    selectOptions: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
     wrappedCell: {
         whiteSpace: 'normal',
         wordWrap: 'break-word'

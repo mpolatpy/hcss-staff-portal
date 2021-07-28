@@ -1,6 +1,5 @@
 import {useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import { Link } from 'react-router-dom';
 import { firestore } from '../../firebase/firebase.utils';
 import {selectCurrentYear} from '../../redux/school-year/school-year.selectors';
@@ -8,8 +7,6 @@ import { selectTeacher } from '../../redux/teachers/teachers.selectors';
 
 import ObservationChartByType from '../observation-chart-by-type/observation-chart-by-type.component';
 import { CircularProgress, Typography } from '@material-ui/core';
-// import Grid from '@material-ui/core/Grid';
-// import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
 const TeacherObservationsComponent = ({teacher, currentYear}) => {
     const classes = useStyles();
     const [state, setState] = useState({
-        isLoading: false,
         observationScores: null,
         lessonPlanScore: null
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const observationMap = {
         "weeklyObservationScores": "Weekly Observations",
@@ -60,10 +57,7 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
 
     useEffect(() => {
         const teacherId = teacher.id;
-        setState({
-            ...state,
-            isLoading: true,
-        })
+        
         const getObservtionScores = async () => {
             const fetchedObservationScores = {};
             
@@ -89,27 +83,28 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
             setState({
                 observationScores: fetchedObservationScores,
                 lessonPlanScore: lpScore,
-                isLoading: false
             });
         }; 
         
+        setIsLoading(true);
         getObservtionScores();
+        setIsLoading(false);
         
-    }, [teacher]);
+    }, [teacher, currentYear]);
 
     return ( 
         <>
             <Typography variant="h6">{`Observations - ${teacher.firstName} ${teacher.lastName}`}</Typography>
             <Divider />
             {
-                state.isLoading ?
+                isLoading ?
                 ( 
                     <div>
                         <CircularProgress />
                     </div>
                 ) : (
                     state.observationScores && (
-                        <div>
+                    <div>
                         <div className={classes.root}>
                         {
                         observationTypes.map((observationType, index) =>(
@@ -135,23 +130,7 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
                         ))
                         }
                         </div>
-                        
-                        {/* <Grid container justifyContent="center" alignItems="flex-start" >
-                        {observationTypes.map((observationType, index) =>(
-                            state.observationScores[observationType] && (
-                            <Grid item sm={12} md={6} key={index} style={{padding: '10px'}}>
-                                <Paper variant="outlined" style={{padding: '10px'}}>
-                                    <Typography variant="h6">{observationType}</Typography>
-                                    <ObservationChartByType score={state.observationScores[observationType]}/>
-                                    <div style={{marginTop:'5px', display: 'flex', justifyContent:"flex-end",}}>
-                                    <Button component={Link} to="#">View Details</Button>
-                                    </div>
-                                </Paper>
-                            </Grid>
-                            )
-                        ))}
-                        </Grid> */}
-                        </div>
+                    </div>
                     )
                 )
             }

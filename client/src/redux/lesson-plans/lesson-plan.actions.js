@@ -26,7 +26,6 @@ export const setLessonPlans = (currentUserId) => {
 
             if (snapshot.exists){
                 const fetchedData = snapshot.data();
-                console.log(fetchedData);
                 if( Object.keys(fetchedData).includes('teachers') && (fetchedData['teachers'].length > 0)){
                     dispatch(setLessonPlanChecksSuccess(fetchedData.teachers));
                 } else {
@@ -52,23 +51,6 @@ export const submitLessonPlanCheckFail = (message) => ({
     type: LessonPlanActionTypes.SUBMIT_LESSON_PLAN_CHECK_FAIL,
     payload: message
 });
-
-// export const submitLessonPlanCheck = (lessonPlan, year, selectedTeachers) => {
-//     const { teacher } = lessonPlan;
-//     const updatedTeacherList = selectedTeachers.filter ( element => element.id !== teacher.id );
-
-//     return async dispatch => {
-//         dispatch(submitLessonPlanCheckStart());
-
-//         try{
-//             const ref = firestore.collection(`lessonPlanScores/${year}/${teacher.id}`).doc();
-//             await ref.set(lessonPlan);
-//             dispatch(submitLessonPlanCheckSuccess(updatedTeacherList))
-//         } catch (e){
-//             dispatch(submitLessonPlanCheckFail(e.message));
-//         }
-//     } 
-// };
 
 export const submitLessonPlanCheck = (lessonPlan, year, selectedTeachers) => {
     const { teacher } = lessonPlan;

@@ -23,7 +23,7 @@ export default function CustomizedSnackbar({ handleClose, open, severity, messag
 
     return (
         <div className={classes.root}>
-            <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} autoHideDuration={3000} onClose={handleClose}>
+            <Snackbar anchorOrigin={{ vertical, horizontal }} open={open} autoHideDuration={5000} onClose={handleClose}>
                 <Alert onClose={handleClose} severity={severity}>
                     {message}
                 </Alert>

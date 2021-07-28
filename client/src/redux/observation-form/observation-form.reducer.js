@@ -113,7 +113,7 @@ const observationFormReducer = (state=INITIAL_STATE, action) => {
                 isSubmitting: false,
                 submissionMessage: {
                     status: 'success',
-                    message: 'Successfully submitted/saved observation form'
+                    message: action.payload
                 }
             };
         case ObservationFormActionTypes.SUBMIT_OBSERVATION_FORM_FAIL:
@@ -148,6 +148,14 @@ const observationFormReducer = (state=INITIAL_STATE, action) => {
                     message: action.payload
                 }
             };
+        case ObservationFormActionTypes.SET_SUBMISSION_MESSAGE:
+            return {
+                ...state,
+                submissionMessage: {
+                    status: action.payload.status,
+                    message: action.payload.content
+                }
+            };  
         case ObservationFormActionTypes.RESET_SUBMISSION_MESSAGE:
             return {
                 ...state,

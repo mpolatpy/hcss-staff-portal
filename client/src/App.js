@@ -1,6 +1,6 @@
 import './App.css';
-import React, { useEffect } from 'react';
-import { Switch, Route, Redirect } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Switch, Route, Redirect, useHistory } from "react-router-dom";
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
 
@@ -19,14 +19,17 @@ import Observations from './pages/observations/observations.component';
 import UserRegistrationPage from './pages/register/register.component';
 import TeacherListOverview from './pages/teachers/teachers-overview.component';
 import Directory from './pages/teachers/teacher-list.component';
+import SettingsPage from './pages/settings/settings-page';
+import LessonPlans from './pages/lesson-plan/lesson-plan.routes';
 
 function App(props) {
 
-  const { currentUser } = props;
+  const { currentUser, currentYear, setCurrentYear } = props;
+  let history = useHistory();
 
   useEffect( () => {
 
-    const { setCurrentUser, setCurrentYear, fetchTeachersAsync } = props;
+    const { setCurrentUser, fetchTeachersAsync } = props;
 
     const unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       if (userAuth) {
@@ -52,6 +55,15 @@ function App(props) {
   }, [] );
 
 
+  const [year,setYear] = useState('');
+
+  const handleChange = (e) => {
+      const { value } = e.target;
+      setCurrentYear(value);
+      setYear(value);
+      history.push('/home');
+  };
+
   return (
     <div>
           <Route exact path="/" 
@@ -64,17 +76,19 @@ function App(props) {
 
           {!currentUser ?
           <Redirect to='/' /> :
-          <MiniDrawer >
+          <MiniDrawer handleChange={handleChange} year={currentYear}>
             <Switch>
               <Route exact path="/directory" component={Directory}/>
               <Route exact path="/register" component={UserRegistrationPage}/>
               <Route path="/staff" component={TeacherListOverview} />
               <Route path="/home" component={HomePage}  /> 
               <Route path="/observations" component={Observations} />
+              <Route path="/lesson-plans" component={LessonPlans} />
               <Route path="/profile" 
-                render={() => ( 
-                  <ProfilePage currentUser={currentUser} />
-                )}
+                render={() => ( <ProfilePage currentUser={currentUser} /> )}
+              />
+              <Route path="/settings" 
+                render={() => ( <SettingsPage currentUser={currentUser} />)} 
               />
               <Route component={NotFound}/>
             </Switch>

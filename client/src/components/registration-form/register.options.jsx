@@ -14,9 +14,9 @@
                     ],
     roleOptions: [
                     'teacher',
-                    'schooladmin',
+                    'admin',
                     'staff',
-                    'DCI',
+                    'dci',
                     'superadmin'
                 ]
 };

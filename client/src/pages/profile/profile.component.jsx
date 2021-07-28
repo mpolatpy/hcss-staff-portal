@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useStyles } from './profile.styles';
 import axios from 'axios';
 
+import Divider from '@material-ui/core/Divider';
+import Typography from '@material-ui/core/Typography';
 
 const ProfilePage = ({ currentUser }) => {
     const classes = useStyles();
@@ -28,21 +30,28 @@ const ProfilePage = ({ currentUser }) => {
     return ( 
         <div className={classes.profilePage}>
             <div className={classes.profileCard}>
-                <h2>Name: {`${currentUser.firstName} ${currentUser.lastName}`}</h2>
-                <h2>School: {currentUser.school}</h2>
-                <h2>Department: {currentUser.department}</h2>
-                <h2>Role: {currentUser.role}</h2>
-                <h2>Username: {currentUser.displayName}</h2>
+                <Typography variant="h5">Account Details</Typography>
+                <Divider style={{width:'100%', marginBottom:'20px'}}/>
+                <Typography variant="subtitle1">Name: {`${currentUser.firstName} ${currentUser.lastName}`}</Typography>
+                <Typography>School: {currentUser.school}</Typography>
+                <Typography>Department: {currentUser.department}</Typography>
+                <Typography>Role: {currentUser.role}</Typography>
+                <Typography>Username: {currentUser.displayName}</Typography>
             </div>
             <div className={classes.profileCard}>
-            <h2>Canvas Courses</h2>
+                <Typography variant="h5">Courses</Typography>
+                <Divider style={{width:'100%', marginBottom:'20px'}}/>
                 {
                     courses.length>0 && 
                     courses.filter ( course => course.enrollments[0].type === 'teacher')
                     .map( (course, index) => ( 
-                        <li key={index}>
-                            {course.name}
-                        </li>
+                        <a href={`https://hcss.instructure.com/courses/${course.id}`} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            key={index}
+                        >
+                            <Typography>{course.name}</Typography>
+                        </a>
                     ))
                 }
             </div>

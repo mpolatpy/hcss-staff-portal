@@ -94,10 +94,10 @@ const EvaluationOverview = ({ match, currentYear }) => {
     return ( 
         <div className={classes.root}>
             <div className={classes.header}>
-                <div className={classes.headerText}>
+                <div>
                     <Typography variant="h5">Evaluation Data</Typography>
                 </div>
-                <div>
+                <div className={classes.selectOptions}>
                     <CustomSelect
                         label="Observation Type"
                         // variant="outlined"
@@ -107,6 +107,10 @@ const EvaluationOverview = ({ match, currentYear }) => {
                         value={observation.value}
                         handleSelect={handleSelect}
                      />
+                     <FormControlLabel
+                        control={<Switch checked={isShowingNumbers} onChange={handleToggle} color="primary" name="toggleShowNumbers" />}
+                        label="Show Averages"
+                    />
                 </div>
             </div>
             <DataTableWithSpinner
@@ -117,12 +121,6 @@ const EvaluationOverview = ({ match, currentYear }) => {
                 pageSize={10}
                 rowsPerPageOptions={[5,10,25,100]}
             />
-            <div>
-            <FormControlLabel
-                control={<Switch checked={isShowingNumbers} onChange={handleToggle} color="primary" name="toggleShowNumbers" />}
-                label="Show Domain Averages"
-            />
-            </div>
         </div>
     );
 };

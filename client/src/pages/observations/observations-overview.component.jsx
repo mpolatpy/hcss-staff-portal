@@ -21,7 +21,6 @@ import Divider from '@material-ui/core/Divider';
 import SaveIcon from '@material-ui/icons/Save';
 import TelegramIcon from '@material-ui/icons/Telegram';
 import TocIcon from '@material-ui/icons/Toc';
-import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import { Typography } from '@material-ui/core';
 import ListAltIcon from '@material-ui/icons/ListAlt';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -115,7 +114,7 @@ const ObservationsOverview = ({ match, history, currentYear, currentUser, saveOb
                     <Link to={`${match.path}/saved`} className={classes.links} >
                         <ListItem button>
                                 <ListItemIcon>
-                                    <SaveIcon />
+                                    <SaveIcon color="primary" />
                                 </ListItemIcon>
                                 <ListItemText primary="Saved Observations" />
                         </ListItem>
@@ -123,7 +122,7 @@ const ObservationsOverview = ({ match, history, currentYear, currentUser, saveOb
                     <Link to={`${match.path}/submitted`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
-                                <TelegramIcon />
+                                <TelegramIcon color="primary" />
                             </ListItemIcon>
                             <ListItemText primary="Submitted Observations" />
                         </ListItem>
@@ -132,31 +131,31 @@ const ObservationsOverview = ({ match, history, currentYear, currentUser, saveOb
                     <Link to={`${match.path}/templates`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
-                                <TocIcon />
+                                <TocIcon color="primary" />
                             </ListItemIcon>
                             <ListItemText primary="Create Observations For Selected Teachers" />
                         </ListItem>
                     </Link>
                     <ListItem button onClick={handleSaveTemplates}>
                             <ListItemIcon>
-                                <ListAltIcon />
+                                <ListAltIcon color="primary" />
                             </ListItemIcon>
                             <ListItemText primary="Create Weekly Observations For Selected Teachers (Shortcut)" />
                     </ListItem>
                     {/* <Divider /> */}
-                    <Link to={`${match.path}/lesson-plans`} className={classes.links} >
+                    {/* <Link to={`${match.path}/lesson-plans`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
-                                <PlaylistAddCheckIcon />
+                                <PlaylistAddCheckIcon color="primary" />
                             </ListItemIcon>
                             <ListItemText primary="Lesson Plan Check for Selected Teachers" />
                         </ListItem>
-                    </Link>
+                    </Link> */}
                     {/* <Divider /> */}
                     <Link to={`${match.path}/templates/edit`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
-                                <EditIcon />
+                                <EditIcon color="primary" />
                             </ListItemIcon>
                             <ListItemText primary="Update Selected Teachers" />
                         </ListItem>

@@ -42,7 +42,7 @@ class SubmittedObservationsPage extends React.Component {
     }
 
     render() {
-        const { classes, match } = this.props;
+        const { match } = this.props;
         return ( 
             <div>
                 <Typography variant="h5">Submitted Observations</Typography>

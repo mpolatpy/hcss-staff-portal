@@ -37,6 +37,18 @@ const HomePage = () => {
             <div className={classes.card}>
                 <CustomCard
                     className={classes.card}
+                    imageUrl="https://east.hampdencharter.org/wp-content/uploads/2018/03/music-3-420x420.jpg"
+                    title='Lesson Plans'
+                    header="Lesson Plans"
+                    buttonText="View Lesson Plans"
+                    to="/lesson-plans"
+                >
+                    {/* <p>View observations here</p> */}
+                </CustomCard>
+            </div>
+            <div className={classes.card}>
+                <CustomCard
+                    className={classes.card}
                     imageUrl="https://east.hampdencharter.org/wp-content/uploads/2019/12/science-lab.jpg"
                     title='Grade Policy'
                     header="Grade Policy"
@@ -50,21 +62,9 @@ const HomePage = () => {
                 <CustomCard
                     className={classes.card}
                     imageUrl="https://east.hampdencharter.org/wp-content/uploads/2019/12/circles-HAMPDEN-1.png"
-                    title='Observations'
+                    title='Student Achievement'
                     header="Student Achievement"
                     buttonText="View Student Achievement"
-                    to="#"
-                >
-                    {/* <p>View observations here</p> */}
-                </CustomCard>
-            </div>
-            <div className={classes.card}>
-                <CustomCard
-                    className={classes.card}
-                    imageUrl="https://east.hampdencharter.org/wp-content/uploads/2018/03/music-3-420x420.jpg"
-                    title='Observations'
-                    header="Tutoring"
-                    buttonText="View Tutoring Data"
                     to="#"
                 >
                     {/* <p>View observations here</p> */}

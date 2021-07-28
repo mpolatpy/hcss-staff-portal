@@ -5,6 +5,8 @@ import { withRouter } from 'react-router-dom';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
+import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
+
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
@@ -26,7 +28,7 @@ import { selectCurrentYear } from '../../redux/school-year/school-year.selectors
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
- const ObservationTemplatesPage = ({ teachers, currentUser, saveObservationForm, currentYear, history }) => {
+ const ObservationTemplatesPage = ({ teachers, currentUser, saveObservationForm, setSubmissionMessage, currentYear, history }) => {
     const observationForm = { ...INITIAL_STATE };
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
     const [observationType, setObservationType] = useState('');
@@ -86,13 +88,23 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const handleSaveSelection = async () => {
         const ref = firestore.doc(`observationTemplates/${currentUser.id}`);
+        let message;
         setIsLoading(true);
+
         try{
            await ref.set({teachers: selectedTeachers});
+           message = {
+                content: 'Successfully updated selected teachers',
+                status: 'success'
+            };
         }catch (e) {
-            console.log(e.message)
+            message = {
+                content: e.message,
+                status: 'error'
+            };
         }  
         setUpdatingSelection(false);
+        setSubmissionMessage(message);
         setIsLoading(false);
     }
 
@@ -212,7 +224,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-    saveObservationForm: observationForm => dispatch(saveObservationForm(observationForm))
+    saveObservationForm: observationForm => dispatch(saveObservationForm(observationForm)),
+    setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ObservationTemplatesPage));

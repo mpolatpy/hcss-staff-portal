@@ -16,7 +16,7 @@ const SubmittedObservation = ({ observationForm, match, setObservationForm, ...o
             setObservationForm(observation);
         }
         getObservationData();
-    },[ setObservationForm]);
+    },[setObservationForm, match.params.observationId]);
     
     return (
         <>

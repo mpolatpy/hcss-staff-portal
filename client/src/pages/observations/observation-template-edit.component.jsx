@@ -5,6 +5,8 @@ import { withRouter } from 'react-router-dom';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
+import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
+
 import { useStyles } from './observation-template.styles';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
@@ -22,7 +24,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
 
- const ObservationTemplateEditPage = ({ teachers, currentUser, history }) => {
+ const ObservationTemplateEditPage = ({ teachers, currentUser, history, setSubmissionMessage }) => {
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -50,14 +52,25 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
     const handleSaveSelection = async () => {
         const ref = firestore.doc(`observationTemplates/${currentUser.id}`);
+        let message;
+
         setIsLoading(true);
         try{
            await ref.set({teachers: selectedTeachers});
+           message = {
+               content: 'Successfully updated selected teachers',
+               status: 'success'
+           };
         }catch (e) {
-            console.log(e.message)
+            message = {
+                content: e.message,
+                status: 'error'
+            };
         }  
         setIsLoading(false);
-        history.push('/observations');
+        setSubmissionMessage(message);
+        // history.push('/observations');
+        history.goBack();
     }
 
     return (
@@ -112,4 +125,8 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
 });
 
-export default connect(mapStateToProps)(withRouter(ObservationTemplateEditPage));
+const mapDispatchToProps = dispatch => ({
+    setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ObservationTemplateEditPage));

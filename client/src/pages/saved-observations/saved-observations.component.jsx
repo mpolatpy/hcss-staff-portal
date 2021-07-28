@@ -2,6 +2,7 @@ import React from 'react';
 import { fetchSavedObservationsAsync, resetSavedObservations } from '../../redux/saved-observations/saved-observations.actions';
 import { connect } from 'react-redux';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import { createStructuredSelector } from 'reselect';
 import { selectSavedObservationsList } from '../../redux/saved-observations/saved-observations.selectors';
 import { Link } from 'react-router-dom';
@@ -36,8 +37,8 @@ const styles = theme => ({
 class SavedObservations extends React.Component {
 
     componentDidMount() {
-        const {fetchSavedObservations} = this.props;
-        fetchSavedObservations(this.props.currentUser);
+        const {fetchSavedObservations, currentUser, currentYear} = this.props;
+        fetchSavedObservations(currentUser, currentYear);
     }
 
     render(){
@@ -100,11 +101,12 @@ class SavedObservations extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
+    currentYear: selectCurrentYear,
     observations: selectSavedObservationsList,
 });
 
 const mapDispatchToProps = dispatch => ({
-    fetchSavedObservations: (user) => dispatch(fetchSavedObservationsAsync(user)),
+    fetchSavedObservations: (user, year) => dispatch(fetchSavedObservationsAsync(user, year)),
     resetSavedObservations: () => dispatch(resetSavedObservations()),
 });
 

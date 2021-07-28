@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.info.contrastText
         },
-        marginTop: theme.spacing(5),
+        marginTop: theme.spacing(1),
     },
     switch: {
         display: 'flex',

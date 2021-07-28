@@ -43,6 +43,11 @@ export const setObservationNotes = notes => ({
     payload: notes
 });
 
+export const setSubmissionMessage = (message) => ({
+    type: ObservationFormActionTypes.SET_SUBMISSION_MESSAGE,
+    payload: message
+});
+
 export const resetSubmissionMessage = () => ({
     type: ObservationFormActionTypes.RESET_SUBMISSION_MESSAGE,
 });
@@ -56,8 +61,9 @@ const submitObservationFormStart = () => ({
     type: ObservationFormActionTypes.SUBMIT_OBSERVATION_FORM_START,
 });
 
-const submitObservationFormSuccess = () => ({
+const submitObservationFormSuccess = (message) => ({
     type: ObservationFormActionTypes.SUBMIT_OBSERVATION_FORM_SUCCES,
+    payload: message
 });
 
 const submitObservationFormFail = errorMessage => ({
@@ -99,7 +105,7 @@ export const saveObservationForm = (observationFormData) => {
             }else{
                 await newObservationRef.set(observationForm)
             }
-            dispatch(submitObservationFormSuccess());
+            dispatch(submitObservationFormSuccess('Successfully saved the observation form'));
         } catch(e) {
             console.log(e);
             dispatch(submitObservationFormFail(e.message));
@@ -145,6 +151,7 @@ export const submitObservationFormAsync = (observationFormData) => {
             const observationCountRef = await getOrCreateObservationCountsDocRef(observerId, teacher, schoolYear);
             const prevObservationCount = await observationCountRef.get();
             const updatedObservationCount = getUpdatedObservationCount(prevObservationCount, observationType);
+            const notificationRef = firestore.collection(`notifications`).doc(schoolYear).collection(teacher.id).doc();
 
             await firestore.runTransaction(async (transaction) => {
                 transaction.set(newObservationRef, observationForm);
@@ -154,10 +161,17 @@ export const submitObservationFormAsync = (observationFormData) => {
                     const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef.id);
                     transaction.delete(prevRef);
                 }
-                transaction.update(scoreRef, updatedScore)
+
+                transaction.update(scoreRef, updatedScore);
+                transaction.set(notificationRef, {
+                    message: 'You have a new observation',
+                    display: true,
+                    date: observationForm.submittedAt,
+                    viewLink: `/observations/submitted/observation/${newObservationRef.id}`
+                });
             });
             
-            dispatch(submitObservationFormSuccess()); 
+            dispatch(submitObservationFormSuccess('Successfully submitted the observation form')); 
         } catch(e) {
             dispatch(submitObservationFormFail(e.message));
         }

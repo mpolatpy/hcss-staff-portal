@@ -16,7 +16,6 @@ const ObservationFormDetails = (props) => {
     const classes = useStyles();
     const { 
         observationDetails,
-        isSavedObservation, 
         currentUser, 
         setObservationFormDetails, 
         teachers,
@@ -28,7 +27,9 @@ const ObservationFormDetails = (props) => {
     const [ state, setState ] = useState({
         courses: [],
         options: []
-    });
+    }); 
+
+    const canvasId = observationDetails.teacher && observationDetails.teacher.canvasId;
 
     const getCourses = async (id) => {
         let courses =[];
@@ -57,7 +58,7 @@ const ObservationFormDetails = (props) => {
             }))
         );
         
-    },[observationDetails.teacher, observationDetails.teacher && observationDetails.teacher.canvasId]);
+    },[observationDetails.teacher, canvasId]);
 
     const handleChange = async e => {
         const { name, value } = e.target;
@@ -109,7 +110,6 @@ const ObservationFormDetails = (props) => {
                             }
                             name="observationDate"
                             label="Observation Date"
-                            // variant="outlined"
                         />
                         {
                             !readOnly &&

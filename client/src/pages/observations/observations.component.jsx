@@ -8,12 +8,10 @@ import ObservationsOverview from './observations-overview.component';
 import NewObservationPage from '../new-observation/new-observation.component';
 import SavedObservations from '../saved-observations/saved-observations.component';
 import SavedObservationDetail from '../saved-observations/saved-observation-detail.component';
-// import SubmittedObservations from './submitted-observations.component';
 import SubmittedObservations from '../submitted-observations/submitted-observations.page';
 import ObservationTemplatesPage from './observation-template.component';
 import ObservationTemplateEditPage from './observation-template-edit.component';
-import LessonPlanCheckPage from '../lesson-plan-check/lesson-plan-check.component';
-import TeacherHomeComponent from '../../components/teacher-home/teacher-home.component';
+import LessonPlanCheckPage from '../lesson-plan/lesson-plan-check.component';
 
 const Observations = (props) => {
     const {match, currentUser} = props;
@@ -44,7 +42,7 @@ const Observations = (props) => {
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser
-})
+});
 
 
 export default connect(mapStateToProps)(Observations);

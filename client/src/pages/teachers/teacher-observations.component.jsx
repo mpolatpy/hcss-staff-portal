@@ -9,19 +9,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 const TeacherObservationsDetailPage = ({observationType, teacher, currentYear}) => {
 
     const teacherId = teacher.id;
-    const [state, setState] = useState({
-        observations: [],
-        isLoading: false
-    });
+    const [observations, setObservations] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchInitialObservationData = async () => {  
             try{
-                setState({
-                    ...state,
-                    isLoading: true
-                });
-
                 const observationsRef = firestore.collection('observations')
                     .where('teacherid', '==', teacherId)
                     .where('observationDetails.schoolYear', '==', currentYear)
@@ -31,26 +24,24 @@ const TeacherObservationsDetailPage = ({observationType, teacher, currentYear}) 
                 const snapshot = await observationsRef.get();
                 const fetchedObservations = snapshot.docs.map(doc => doc.data());
 
-                setState({
-                    observations: fetchedObservations,
-                    isLoading: false
-                });
+                setObservations(fetchedObservations);
 
             } catch(e){
                 console.log(e.message);
             }
         }
-        
+        setIsLoading(true);
         fetchInitialObservationData();
+        setIsLoading(false);
     },[teacherId, currentYear, observationType]);
 
     return ( 
         <div>
             {
-            state.isLoading ? (<CircularProgress />) : (
+            isLoading ? (<CircularProgress />) : (
                 <>
                 <Typography variant="h5"> {`${observationType}s - ${teacher.firstName} ${teacher.lastName}`}</Typography>
-                <ObservationTableByType observations={state.observations} />
+                <ObservationTableByType observations={observations} />
                 </>
             )
             }
