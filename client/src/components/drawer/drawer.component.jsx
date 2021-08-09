@@ -212,7 +212,7 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                     
                     }
 
-                    <Link to="#" className={classes.links}>
+                    <Link to="/important-links" className={classes.links}>
                         <ListItem button key={"links"}>
                             <ListItemIcon><LinkIcon className={classes.menuIcon} /></ListItemIcon>
                             <ListItemText primary={"Important Links"} />

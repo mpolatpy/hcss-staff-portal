@@ -18,7 +18,7 @@ import { Typography } from '@material-ui/core';
 const styles = theme => ({
     root: {
         width: '100%',
-        marginTop: theme.spacing(5),
+        marginTop: theme.spacing(1),
         border: "1px solid",
         borderColor: "#d3d3d3",
         borderRadius: "5px",

@@ -21,6 +21,8 @@ import TeacherListOverview from './pages/teachers/teachers-overview.component';
 import Directory from './pages/teachers/teacher-list.component';
 import SettingsPage from './pages/settings/settings-page';
 import LessonPlans from './pages/lesson-plan/lesson-plan.routes';
+import ScrollToTop from './components/scroll-to-top/scroll-to-top.component';
+import ImportantLinks from './pages/important-links/important-links.component';
 
 function App(props) {
 
@@ -77,6 +79,7 @@ function App(props) {
           {!currentUser ?
           <Redirect to='/' /> :
           <MiniDrawer handleChange={handleChange} year={currentYear}>
+            <ScrollToTop />
             <Switch>
               <Route exact path="/directory" component={Directory}/>
               <Route exact path="/register" component={UserRegistrationPage}/>
@@ -84,6 +87,7 @@ function App(props) {
               <Route path="/home" component={HomePage}  /> 
               <Route path="/observations" component={Observations} />
               <Route path="/lesson-plans" component={LessonPlans} />
+              <Route path="/important-links" component={ImportantLinks} />
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}
               />

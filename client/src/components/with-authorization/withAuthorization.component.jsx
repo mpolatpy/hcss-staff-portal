@@ -6,7 +6,7 @@ const withAuthorization = (allowedRoles) => (WrappedComponent) => {
     const Authorization = ({ currentUser, ...otherProps }) => {
 
         return currentUser && allowedRoles.includes(currentUser.role) ? ( 
-            <WrappedComponent {...otherProps}/>
+            <WrappedComponent currentUser={currentUser} {...otherProps}/>
         ) : ( 
             <div>
                 <h1>You do not have access to this page.</h1>

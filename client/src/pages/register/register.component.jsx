@@ -47,23 +47,6 @@ const UserRegistrationPage = (props) => {
 
             await createUserProfileDocument(user, 
                 { firstName, lastName, school, role, department, courses, canvasId });
-
-            setStaff({
-                firstName: '',
-                lastName: '',
-                email: '',
-                password: '',
-                school: '',
-                role: '',
-                jobTitle: '',
-                department: '',
-                courses: [],
-                canvasId:'',
-                submissionMessage: {
-                    type: 'success',
-                    text: 'User saved successfully.'
-                }
-            });
             
         } catch (error) {
             setStaff({
@@ -76,6 +59,8 @@ const UserRegistrationPage = (props) => {
         } finally {
             setIsLoading(false);
         }
+
+        auth.signOut();
     };
 
     return ( 

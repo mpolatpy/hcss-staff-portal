@@ -59,7 +59,7 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
                     </>
                 ):( 
                     <div>
-                        <h2>No saved lesson plan checks.</h2>
+                        <h2>Please initialize lesson plan checks for selected teachers.</h2>
                         <div style={{ marginTop: '20px'}}>
                             <Button color="primary" variant="contained" onClick={() => setLessonPlans(currentUser.id)}>Create</Button>
                             <Button color="primary" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
@@ -82,7 +82,7 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = dispatch => ({
     setLessonPlans: (currentUserId) => dispatch(setLessonPlans(currentUserId)),
     resetLessonPlans: () => dispatch(resetLessonPlanChecks()),
-    submitLessonPlanCheck: (lessonPlan, year, teachers ) => dispatch(submitLessonPlanCheck(lessonPlan, year, teachers))
+    submitLessonPlanCheck: (lessonPlan, year, teachers ) => dispatch(submitLessonPlanCheck(lessonPlan, year, teachers)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(LessonPlanCheckPage);

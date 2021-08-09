@@ -52,6 +52,20 @@ export const submitLessonPlanCheckFail = (message) => ({
     payload: message
 });
 
+export const saveLessonPlanCheckStart = () => ({
+    type: LessonPlanActionTypes.SAVE_LESSON_PLAN_CHECK_START
+});
+
+export const saveLessonPlanCheckSuccess = (updatedTeacherList) => ({
+    type: LessonPlanActionTypes.SAVE_LESSON_PLAN_CHECK_SUCCESS,
+    payload: updatedTeacherList
+});
+
+export const saveLessonPlanCheckFail = (message) => ({
+    type: LessonPlanActionTypes.SAVE_LESSON_PLAN_CHECK_FAIL,
+    payload: message
+});
+
 export const submitLessonPlanCheck = (lessonPlan, year, selectedTeachers) => {
     const { teacher } = lessonPlan;
     const updatedTeacherList = selectedTeachers.filter ( element => element.id !== teacher.id );

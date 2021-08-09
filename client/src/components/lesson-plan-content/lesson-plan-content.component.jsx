@@ -22,7 +22,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teachers, setSubmissionMessage }) => {
+const Content = ({teacher, submitLessonPlanCheck, saveLessonPlanCheck, observer, currentYear, teachers, setSubmissionMessage }) => {
     const classes = useStyles();
     const [ isFetching, setIsFetching ] = useState(false);
     const [ lessonPlanScores, setLessonPlanScores ] = useState({
@@ -98,7 +98,6 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                 status: 'error'
             });
         }
-        
     };
 
     const handleNoteChange = (e) => {
@@ -283,7 +282,7 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                     }
                 </div>
                 <div style={{ marginTop: '15px'}}>
-                    <Button onClick={handleSubmit} color="primary" variant="contained">Submit</Button>
+                    <Button onClick={handleSubmit} color="primary" variant="contained" >Submit</Button>
                 </div>
                 </>
             )

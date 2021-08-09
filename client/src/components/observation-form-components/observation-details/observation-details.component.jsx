@@ -26,7 +26,8 @@ const ObservationFormDetails = (props) => {
 
     const [ state, setState ] = useState({
         courses: [],
-        options: []
+        options: [], 
+        canvasId: null
     }); 
 
     const canvasId = observationDetails.teacher && observationDetails.teacher.canvasId;
@@ -50,13 +51,28 @@ const ObservationFormDetails = (props) => {
     }
     
     useEffect(() => { 
-        observationDetails.teacher && ( 
-            getCourses(observationDetails.teacher.canvasId)
-            .then(fetchedCourses => setState({
-                courses: fetchedCourses,
-                options: fetchedCourses.map( c => c.name)
-            }))
-        );
+        if(observationDetails.teacher){
+
+            setState({
+                ...state,
+                canvasId: observationDetails.teacher.canvasId
+            });
+
+            getCourses(observationDetails.teacher.canvasId).then(
+                fetchedCourses => setState({
+                    ...state,
+                    courses: fetchedCourses,
+                    options: fetchedCourses.map( c => c.name)
+            }));
+        }
+
+        return () => {
+            setState({
+                courses: [],
+                options: [], 
+                canvasId: null
+            });
+        }
         
     },[observationDetails.teacher, canvasId]);
 

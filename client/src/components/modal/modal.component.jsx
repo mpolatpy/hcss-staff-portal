@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
   },
   paper: {
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid #d3d3d3',
     boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)",
     // boxShadow: theme.shadows[5],
@@ -34,7 +34,7 @@ export default function CustomModal({ modalBody,modalIcon, color}) {
 
   return (
     <div>
-      <IconButton onClick={handleOpen} color={color}>
+      <IconButton onClick={handleOpen} color={color} >
         {modalIcon}
       </IconButton>
 

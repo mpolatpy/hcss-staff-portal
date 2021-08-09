@@ -17,7 +17,6 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import NotesIcon from '@material-ui/icons/Notes';
 import CachedIcon from '@material-ui/icons/Cached';
-
 import Stepper from '@material-ui/core/Stepper'; 
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -51,10 +50,12 @@ const ObservationPage = (props) => {
     const handleNext = (e) => {
         e.preventDefault();
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
+        window.scrollTo(0, 0);
     };
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
+        // window.scrollTo(0, 0);
     };
 
     const handleReset = () => {
@@ -203,79 +204,12 @@ const ObservationPage = (props) => {
                                         ]}
                                     />
                                 </div>
-                                {/* {
-                                    !readOnly ? (
-                                        <div className={classes.resetSaveButtons}>
-                                            <CustomModal
-                                                buttonStyle={classes.button}
-                                                buttonText="Notes"
-                                                color="primary"
-                                                modalBody={( 
-                                                    <div style={{width: '60vw'}}>
-                                                        <CustomTextArea />
-                                                    </div>
-                                                )}
-                                            />
-
-                                            {
-                                                observationForm.isSavedObservation ?
-                                                    (
-                                                    <CustomModal
-                                                        buttonStyle={classes.button}
-                                                        buttonText="Delete"
-                                                        color="secondary"
-                                                        modalBody={( 
-                                                            <div>
-                                                                <Typography variant="h5">
-                                                                    Please Confirm Delete
-                                                                </Typography>
-                                                                <p>Once deleted, you will not be able to retrieve this observation back</p>
-                                                                <div>
-                                                                <Button
-                                                                type="submit"
-                                                                variant="contained"
-                                                                color="secondary"
-                                                                onClick={handleDelete}
-                                                                className={classes.button}
-                                                                >
-                                                                    Delete
-                                                                </Button>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    />
-                                                    ) : (
-                                                    <Button
-                                                        // disabled={activeStep === 0}
-                                                        // variant="outlined"
-                                                        color="secondary"
-                                                        onClick={handleReset}
-                                                        className={classes.button}
-                                                    >
-                                                        Reset
-                                                    </Button>
-                                                    )
-                                            }
-                                            <Button
-                                                disabled={activeStep === 0}
-                                                type="submit"
-                                                // variant="outlined"
-                                                color="primary"
-                                                onClick={handleSave}
-                                                className={classes.button}
-                                            >
-                                                Save
-                                            </Button>
-                                        </div>
-                                    ) : null
-                                } */}
                             </div>
                             </form>
                         </StepContent>
                     </Step>
                 ))}
             </Stepper>
-            
             
         </div>
     );

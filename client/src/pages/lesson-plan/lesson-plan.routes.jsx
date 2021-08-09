@@ -20,7 +20,7 @@ const LessonPlans = (props) => {
                     <LessonPlanPage {...props} />
                 )
             }
-            </Route>
+        </Route>
         <Route exact path={`${match.path}/check`}  component={LessonPlanCheckPage}/>
         <Route exact path={`${match.path}/submitted`}  component={SubmittedLessonPlans}/>
     </>

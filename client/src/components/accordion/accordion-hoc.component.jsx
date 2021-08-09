@@ -46,7 +46,6 @@ const AccordionHOC = (AccordionHeader, AccordionContent) => {
                         <AccordionContent {...props} />
                     </AccordionDetails>
                 </Accordion>
-        
             </div>
         );
     };

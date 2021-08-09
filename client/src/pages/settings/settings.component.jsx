@@ -9,31 +9,44 @@ const SettingsPageComponent = ({currentUser, match}) => {
     return (
         <div>
             <Typography variant="h4">Settings</Typography>
-            <Divider/>
+            {/* <Divider/> */}
             <List component="nav" aria-label="settings">
                 <Link to={`${match.path}/change-password`} style={{textDecoration: 'none',}}>
                     <ListItem button>
                         <ListItemText primaryTypographyProps={{color:"primary"}} primary="Change Password" />
                     </ListItem>
                 </Link>
-                <ListItem button>
-                    <ListItemText primaryTypographyProps={{color:"primary"}} primary="Other Items" />
-                </ListItem>
+                <Divider/>
                 {
                     currentUser.role === 'superadmin' ?
-                    (<Link to="/register" style={{textDecoration: 'none',}}>
+                    ( <>
+                    <Link to="/register" style={{textDecoration: 'none',}}>
                         <ListItem button>
                             <ListItemText primaryTypographyProps={{color:"primary"}} primary="Add User" />
                         </ListItem>
-                    </Link>): null
+                    </Link>
+                    <Divider/>
+                    <Link to={`${match.path}/add-link`} style={{textDecoration: 'none',}}>
+                        <ListItem button>
+                            <ListItemText primaryTypographyProps={{color:"primary"}} primary="Add New Link" />
+                        </ListItem>
+                    </Link>
+                    <Divider/>
+                    </>
+                    ): null
                 }
                 {
                     ['superadmin', 'admin', 'dci'].includes(currentUser.role) ?
-                    (<Link to="/observations/templates/edit" style={{textDecoration: 'none',}}>
+                    (
+                    <>
+                    <Link to="/observations/templates/edit" style={{textDecoration: 'none',}}>
                         <ListItem button>
                             <ListItemText primaryTypographyProps={{color:"primary"}} primary="Update Selected Teachers" />
                         </ListItem>
-                    </Link>): null
+                    </Link>
+                    <Divider/>
+                    </>
+                    ): null
                 }
             </List>
         </div>

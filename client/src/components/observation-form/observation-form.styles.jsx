@@ -9,7 +9,7 @@ export const useStyles = makeStyles((theme) => ({
         borderRadius: "5px",
         backgroundColor: theme.palette.background.paper,
         boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)",
-        padding: theme.spacing(5)
+        padding: theme.spacing(3)
     },
     button: {
         marginTop: theme.spacing(1),
