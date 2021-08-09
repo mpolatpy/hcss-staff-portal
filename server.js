@@ -3,6 +3,7 @@ const express = require('express');
 // const bodyParser = require('body-parser');
 const path = require('path');
 const axios = require('axios');
+const { nextTick } = require('process');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -18,15 +19,19 @@ app.use(express.urlencoded({ extended: true }));
 
 if (process.env.NODE_ENV === 'production') {
 
-    app.use(express.static(path.join(__dirname, 'client/build')));
-
-    app.get('*', function (req, res) {
+    app.all('*', function (req, res, next) {
         if (req.get('x-forwarded-proto') != "https") {
             res.set('x-forwarded-proto', 'https');
             res.redirect('https://' + req.get('host') + req.url);
         } else {
-            res.sendFile(path.join(__dirname, 'client/build', 'index.html'));    
+            next();    
         }
+    });
+
+    app.use(express.static(path.join(__dirname, 'client/build')));
+
+    app.get('*', function (req, res) {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));    
     });
 }
 
