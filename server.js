@@ -17,10 +17,16 @@ app.use(express.urlencoded({ extended: true }));
 // app.use(cors());
 
 if (process.env.NODE_ENV === 'production') {
+
     app.use(express.static(path.join(__dirname, 'client/build')));
 
     app.get('*', function (req, res) {
-        res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
+        if (req.get('x-forwarded-proto') != "https") {
+            res.set('x-forwarded-proto', 'https');
+            res.redirect('https://' + req.get('host') + req.url);
+        } else {
+            res.sendFile(path.join(__dirname, 'client/build', 'index.html'));    
+        }
     });
 }
 
