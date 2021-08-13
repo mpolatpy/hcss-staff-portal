@@ -9,7 +9,7 @@ import Alert from '@material-ui/lab/Alert';
 
 import useStyles from "./sign-in.styles";
 
-import { auth } from '../../firebase/firebase.utils';
+import { auth, firestore } from '../../firebase/firebase.utils';
 
 function SignInForm({ history })  {
 
@@ -30,6 +30,22 @@ function SignInForm({ history })  {
         event.preventDefault();
         const { email, password } = state;
 
+        // const userRef = firestore.collection('users').where('email', '==', email)
+        // const snapShot = await userRef.get();
+        // console.log(snapShot);
+        // let user;
+
+        // if(!snapShot.empty) user = snapShot.docs[0].data();
+
+        // if(user && !user.isActive){
+        //     setState({
+        //         ...state,
+        //         errorMessage: 'Inactive account. Please contact your administrator.'
+        //     });
+
+        //     return;
+        // }
+
         try {
             await auth.signInWithEmailAndPassword(email, password);
             setState({ email: '', password: '', errorMessage:'' });
@@ -39,6 +55,7 @@ function SignInForm({ history })  {
                 password:'', 
                 errorMessage: "Invalid username or password. Please try again."
             });
+            console.log(error.message)
         }
     }
 
@@ -84,7 +101,7 @@ function SignInForm({ history })  {
                         <Alert className={classes.errorMessage} severity="error">{state.errorMessage}</Alert>:
                         null
                     }
-                    <Button fullWidth className={classes.sign_in_button} type="submit" variant="contained">Submit</Button>
+                    <Button fullWidth className={classes.sign_in_button} type="submit" variant="contained">Signin</Button>
                 </form>
                 </div>
             </Grid>

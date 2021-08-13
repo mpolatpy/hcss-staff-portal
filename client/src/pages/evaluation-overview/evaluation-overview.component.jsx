@@ -59,7 +59,7 @@ const EvaluationOverview = ({ match, currentYear }) => {
                     <Link
                         to={`${match.path}/home/${params.value}`}
                     >
-                        <OpenInNewIcon size="small" />
+                        <OpenInNewIcon fontSize="small" />
                     </Link>
             ),
             width: 50

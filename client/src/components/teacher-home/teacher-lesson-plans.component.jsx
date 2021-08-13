@@ -98,7 +98,7 @@ const TeacherLessonPlansComponent = ({teacher, currentYear}) => {
                                     </Table>
                                 </TableContainer>
                                 </Grid>
-                                <Grid xs={false} md={6}></Grid>
+                                <Grid xs={false} md={6} item></Grid>
                             </Grid>
                             )
                         }

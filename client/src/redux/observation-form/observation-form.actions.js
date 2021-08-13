@@ -152,6 +152,7 @@ export const submitObservationFormAsync = (observationFormData) => {
             const prevObservationCount = await observationCountRef.get();
             const updatedObservationCount = getUpdatedObservationCount(prevObservationCount, observationType);
             const notificationRef = firestore.collection(`notifications`).doc(schoolYear).collection(teacher.id).doc();
+            const emailRef = firestore.collection("emails").doc();
 
             await firestore.runTransaction(async (transaction) => {
                 transaction.set(newObservationRef, observationForm);
@@ -169,6 +170,14 @@ export const submitObservationFormAsync = (observationFormData) => {
                     date: observationForm.submittedAt,
                     viewLink: `/observations/submitted/observation/${newObservationRef.id}`
                 });
+                transaction.set(emailRef, ({
+                    to: teacher.email,
+                    message: {
+                        subject: `New Observation Notification`,
+                        text: `Hello ${teacher.firstName}. You have a new observation`,
+                        // html: "This is the <code>HTML</code> section of the email body.",
+                    },
+                }));
             });
             
             dispatch(submitObservationFormSuccess('Successfully submitted the observation form')); 

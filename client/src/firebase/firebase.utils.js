@@ -3,23 +3,23 @@ import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
-const config = {
-    apiKey: "AIzaSyBmUYI-PpxVSuO6VRe4onM80u2TbE8AHYU",
-    authDomain: "hcss-staff-portal.firebaseapp.com",
-    projectId: "hcss-staff-portal",
-    storageBucket: "hcss-staff-portal.appspot.com",
-    messagingSenderId: "365499006292",
-    appId: "1:365499006292:web:cae201fd244f6d60ab9cc1"
-};
-
 // const config = {
-//     apiKey: "AIzaSyCC9d9CLyRbXJwGNUBhB2wfjKFGnTnaBDQ",
-//     authDomain: "hcss-staff-portal-8562d.firebaseapp.com",
-//     projectId: "hcss-staff-portal-8562d",
-//     storageBucket: "hcss-staff-portal-8562d.appspot.com",
-//     messagingSenderId: "429574787652",
-//     appId: "1:429574787652:web:25b7a43f9c3eaa7e1ca211"
-// }
+//     apiKey: "AIzaSyBmUYI-PpxVSuO6VRe4onM80u2TbE8AHYU",
+//     authDomain: "hcss-staff-portal.firebaseapp.com",
+//     projectId: "hcss-staff-portal",
+//     storageBucket: "hcss-staff-portal.appspot.com",
+//     messagingSenderId: "365499006292",
+//     appId: "1:365499006292:web:cae201fd244f6d60ab9cc1"
+// };
+
+const config = {
+    apiKey: "AIzaSyCC9d9CLyRbXJwGNUBhB2wfjKFGnTnaBDQ",
+    authDomain: "hcss-staff-portal-8562d.firebaseapp.com",
+    projectId: "hcss-staff-portal-8562d",
+    storageBucket: "hcss-staff-portal-8562d.appspot.com",
+    messagingSenderId: "429574787652",
+    appId: "1:429574787652:web:25b7a43f9c3eaa7e1ca211"
+};
 
 firebase.initializeApp(config);
 
@@ -37,6 +37,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
             await userRef.set({
                 email,
                 createdAt,
+                isActive: true,
                 ...additionalData
             });
         } catch (error) {

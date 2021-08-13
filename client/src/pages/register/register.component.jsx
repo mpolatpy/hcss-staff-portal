@@ -6,6 +6,7 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import RegistrationForm from '../../components/registration-form/registration-form.component';
 import WithAuthorization from '../../components/with-authorization/withAuthorization.component';
 import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
+import { sendRegistrationEmail } from '../../firebase/email-templates';
 
 const UserRegistrationPage = (props) => {
     
@@ -47,6 +48,8 @@ const UserRegistrationPage = (props) => {
 
             await createUserProfileDocument(user, 
                 { firstName, lastName, school, role, department, courses, canvasId });
+            
+            sendRegistrationEmail(email, password, firstName, lastName);
             
         } catch (error) {
             setStaff({

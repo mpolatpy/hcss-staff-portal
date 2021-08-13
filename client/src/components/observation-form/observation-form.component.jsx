@@ -192,7 +192,7 @@ const ObservationPage = (props) => {
                                                 <IconButton
                                                     aria-label="reset"
                                                     onClick={handleReset}
-                                                    className={classes.button}
+                                                    // className={classes.button}
                                                 >
                                                     <CachedIcon />
                                                 </IconButton>
