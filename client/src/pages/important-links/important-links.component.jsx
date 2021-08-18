@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { firestore } from '../../firebase/firebase.utils';
+import { filterLinks } from './important-links.utils';
 import { List, Link, ListItem, Typography, CircularProgress, Paper, Divider } from '@material-ui/core';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import StarIcon from '@material-ui/icons/Star';
@@ -46,7 +47,8 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
         const fetchLinks = async () => {
             const linksRef = firestore.doc('links/data');
             const linkSnapshot = await linksRef.get();
-            const fetchedLinks = linkSnapshot.exists ? linkSnapshot.data().all : [];
+            let fetchedLinks = linkSnapshot.exists ? linkSnapshot.data().all : [];
+            fetchedLinks = filterLinks(fetchedLinks, currentUser);
 
             const links = {};
 
@@ -140,7 +142,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
             <div>
                 <div>
                 <Paper variant="outlined" style={{ padding: '18px', marginBottom: '10px'}}>
-                    <Typography variant="h5">Favorites</Typography>
+                    <Typography variant="h5">Quick Access</Typography>
                     <Divider/>
                 {favorites.length ? ( 
                     <List>
@@ -150,7 +152,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                                 <Link href={link.url} variant="subtitle1" target="_blank" rel="noopener">
                                     {link.label}
                                 </Link>
-                                <Tooltip title="Remove From Favorites">
+                                <Tooltip title="Remove From Quick Access">
                                     <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => removeFromFavorites(link.ref)} aria-label={`add-to-favorites-${i}`}>
                                         <DeleteOutlineIcon fontSize="small" />
                                     </IconButton>
@@ -161,7 +163,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                     </List>
                 
                  ): (
-                     <Typography style={{marginTop: '10px'}}>You can add links to your favorites by clicking the star next to each link.</Typography>
+                     <Typography style={{marginTop: '10px'}}>You can add links to quick access by clicking the star next to each link.</Typography>
                  )}
                  </Paper>
             </div>
@@ -215,13 +217,13 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                                             {
                                                 favoriteUrls.includes( link.url ) ?
                                                 (
-                                                    <Tooltip title="Already in Favorites">
+                                                    <Tooltip title="Already in Quick Access">
                                                         <IconButton style={{marginLeft:'10px'}} size="small" aria-label={`add-to-favorites-${item}-${i}`}>
                                                             <StarIcon color="primary" fontSize="small" />
                                                         </IconButton>
                                                     </Tooltip>
                                                 ) : (
-                                                <Tooltip title="Add to Favorites">
+                                                <Tooltip title="Add to Quick Access">
                                                     <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => addToFavorites(link)} aria-label={`add-to-favorites-${item}-${i}`}>
                                                         <StarBorderIcon fontSize="small" />
                                                     </IconButton>

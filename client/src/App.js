@@ -23,6 +23,7 @@ import SettingsPage from './pages/settings/settings-page';
 import LessonPlans from './pages/lesson-plan/lesson-plan.routes';
 import ScrollToTop from './components/scroll-to-top/scroll-to-top.component';
 import ImportantLinks from './pages/important-links/important-links.component';
+import ParentCommunicationPage from './pages/parent-communication/parent-communication.page';
 
 function App(props) {
 
@@ -88,6 +89,7 @@ function App(props) {
               <Route path="/observations" component={Observations} />
               <Route path="/lesson-plans" component={LessonPlans} />
               <Route path="/important-links" component={ImportantLinks} />
+              <Route path="/parent-communication" component={ParentCommunicationPage} />
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}
               />

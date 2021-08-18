@@ -3,11 +3,14 @@ const express = require('express');
 // const bodyParser = require('body-parser');
 const path = require('path');
 const axios = require('axios');
-const { nextTick } = require('process');
+const {PowerSchoolClient} = require('./powerschool');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 const CANVAS_ACCESS_KEY = process.env.CANVAS_ACCESS_KEY;
+const PS_CLIENT_ID = process.env.PS_CLIENT_ID;
+const PS_CLIENT_SECRET = process.env.PS_CLIENT_SECRET;
+const powerSchool = new PowerSchoolClient(PS_CLIENT_ID, PS_CLIENT_SECRET);
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -46,5 +49,14 @@ app.post('/canvas-courses', (req, res) => {
 
     axios.get(URL, { headers: { Authorization: 'Bearer ' + CANVAS_ACCESS_KEY}})
         .then( (response) => res.status(200).send( response.data ) )
-        .catch( err => res.send({ error: err.message  }))
-})
+        .catch( e => res.send({ error: e.message  }))
+});
+
+app.post('/get-powerschool-data', (req, res) => {
+    const url = req.body.url;
+    const queryParam = req.body.queryParam || null;
+
+    powerSchool.fetchData(url, queryParam)
+        .then( (response) => res.send( response ) )
+        .catch( e => res.send({ error: e  }))
+});

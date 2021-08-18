@@ -25,7 +25,7 @@ const ProfilePage = ({ currentUser }) => {
         }
         
         handleGetCourses();
-    }, [currentUser.canvasId]);    
+    }, [currentUser.canvasId]);   
 
     return ( 
         <div className={classes.profilePage}>
@@ -35,8 +35,7 @@ const ProfilePage = ({ currentUser }) => {
                 <Typography variant="subtitle1">Name: {`${currentUser.firstName} ${currentUser.lastName}`}</Typography>
                 <Typography>School: {currentUser.school}</Typography>
                 <Typography>Department: {currentUser.department}</Typography>
-                <Typography>Role: {currentUser.role}</Typography>
-                <Typography>Username: {currentUser.displayName}</Typography>
+                <Typography>Role: {currentUser.jobTitle}</Typography>
             </div>
             <div className={classes.profileCard}>
                 <Typography variant="h5">Courses</Typography>

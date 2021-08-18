@@ -26,12 +26,6 @@ const SettingsPageComponent = ({currentUser, match}) => {
                         </ListItem>
                     </Link>
                     <Divider/>
-                    <Link to={`${match.path}/add-link`} style={{textDecoration: 'none',}}>
-                        <ListItem button>
-                            <ListItemText primaryTypographyProps={{color:"primary"}} primary="Add New Link" />
-                        </ListItem>
-                    </Link>
-                    <Divider/>
                     </>
                     ): null
                 }
@@ -39,6 +33,12 @@ const SettingsPageComponent = ({currentUser, match}) => {
                     ['superadmin', 'admin', 'dci'].includes(currentUser.role) ?
                     (
                     <>
+                    <Link to={`${match.path}/add-link`} style={{textDecoration: 'none',}}>
+                        <ListItem button>
+                            <ListItemText primaryTypographyProps={{color:"primary"}} primary="Add New Link" />
+                        </ListItem>
+                    </Link>
+                    <Divider/>
                     <Link to="/observations/templates/edit" style={{textDecoration: 'none',}}>
                         <ListItem button>
                             <ListItemText primaryTypographyProps={{color:"primary"}} primary="Update Selected Teachers" />

@@ -39,6 +39,7 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
         department: teacher.department,
         email: teacher.email,
         school: teacher.school,
+        status: teacher.isActive ? 'Active' : 'Inactive',
         id: teacher.id
     }));
     
@@ -64,6 +65,7 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
         { field: 'department', headerName: 'Department', flex: 1, headerClassName: 'teacher-list-header', },
         { field: 'school', headerName: 'School', flex: 1, headerClassName: 'teacher-list-header', },
         { field: 'email', headerName: 'Email', flex: 1.5, headerClassName: 'teacher-list-header', },
+        { field: 'status', headerName: 'Status', flex: 1, headerClassName: 'teacher-list-header',},
     ]
 
     return ( 

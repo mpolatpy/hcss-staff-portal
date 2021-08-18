@@ -62,10 +62,10 @@ const HomePage = () => {
                 <CustomCard
                     className={classes.card}
                     imageUrl="https://east.hampdencharter.org/wp-content/uploads/2019/12/circles-HAMPDEN-1.png"
-                    title='Student Achievement'
-                    header="Student Achievement"
-                    buttonText="View Student Achievement"
-                    to="#"
+                    title='Parent Communications'
+                    header="Parent Communication"
+                    buttonText="View Parent Communications"
+                    to="/parent-communication"
                 >
                     {/* <p>View observations here</p> */}
                 </CustomCard>

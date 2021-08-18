@@ -8,7 +8,7 @@ import WithAuthorization from '../../components/with-authorization/withAuthoriza
 import { auth, createUserProfileDocument } from '../../firebase/firebase.utils';
 import { sendRegistrationEmail } from '../../firebase/email-templates';
 
-const UserRegistrationPage = (props) => {
+const UserRegistrationPage = () => {
     
     const [staff, setStaff] = useState({
         firstName:'',
@@ -20,10 +20,11 @@ const UserRegistrationPage = (props) => {
         jobTitle: '',
         department: '',
         canvasId:'',
+        powerSchoolId: '',
         courses: [],
-        submissionMessage: null
     });
 
+    const [submissionMessage, setSubmissionMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = e => {
@@ -36,7 +37,7 @@ const UserRegistrationPage = (props) => {
 
     const handleSubmit = async event => {
         event.preventDefault();
-        const { firstName, lastName, email, password, school, role,  department, courses, canvasId} = staff;
+        const { firstName, lastName, email, password, ...otherDetails} = staff;
 
         try {
             setIsLoading(true);
@@ -45,25 +46,20 @@ const UserRegistrationPage = (props) => {
                 email,
                 password
             );
-
             await createUserProfileDocument(user, 
-                { firstName, lastName, school, role, department, courses, canvasId });
+                { firstName, lastName, ...otherDetails });
             
             sendRegistrationEmail(email, password, firstName, lastName);
             
+            auth.signOut();
         } catch (error) {
-            setStaff({
-                ...staff,
-                submissionMessage: {
-                    type: 'error',
-                    text: error.message
-                }
+            setSubmissionMessage({
+                type: 'error',
+                text: error.message
             });
         } finally {
             setIsLoading(false);
         }
-
-        auth.signOut();
     };
 
     return ( 
@@ -73,6 +69,7 @@ const UserRegistrationPage = (props) => {
                 handleChange={handleChange}
                 staff={staff}
                 isLoading={isLoading}
+                submissionMessage={submissionMessage}
             />
         </div>
     );

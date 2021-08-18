@@ -30,18 +30,12 @@ const LessonPlanTable = ({teachers, lessonPlanSummary}) => {
                     <Table stickyHeader >
                         <TableHead className="lesson-plan-header">
                             <TableRow>
-                                <TableCell rowSpan={2} >Teacher</TableCell>
-                                <TableCell rowSpan={2} >School</TableCell>
-                                <TableCell rowSpan={2} >Department</TableCell>
-                                <TableCell align="center" colSpan={2}>Percent Submitted</TableCell>
-                                <TableCell align="center" colSpan={2}>On Time</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                {/* <TableCell>Teacher</TableCell> */}
+                                <TableCell>Teacher</TableCell>
+                                <TableCell>School</TableCell>
+                                <TableCell>Department</TableCell>
                                 <TableCell align="center"># of Scores</TableCell>
-                                <TableCell align="center">%</TableCell>
-                                <TableCell align="center"># of Scores</TableCell>
-                                <TableCell align="center">%</TableCell>
+                                <TableCell align="center">Percent Submitted</TableCell>
+                                <TableCell align="center">On Time</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -58,7 +52,6 @@ const LessonPlanTable = ({teachers, lessonPlanSummary}) => {
                                 <TableCell >{teacher.department}</TableCell>
                                 <TableCell align="center">{lesson.percentSubmitted.numScores}</TableCell>
                                 <TableCell align="center">{(lesson.percentSubmitted.rate).toFixed(1)}</TableCell>
-                                <TableCell align="center">{lesson.onTime.numScores}</TableCell>
                                 <TableCell align="center">{(lesson.onTime.rate).toFixed(1)}</TableCell>
                             </TableRow>
                         )})

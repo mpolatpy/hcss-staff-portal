@@ -83,7 +83,7 @@ const TeacherListOverview = (props) => {
 
 const mapStateToProps = createStructuredSelector({
     isLoaded: state => selectIsTeachersLoaded(state),
-    currentYear: selectCurrentYear
+    currentYear: selectCurrentYear,
 });
 
 export default connect(mapStateToProps)(TeacherListOverview);

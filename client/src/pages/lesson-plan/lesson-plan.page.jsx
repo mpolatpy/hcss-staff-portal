@@ -58,7 +58,7 @@ const LessonPlanPage = ({ match }) => {
                     <ListItemIcon>
                         <TelegramIcon color="primary" />
                     </ListItemIcon>
-                    <ListItemText primary="Submitted Lesson Plans" />
+                    <ListItemText primary="Submitted Lesson Plans - Selected Teachers" />
                 </ListItem>
             </Link>
             <Link to="/observations/templates/edit" className={classes.links} >

@@ -145,6 +145,7 @@ export const submitObservationFormAsync = (observationFormData) => {
         dispatch(submitObservationFormStart());
         try{
             const schoolYear = observationDetails.schoolYear;
+            
             const scoreRef = await getOrCreateScoreDocument(teacher, schoolYear, observationType);
             const prev = await scoreRef.get();
             const updatedScore = getUpdatedObservationScore(prev, observationFormData);
@@ -156,13 +157,13 @@ export const submitObservationFormAsync = (observationFormData) => {
 
             await firestore.runTransaction(async (transaction) => {
                 transaction.set(newObservationRef, observationForm);
-                transaction.set(observationCountRef, updatedObservationCount);
 
                 if (observationFormData.isSavedObservation) {
                     const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef.id);
                     transaction.delete(prevRef);
                 }
-
+                
+                transaction.set(observationCountRef, updatedObservationCount);
                 transaction.update(scoreRef, updatedScore);
                 transaction.set(notificationRef, {
                     message: 'You have a new observation',
@@ -174,10 +175,24 @@ export const submitObservationFormAsync = (observationFormData) => {
                     to: teacher.email,
                     message: {
                         subject: `New Observation Notification`,
-                        text: `Hello ${teacher.firstName}. You have a new observation`,
-                        // html: "This is the <code>HTML</code> section of the email body.",
-                    },
-                }));
+                        text: `Hi ${teacher.firstName}. 
+
+This is an automated observation notificication.
+
+Observation Type: ${observationType}
+Observer: ${observationDetails.observer.lastName} ${observationDetails.observer.firstName}
+Date: ${observationDate.toLocaleDateString("en-US")}
+
+Please view the details and the feedback in HCSS Staff Portal.
+
+https://staffportal.hampdencharter.org
+
+Thank you
+
+`,
+                            // html: "This is the <code>HTML</code> section of the email body.",
+                        },
+                    }));
             });
             
             dispatch(submitObservationFormSuccess('Successfully submitted the observation form')); 

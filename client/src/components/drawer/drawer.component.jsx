@@ -42,7 +42,19 @@ import EventNoteIcon from '@material-ui/icons/EventNote';
 import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import ContactPhoneOutlinedIcon from '@material-ui/icons/ContactPhoneOutlined';
+import Tooltip from '@material-ui/core/Tooltip';
 import useStyles from "./drawer.styles";
+import { withStyles } from '@material-ui/core/styles';
+
+const LightTooltip = withStyles((theme) => ({
+    tooltip: {
+      backgroundColor: theme.palette.common.white,
+      color: 'rgba(0, 0, 0, 0.87)',
+      boxShadow: theme.shadows[1],
+      fontSize: 11,
+    },
+  }))(Tooltip);
 
 const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, resetSubmissionMessage, handleChange, year}) => {
     const classes = useStyles();
@@ -120,16 +132,21 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                         <MenuIcon />
                     </IconButton>
                     <div className={classes.upperMenu}>
-                        <Typography variant="h6" noWrap>
-                            HCSS STAFF PORTAL
-                        </Typography>
+                        <Link className={classes.links} to="/home">
+                            <LightTooltip title="Staff Portal Home Page">
+                            <Typography variant="h6" noWrap>
+                                HCSS STAFF PORTAL
+                            </Typography>
+                            </LightTooltip>
+                        </Link>
                         <div className={classes.upperMenuIcons}> 
                             <DrawerSelect years={years} handleChange={handleChange} year={year}/>
                             <CustomModal
                             color="inherit"
                             modalIcon={( 
+                                
                                 <Badge badgeContent={notifications.length} color="secondary">
-                                    <NotificationsSharpIcon />
+                                    <LightTooltip title="Notifications"><NotificationsSharpIcon /></LightTooltip>
                                 </Badge>
                             )}
                             modalBody={
@@ -141,10 +158,14 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                                 />}
                             />
                             <Link to="/profile" className={classes.links}>
+                                <LightTooltip title="Account">
                                 <IconButton color="inherit"><AccountCircleIcon /></IconButton>
+                                </LightTooltip>
                             </Link>
                             <IconButton color="inherit" onClick={() => auth.signOut()}>
-                                <ExitToAppIcon />
+                                <LightTooltip title="Signout">
+                                    <ExitToAppIcon />
+                                </LightTooltip>
                             </IconButton>
                         </div>
                     </div>
@@ -174,38 +195,56 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                 <Divider />
                 <List> 
                     <Link to="/home" className={classes.links}>
+                    <LightTooltip title="Home Page">
                         <ListItem button key={"home"}>
                             <ListItemIcon><HomeIcon className={classes.menuIcon} /></ListItemIcon>
                             <ListItemText primary={"Home"} />
                         </ListItem>
+                    </LightTooltip>
                     </Link>
                     <Link to="/observations" className={classes.links}>
+                    <LightTooltip title="Observations">
                         <ListItem button key={"observations"}>
                             <ListItemIcon><EventNoteIcon className={classes.menuIcon}/></ListItemIcon>
                             <ListItemText primary={"Observation"} />
                         </ListItem>
+                    </LightTooltip>
                     </Link>
                     <Link to="/lesson-plans" className={classes.links}>
+                    <LightTooltip title="Lesson Plans">
                         <ListItem button key={"observations"}>
                             <ListItemIcon><DoneAllIcon className={classes.menuIcon}/></ListItemIcon>
                             <ListItemText primary={"Lesson Plans"} />
                         </ListItem>
+                    </LightTooltip>
+                    </Link>
+                    <Link to="/parent-communication" className={classes.links}>
+                        <LightTooltip title="Parent Communication">
+                        <ListItem button key={"parent-communication"}>
+                            <ListItemIcon><ContactPhoneOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
+                            <ListItemText primary={"Parent Communication"} />
+                        </ListItem>
+                        </LightTooltip>
                     </Link>
                     <Divider />
                     {
                         currentUser.role !== 'teacher' ? (
                         <>
                         <Link to="/directory" className={classes.links}>
+                            <LightTooltip title="Directory">
                             <ListItem button key={"users"}>
                                 <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
                                 <ListItemText primary={"Users"} />
                             </ListItem>
+                            </LightTooltip>
                         </Link>
                         <Link to="/staff" className={classes.links}>
+                            <LightTooltip title="Evaluation">
                             <ListItem button key={"teachers"}>
                                 <ListItemIcon><EqualizerOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
                                 <ListItemText primary={"Evaluation"} />
                             </ListItem>
+                            </LightTooltip>
                         </Link>
                         </>
                         ): null
@@ -213,16 +252,20 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                     }
 
                     <Link to="/important-links" className={classes.links}>
+                        <LightTooltip title="Important Links">
                         <ListItem button key={"links"}>
                             <ListItemIcon><LinkIcon className={classes.menuIcon} /></ListItemIcon>
                             <ListItemText primary={"Important Links"} />
                         </ListItem>
+                        </LightTooltip>
                     </Link>
                     <Link to="/settings" className={classes.links}>
+                        <LightTooltip title="Settings">
                         <ListItem button key={"settings"}>
                             <ListItemIcon><SettingsIcon className={classes.menuIcon} /></ListItemIcon>
                             <ListItemText primary={"Settings"} />
                         </ListItem>
+                        </LightTooltip>
                     </Link>
                 </List>
                 <Divider />

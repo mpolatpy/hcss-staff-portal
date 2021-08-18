@@ -16,13 +16,12 @@ const useStyles = makeStyles((theme) => ({
     },
     switch: {
         display: 'flex',
-        justifyContent: 'flex-end',  
+        justifyContent: 'flex-start',  
     }
 }));
 
 const ObservationTableByType = ({observations}) => {
     const classes = useStyles();
-    // console.log(observations.map( o => o.firestoreRef.id));
 
     const rows = observations.map( observation => ({
             id: observation.firestoreRef.id,
@@ -75,20 +74,21 @@ const ObservationTableByType = ({observations}) => {
     }
 
     return (
-        <div className={classes.dataTable}>
+        <div className={classes.dataTable}>   
+            <DataTable
+                customStyle = {{ height: 450, width: '100%', overflowX: 0 }}
+                rows={observations.length ? rows : []}
+                rowHeight={35}
+                columns={observationColumns}
+                pageSize={10}
+                rowsPerPageOptions={[5,10,25,100]}
+            />
             <div className={classes.switch}>
                 <FormControlLabel
                     control={<Switch checked={isShowingNumbers} onChange={handleToggle} color="primary" name="toggleShowNumbers" />}
                     label="Show Values"
                 />
             </div>
-            <DataTable
-                rows={observations.length ? rows : []}
-                rowHeight={45}
-                columns={observationColumns}
-                pageSize={10}
-                rowsPerPageOptions={[5,10,25,100]}
-            />
         </div>
     );
 };

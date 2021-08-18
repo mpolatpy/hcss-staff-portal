@@ -8,7 +8,7 @@ import withAuthorization from '../../components/with-authorization/withAuthoriza
 import { firestore } from '../../firebase/firebase.utils';
 import RegisterLinkForm from '../../components/register-links/register-link-form.component';
 
-const AddLinks = ({setSubmissionMessage}) => {
+const AddLinks = ({setSubmissionMessage, currentUser}) => {
     
     const [categories, setCategories] = useState([]);
     const [links, setLinks] = useState([]);
@@ -35,6 +35,7 @@ const AddLinks = ({setSubmissionMessage}) => {
     return ( 
         <div>
             <RegisterLinkForm 
+                currentUser={currentUser}
                 categories={categories} 
                 links={links}
                 setSubmissionMessage={setSubmissionMessage}
@@ -52,4 +53,4 @@ const mapDispatchToProps = dispatch => ({
     setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withAuthorization(['superadmin'])(AddLinks));
+export default connect(mapStateToProps, mapDispatchToProps)(withAuthorization(['superadmin', 'dci', 'admin'])(AddLinks));

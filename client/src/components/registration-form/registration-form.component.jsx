@@ -14,14 +14,14 @@ import options from './register.options';
 
 const RegistrationForm = (props) => {
     const classes = useStyles();
-    const { staff, handleSubmit, handleChange } = props;
+    const { staff, handleSubmit, handleChange, submissionMessage } = props;
     const { departmentOptions, schoolOptions, roleOptions } = options;
 
     return ( 
         <div className={classes.root}>
-            {staff.submissionMessage &&
-                <Alert severity={staff.submissionMessage.type}>
-                    {staff.submissionMessage.text}
+            {submissionMessage &&
+                <Alert severity={submissionMessage.type}>
+                    {submissionMessage.text}
                 </Alert>
             }
             <Grid item xs={12} sm={10} >
@@ -103,6 +103,16 @@ const RegistrationForm = (props) => {
                         type="text"
                         name="canvasId"
                         label="Canvas ID"
+                        variant="outlined"
+                    />
+                    <TextField
+                        required
+                        className={classes.textInput}
+                        onChange={handleChange}
+                        value={staff.powerSchoolId}
+                        type="text"
+                        name="powerSchoolId"
+                        label="PowerSchool ID"
                         variant="outlined"
                     />
                     <CustomSelect

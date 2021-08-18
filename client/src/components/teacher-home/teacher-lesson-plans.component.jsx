@@ -2,7 +2,8 @@ import {useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { firestore } from '../../firebase/firebase.utils';
 import {selectCurrentYear} from '../../redux/school-year/school-year.selectors';
-import { selectTeacher } from '../../redux/teachers/teachers.selectors';
+import { selectCurrentUser } from '../../redux/user/user.selectors';
+import { selectTeacher, selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../redux/teachers/teachers.selectors';
 
 import { CircularProgress, Typography } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
@@ -14,8 +15,9 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 import Divider from '@material-ui/core/Divider';
+import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid'
-
+import CustomSelect from '../custom-select/custom-select.component';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TeacherLessonPlansComponent = ({teacher, currentYear}) => {
+const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teachersOptions, teachersMap, match, history}) => {
     const classes = useStyles();
     const [lessonPlanScore, setLessonPlanScore] = useState(null);
     const [lessonPlans, setLessonPlans] = useState([]);
@@ -62,10 +64,31 @@ const TeacherLessonPlansComponent = ({teacher, currentYear}) => {
         
     }, [teacher, currentYear]);
 
+    const handleSelect = (e) => {
+        const {value} = e.target;
+        const {id} = teachersMap[value];
+        history.push(match.url.replace(match.params.teacherId, id));
+    };
+
     return ( 
         <>
-            <Typography variant="h6">{`Lesson Plans - ${teacher.firstName} ${teacher.lastName}`}</Typography>
-            <Divider />
+            <Box
+            style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}
+            >
+                <Typography variant="h6">{`Lesson Plans - ${teacher.firstName} ${teacher.lastName}`}</Typography>
+                {
+                    currentUser && currentUser.role !== 'teacher' && ( 
+                        <CustomSelect
+                            label="Selected Teacher"
+                            style={{ width: 100, height: 40 }}
+                            options={teachersOptions}
+                            name="selectTeacher"
+                            value={`${teacher.lastName}, ${teacher.firstName}`}
+                            handleSelect={handleSelect}
+                        />
+                    )
+                }
+            </Box>
             {
                 isLoading ?
                 ( 
@@ -146,7 +169,10 @@ const TeacherLessonPlansComponent = ({teacher, currentYear}) => {
 
 const mapStateToProps = (state, ownProps) => ({
     teacher: selectTeacher(ownProps.match.params.teacherId)(state),
-    currentYear: selectCurrentYear(state)
+    teachersOptions: selectTeacherOptions(state),
+    teachersMap: selectTeachersObjWithNameKeys(state),
+    currentYear: selectCurrentYear(state),
+    currentUser: selectCurrentUser(state)
 });
 
 export default connect(mapStateToProps)(TeacherLessonPlansComponent);

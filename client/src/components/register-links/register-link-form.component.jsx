@@ -10,7 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import CustomSelect from '../custom-select/custom-select.component';
 import useStyles from "./register-link.styles";
 
-const RegisterLinkForm = ({ categories, links, setSubmissionMessage }) => {
+const RegisterLinkForm = ({ categories, links, setSubmissionMessage, currentUser }) => {
     const classes = useStyles(); 
 
     const [link, setLink] = useState({
@@ -63,6 +63,18 @@ const RegisterLinkForm = ({ categories, links, setSubmissionMessage }) => {
         setSubmissionMessage(message);
     };
 
+    const options = [
+        'HCSS East',
+        'HCSS West',
+        'ELA',
+        'Math',
+        'Science',
+        'Humanities',
+        'Special Services',
+        'District - All',
+        'Central Office',
+    ];
+
     return ( 
         <div>
         {   isLoading ?
@@ -104,17 +116,11 @@ const RegisterLinkForm = ({ categories, links, setSubmissionMessage }) => {
                     />
                     <CustomSelect
                         required
-                        label="School"
+                        label="Group"
                         name="school"
                         value={link.school}
                         handleSelect={handleChange}
-                        options={[
-                            'HCSS East',
-                            'HCSS West',
-                            'District - All',
-                            'Central Office',
-                            'SuperAdmin Only'
-                        ]}
+                        options={currentUser.role === 'superadmin' ? [...options, 'SuperAdmin Only'] :options}
                         variant="outlined"
                     />
                         <Button

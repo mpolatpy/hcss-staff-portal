@@ -78,7 +78,7 @@ export const fetchCurrentYear = async (setYear) => {
                             .then(year => (setYear(year)) )
     } catch(error){
         console.log(error);
-    }
+    } 
 };
 
 export const auth = firebase.auth();

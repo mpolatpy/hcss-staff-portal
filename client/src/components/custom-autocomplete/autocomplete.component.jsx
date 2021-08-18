@@ -10,7 +10,17 @@ const CustomAutocomplete = ({ id, options, label, name, handleChange}) => {
       options={options}
       getOptionLabel={option => `${option.firstName}, ${option.lastName}`}
       style={{ width: 300 }}
-      renderInput={(params) => <TextField {...params} name={name} onChange={handleChange} label={label} variant="standard" />}
+      renderInput={
+        (params) => (
+          <TextField 
+          {...params} 
+          name={name} 
+          onChange={handleChange} 
+          label={label} 
+          variant="standard" 
+          />
+        )
+      }
     />
   );
 };

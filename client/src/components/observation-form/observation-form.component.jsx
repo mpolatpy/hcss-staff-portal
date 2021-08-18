@@ -46,7 +46,7 @@ const ObservationPage = (props) => {
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
     const steps = getSteps();
-
+    const {teacher, observationDate, observationType} = observationForm.observationDetails;
     const handleNext = (e) => {
         e.preventDefault();
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -144,7 +144,7 @@ const ObservationPage = (props) => {
                                         actions={[
                                             {icon: (<IconButton
                                                         aria-label="save"
-                                                        disabled={activeStep === 0}
+                                                        disabled={!teacher || !observationDate || !observationType}
                                                         type="submit"
                                                         onClick={handleSave}
                                                     >

@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import axios from 'axios';
 
+import { getObservationOptions } from './observation-details.utils';
 import CustomSelect from '../../custom-select/custom-select.component';
-// import CustomAutocomplete from '../../custom-autocomplete/autocomplete.component';
 import DatePicker from '../../date-picker/date-picker.component';
 import {selectIsSavedObservation, selectObservationFormDetails} from '../../../redux/observation-form/observation-form.selectors';
-import {selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../../redux/teachers/teachers.selectors';
+import { selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../../redux/teachers/teachers.selectors';
 import { selectCurrentYear } from '../../../redux/school-year/school-year.selectors';
 import ObservationInfoModal from '../../observation-info-modal/observation-info.component';
 import { useStyles } from './observation-details.styles';
@@ -20,6 +20,7 @@ const ObservationFormDetails = (props) => {
         setObservationFormDetails, 
         teachers,
         teacherOptions,
+        teacherList,
         currentYear,
         readOnly      
      } = props;
@@ -31,7 +32,8 @@ const ObservationFormDetails = (props) => {
     }); 
 
     const canvasId = observationDetails.teacher && observationDetails.teacher.canvasId;
-
+    const observationOptions = getObservationOptions(currentUser);
+    
     const getCourses = async (id) => {
         let courses =[];
 
@@ -78,7 +80,6 @@ const ObservationFormDetails = (props) => {
 
     const handleChange = async e => {
         const { name, value } = e.target;
-
         if (name === 'teacher') {
             const selectedTeacher = teachers[value];
             if (selectedTeacher){
@@ -144,13 +145,7 @@ const ObservationFormDetails = (props) => {
                             name="observationType"
                             handleSelect={handleChange}
                             value={observationDetails.observationType}
-                            options={[
-                                'Weekly Observation',
-                                'Full Class Observation',
-                                'Quarter Evaluation',
-                                'Midyear Evaluation',
-                                'End of Year Evaluation'
-                            ]}
+                            options={observationOptions}
                         />
                     </div>
                     <div className={classes.form_items}>
