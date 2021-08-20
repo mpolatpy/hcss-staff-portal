@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { createStructuredSelector } from 'reselect';
-import axios from 'axios';
-import { firestore } from '../../firebase/firebase.utils';
+import{ Link } from 'react-router-dom';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from "../../redux/school-year/school-year.selectors";
 import DataTable from '../../components/custom-table/custom-table.component';
-import { CircularProgress, Typography } from "@material-ui/core";
+import { Typography, Box, CircularProgress } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles'
+import CustomSelect from "../../components/custom-select/custom-select.component";
 
 const useStyles = makeStyles((theme) => ({
     dataTable: {
@@ -17,88 +16,80 @@ const useStyles = makeStyles((theme) => ({
         },
         marginTop: theme.spacing(2),
     },
-}));
+})); 
 
-const ParentCommunicationPage = ({currentUser, currentYear}) => {
-    const [communications, setCommunications ] = useState([]);
-    const [isLoading, setLoading] = useState(false);
+const ParentCommunicationPage = ({isLoading, match, communications, currentUser, teacherList, teacher, setTeacher}) => {
     const classes = useStyles();
 
-    useEffect(() =>{
-        setLoading(true);
+    const rows = Object.keys(communications).map( (student_number, i) => {
+        const arr = communications[student_number];
 
-        const fetchSchoolYears = async () => {
-            const ref = firestore.collection('years');
-            const snapshot = await ref.get();
-            const years = {};
-            if(!snapshot.empty){
-                snapshot.docs.forEach(doc => years[doc.id] = doc.data());
-            }
+        return {
+            id: i,
+            count: arr.length,
+            student_number: student_number,
+            lastfirst: arr[0].lastfirst,
+            grade_level: arr[0].grade_level,
+        }
 
-            return years;
-        };
-
-        const fetchCommunications = async () => {
-            const teacherName = `${currentUser.lastName}, ${currentUser.firstName}`;
-            const schoolYears = await fetchSchoolYears();
-            const schoolYear = schoolYears[currentYear];
-            const queryParam = `LOG.entry_author==${teacherName};Log.entry_date=ge=${schoolYear.start_date}`;
-
-            try{
-                const response = await axios({
-                    url: '/get-powerschool-data',
-                    method: 'post',
-                    data: {
-                        url: 'https://hcss.powerschool.com/ws/schema/query/com.hcss.admin.parent_communication',
-                        queryParam: queryParam
-                    }
-                })
-                if(response.data && response.data.status === 'success') setCommunications(response.data.result);
-            } catch(e){
-                console.log(e);
-            }
-        };
-
-        fetchCommunications();
-        setLoading(false);
-    }, []);
-
-    const rows = communications.map( (communication, i) => ({
-        id: i,
-        ...communication
-    }));
+    }).sort((a, b) => {
+        if(a.lastfirst > b.lastfirst) return 1;
+        else return -1;
+    });
 
     const columns = [
-        {field: 'entry_date', headerName: 'Date', headerClassName: 'teacher-list-header', flex: 1,
-            renderCell: (params) => new Date(params.value).toLocaleDateString('en-US')
+        {field: 'student_number', headerName: 'ID', headerClassName: 'teacher-list-header', flex: 0.5,
+            renderCell: param => ( 
+                <Link to={`${match.path}/student/${param.value}`}>
+                    {param.value}
+                </Link>
+            )
         },
-        {field: 'student_number', headerName: 'ID', headerClassName: 'teacher-list-header', flex: 1,},
-        {field: 'lastfirst', headerName: 'Name', headerClassName: 'teacher-list-header', flex: 1.5,},
+        {field: 'lastfirst', headerName: 'Name', headerClassName: 'teacher-list-header', flex: 2,},
         {field: 'grade_level', headerName: 'Grade', headerClassName: 'teacher-list-header', flex: 1,},
-        {field: 'name', headerName: 'Category', headerClassName: 'teacher-list-header', flex: 1.5,},
-        {field: 'subtype', headerName: 'Type', headerClassName: 'teacher-list-header', flex: 1,},
-        {field: 'entry', headerName: 'Entry', headerClassName: 'teacher-list-header', flex: 4,},
+        {field: 'count', headerName: 'Count', headerClassName: 'teacher-list-header', flex: 1,},
     ];
+
+    const handleSelect = (e) => {
+        const { value } = e.target;
+        setTeacher(value);
+    }
 
     return (
         <div>
-            <Typography variant="h5">Parent Communication</Typography>
             {
-                isLoading ? (
-                    <CircularProgress />
-                ) : ( 
-                    <div className={classes.dataTable}>
-                        <DataTable
-                            customStyle = {{ height: 510, width: '100%', overflowX: 0 }}
-                            rows={rows}
-                            columns={columns}
-                            rowHeight={40}
-                            pageSize={10}
-                            rowsPerPageOptions={[5,10,25,100]}
-                        />
-                    </div>
+                currentUser.role !== 'teacher' ?
+                (
+                <Box
+                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}
+                >
+                    <Typography variant="h5">Parent Communication</Typography>
+                    {
+                    teacherList && (<CustomSelect
+                        label="Teacher"
+                        style={{ width: 100, height: 40 }}
+                        options={teacherList}
+                        name="select_teacher"
+                        value={teacher}
+                        handleSelect={handleSelect}
+                    />)
+                    }
+                </Box>
+                ) : (
+                    <Typography variant="h5">Parent Communication</Typography>
                 )
-            }   
+            }
+            <div className={classes.dataTable}>
+                <DataTable
+                    customStyle = {{ height: 510, width: '60%', overflowX: 0 }}
+                    rows={isLoading? [] : rows}
+                    columns={columns}
+                    rowHeight={40}
+                    pageSize={10}
+                    loading={isLoading}
+                    rowsPerPageOptions={[5,10,25,100]}
+                />
+            </div>
         </div>
     );
 };

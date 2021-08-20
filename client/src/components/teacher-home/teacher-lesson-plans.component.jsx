@@ -14,7 +14,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid'
 import CustomSelect from '../custom-select/custom-select.component';

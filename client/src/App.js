@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Switch, Route, Redirect, useHistory } from "react-router-dom";
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
@@ -23,7 +23,7 @@ import SettingsPage from './pages/settings/settings-page';
 import LessonPlans from './pages/lesson-plan/lesson-plan.routes';
 import ScrollToTop from './components/scroll-to-top/scroll-to-top.component';
 import ImportantLinks from './pages/important-links/important-links.component';
-import ParentCommunicationPage from './pages/parent-communication/parent-communication.page';
+import ParentCommunicationRoute from './pages/parent-communication/parent-communications.routes';
 
 function App(props) {
 
@@ -57,13 +57,9 @@ function App(props) {
     }
   }, [] );
 
-
-  const [year,setYear] = useState('');
-
   const handleChange = (e) => {
       const { value } = e.target;
       setCurrentYear(value);
-      setYear(value);
       history.push('/home');
   };
 
@@ -89,7 +85,7 @@ function App(props) {
               <Route path="/observations" component={Observations} />
               <Route path="/lesson-plans" component={LessonPlans} />
               <Route path="/important-links" component={ImportantLinks} />
-              <Route path="/parent-communication" component={ParentCommunicationPage} />
+              <Route path="/parent-communication" component={ParentCommunicationRoute} />
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}
               />

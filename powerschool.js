@@ -7,12 +7,12 @@ class PowerSchoolClient {
         this.initial_token = Buffer.from(`${PS_CLIENT_ID}:${PS_CLIENT_SECRET}`).toString('base64');
     }
 
-    fetchData = async (URL, queryParam) => {
+    fetchData = async (URL, queryParam=null) => {
         let page = 1;
         if(queryParam && queryParam.includes(',')){
             queryParam = queryParam.replace(',', '%2C');
         }
-        const data = queryParam ? {'$q': queryParam} : {};
+        const data = queryParam? {'$q': queryParam} : {};
         const url = 'https://hcss.powerschool.com/oauth/access_token/';
         let result = [], status;
         try{
@@ -31,7 +31,7 @@ class PowerSchoolClient {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             };
-            
+
             while(true){
                 const resp = await axios.post(URL, 
                     data,

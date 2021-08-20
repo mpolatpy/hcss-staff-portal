@@ -49,6 +49,18 @@ const HomePage = () => {
             <div className={classes.card}>
                 <CustomCard
                     className={classes.card}
+                    imageUrl="https://east.hampdencharter.org/wp-content/uploads/2019/12/circles-HAMPDEN-1.png"
+                    title='Parent Communications'
+                    header="Parent Communication"
+                    buttonText="View Parent Communications"
+                    to="/parent-communication"
+                >
+                    {/* <p>View observations here</p> */}
+                </CustomCard>
+            </div>
+            <div className={classes.card}>
+                <CustomCard
+                    className={classes.card}
                     imageUrl="https://east.hampdencharter.org/wp-content/uploads/2019/12/science-lab.jpg"
                     title='Grade Policy'
                     header="Grade Policy"
@@ -61,15 +73,21 @@ const HomePage = () => {
             <div className={classes.card}>
                 <CustomCard
                     className={classes.card}
-                    imageUrl="https://east.hampdencharter.org/wp-content/uploads/2019/12/circles-HAMPDEN-1.png"
-                    title='Parent Communications'
-                    header="Parent Communication"
-                    buttonText="View Parent Communications"
-                    to="/parent-communication"
+                    imageUrl="https://hampdencharter.org/wp-content/uploads/2019/11/ACH3.jpg"
+                    title='Student Achievement'
+                    header="Student Achievement"
+                    buttonText="View Student Achievement"
+                    to="#"
                 >
-                    {/* <p>View observations here</p> */}
+                    {/* <Typography>View observations here</Typography> */}
                 </CustomCard>
             </div>
+            
+            {/* https://hampdencharter.org/wp-content/uploads/2019/11/music1.jpg
+            https://west.hampdencharter.org/wp-content/uploads/2018/03/ART1-895x430.jpg
+            https://west.hampdencharter.org/wp-content/uploads/2018/03/ROBOT1-895x430.jpg
+            https://west.hampdencharter.org/wp-content/uploads/2018/03/LAB1-895x430-copy-895x430.jpg
+            https://east.hampdencharter.org/wp-content/uploads/2018/03/robotics-420x420.jpg */}
         </div>
     )
 }

@@ -79,7 +79,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
         fetchLinks();
         fetchFavorites();
         setIsLoading(false);
-    },[]);
+    },[currentUser]);
 
     const addToFavorites = async (link) => {
         let message;

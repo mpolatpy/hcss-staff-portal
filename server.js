@@ -54,7 +54,7 @@ app.post('/canvas-courses', (req, res) => {
 
 app.post('/get-powerschool-data', (req, res) => {
     const url = req.body.url;
-    const queryParam = req.body.queryParam || null;
+    const queryParam = req.body.queryParam;
 
     powerSchool.fetchData(url, queryParam)
         .then( (response) => res.send( response ) )

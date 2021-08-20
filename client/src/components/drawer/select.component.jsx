@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
@@ -8,7 +7,7 @@ import { useStyles } from './drawer-select.styles';
 const DrawerSelect = ({years, currentYear, handleChange, year}) => {
   const classes = useStyles();
 
-  const iconComponent = (props) => {
+  const iconComponent = () => {
     return (
       <ExpandMoreIcon className={classes.icon}/>
     )};
