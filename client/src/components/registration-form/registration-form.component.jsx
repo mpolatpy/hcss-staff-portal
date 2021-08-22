@@ -14,19 +14,20 @@ import options from './register.options';
 
 const RegistrationForm = (props) => {
     const classes = useStyles();
-    const { staff, handleSubmit, handleChange, submissionMessage } = props;
+    const { staff, handleSubmit, handleChange, submissionMessage, updateCourses } = props;
     const { departmentOptions, schoolOptions, roleOptions } = options;
 
     return ( 
         <div className={classes.root}>
-            {submissionMessage &&
+            {submissionMessage && 
                 <Alert severity={submissionMessage.type}>
                     {submissionMessage.text}
                 </Alert>
             }
-            <Grid item xs={12} sm={10} >
+            <Grid className={classes.mainContainer} container>
+                <Grid item sm={7}>
                 <form className={classes.inputContainer} onSubmit={handleSubmit}>
-                    <Typography align="justify" variant="h5" mb={5}><strong>Add New Staff Member</strong></Typography>
+                    <Typography align="justify" variant="h5" mb={10}><strong>Add New Staff Member</strong></Typography>
                     <TextField
                         required
                         className={classes.textInput}
@@ -130,13 +131,31 @@ const RegistrationForm = (props) => {
                             type="submit"
                             color="primary"
                             size="large"
-                        style={{ minWidth: 270, width: 440}}
+                            style={{ width: '30vw',minWidth: 270,}}
                             startIcon={<SaveIcon />}
                         >
                             Save
                     </Button>
                     {/* </div> */}
                 </form>
+                </Grid>
+                <Grid item className={classes.courses} sm={4}>
+                    <Typography variant="h5" style={{marginBottom: '20px'}}>Courses</Typography>
+                    {
+                        staff.courses && staff.courses.map(course => ( 
+                            <Typography key={course.id}>{course.name}</Typography>
+                        ))
+                    }
+                    <Button 
+                        disabled={isNaN(staff.canvasId) || staff.canvasId ===''} 
+                        color="primary" 
+                        onClick={() => updateCourses(staff.canvasId)}
+                        style={{ textTransform: "none", marginTop: '20px' }}
+                        variant="outlined"
+                    >
+                        Update Courses
+                    </Button>
+                </Grid>
             </Grid>
         </div>
     );

@@ -11,9 +11,11 @@ import {Link} from 'react-router-dom';
 const useStyles = makeStyles((theme) =>  ({ 
     root: {
         marginTop: theme.spacing(2),
-        '& .lesson-plan-header': {
-            backgroundColor: '#009688'
+        '& .MuiTableCell-head': {
+            backgroundColor: '#3f51b5',
+            color: '#fff'
         }
+
     },
     link: {
         textDecoration: 'none'

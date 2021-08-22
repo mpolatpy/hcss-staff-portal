@@ -32,7 +32,7 @@ const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
     useEffect(() => {
         const fetchInitialObservationData = async () => {  
             try{
-                setIsLoading(true);
+                setIsLoading(true); 
                 const observationsRef = firestore.collection('observations')
                     .where('observerId', '==', currentUser.id)
                     .where('observationDetails.schoolYear', '==', currentYear)

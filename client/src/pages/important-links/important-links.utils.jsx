@@ -1,6 +1,13 @@
 
-export const filterLinks = (links, currentUser) => {
-    if(currentUser.school.toLowerCase() === 'central office'){
+export const filterAndCategorizeLinks = (fetchedLinks, currentUser) => {
+    const filteredLinks = filterLinks(fetchedLinks, currentUser);
+    return categorizeLinks(filteredLinks);
+}
+
+const filterLinks = (links, currentUser) => {
+    if(!currentUser.school) return [];
+    
+    if(currentUser.school === 'Central Office'){
         if(currentUser.role === 'superadmin'){
             return links;
         } else {
@@ -23,3 +30,17 @@ export const filterLinks = (links, currentUser) => {
         );
     }
 };
+
+const categorizeLinks = (fetchedLinks) => {
+    const links = {};
+
+    for (let link of fetchedLinks){
+        if(link.category in links){
+            links[link.category].push(link);
+        } else {
+            links[link.category] = [link];
+        }
+    }
+
+    return links;
+}

@@ -13,7 +13,12 @@ import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        minWidth: '400px'
+        minWidth: '400px',
+
+        '& .MuiTableCell-head': {
+            backgroundColor: '#3f51b5',
+            color: '#fff'
+        }
     },
     modalContainer: {
         display: 'flex',
@@ -64,7 +69,13 @@ const NotificationModal = ({notifications, currentYear, currentUser, setNotifica
                             <TableRow hover key={index}>
                                 <TableCell>{new Date(notification.date.seconds * 1000).toLocaleDateString()}</TableCell>
                                 <TableCell>{notification.message}</TableCell>
-                                <TableCell><Link to={notification.viewLink}>Click Here to View</Link></TableCell>
+                                <TableCell>
+                                {
+                                    notification.viewLink ? 
+                                    (<Link to={notification.viewLink}>Click Here to View</Link>)
+                                    : ''
+                                }
+                                </TableCell>
                             </TableRow>
                         ))
                         }
@@ -72,7 +83,8 @@ const NotificationModal = ({notifications, currentYear, currentUser, setNotifica
                     </Table>
                 </TableContainer>
             ) : ( 
-                <h3>You have no active notifications.</h3>
+                <h3>You have no active notifications. 
+                    You may view all notifications <Link to="/notifications">here</Link></h3>
             )
             }
         </div>

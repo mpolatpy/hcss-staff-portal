@@ -22,6 +22,11 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     marginTop: theme.spacing(2),
+
+    '& .MuiTableCell-head': {
+        backgroundColor: '#3f51b5',
+        color: '#fff'
+    }
   },
 }));
 

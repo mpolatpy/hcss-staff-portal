@@ -26,6 +26,12 @@ const SettingsPageComponent = ({currentUser, match}) => {
                         </ListItem>
                     </Link>
                     <Divider/>
+                    <Link to={`${match.path}/update-courses`} style={{textDecoration: 'none',}}>
+                        <ListItem button>
+                            <ListItemText primaryTypographyProps={{color:"primary"}} primary="Update Courses" />
+                        </ListItem>
+                    </Link>
+                    <Divider/>
                     </>
                     ): null
                 }

@@ -6,8 +6,8 @@ import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
-
-import { useStyles } from './observation-template.styles';
+import axios from 'axios';
+import { useStyles } from '../observations/observation-template.styles';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -24,65 +24,79 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 
 
- const ObservationTemplateEditPage = ({ teachers, currentUser, history, setSubmissionMessage }) => {
+ const UpdateCoursesPage = ({ teachers, currentUser, history, setSubmissionMessage }) => {
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-
-    useEffect(() => {
-        const fetchSelectedTeachers = async () => {
-            const ref = firestore.doc(`observationTemplates/${currentUser.id}`);
-            const snapshot = await ref.get();
-
-            if (snapshot.exists){
-                const fetchedData = snapshot.data();
-                if(Object.keys(fetchedData).includes('teachers')){
-                    setSelectedTeachers(fetchedData.teachers)
-                }
-            }
-        };
-
-        fetchSelectedTeachers();
-    }, [currentUser.id]);
-
+    const [showReport, setShowReport] = useState(false);
     const classes = useStyles();
+    const [submitStatus, setSubmitStatus] = useState([]);
 
     const handleChange = (e, values) => {
         setSelectedTeachers(values);
     }
 
-    const handleSaveSelection = async () => {
-        const ref = firestore.doc(`observationTemplates/${currentUser.id}`);
-        let message;
+    const getCourses = async (teacher) => {
+        const response = await axios.post( '/canvas-courses', {
+            teacherId: teacher.canvasId,
+        });
+        const courses = response.data.filter ( 
+            course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
+        ).map(course => ({
+            name: course.name,
+            id: course.id
+        }));
 
-        setIsLoading(true);
+        return courses;
+    }
+
+    const updateCoursesForTeacher = async (teacher, submissions) => {
+        let status;
         try{
-           await ref.set({teachers: selectedTeachers});
-           message = {
-               content: 'Successfully updated selected teachers',
-               status: 'success'
-           };
-        }catch (e) {
-            message = {
-                content: e.message,
-                status: 'error'
-            };
-        }  
+            const courses = await getCourses(teacher);
+            const ref = firestore.doc(`users/${teacher.firestoreId}`);
+            await ref.update({courses: courses});
+            submissions.push(`Updated courses for ${teacher.firstName} ${teacher.lastName}: `);
+            courses.forEach((course, i) => submissions.push(`${i+1}: ${course.name} `));
+        } catch(e){
+            submissions.push(`Not updated courses for ${teacher.firstName} ${teacher.lastName}: ${e.message}`);
+        }
+        submissions.push('________________________________________________________ ');
+        
+        return submissions;  
+    }
+
+    const handleSubmit = async () => {
+        setIsLoading(true);
+        let submissions = [];
+        for(let teacher of selectedTeachers){
+            submissions = await updateCoursesForTeacher(teacher, submissions);
+        }
+
+        setSubmitStatus(submissions);
         setIsLoading(false);
-        setSubmissionMessage(message);
-        // history.push('/observations');
-        history.goBack();
+        setShowReport(true);
     }
 
     return (
         isLoading ?
-        ( 
+        (
             <div className={classes.loading}>
                 <CircularProgress />
             </div>
         ):
+        (showReport ?
+        ( 
+            <div style={{ marginTop: '10px' }}>
+                    {
+                        submitStatus.map((submission, i) => (
+                            <p key={`submission-${i}`}>{submission}</p>
+                        ))
+                    }
+            </div>
+        ):
         (
         <div className={classes.root}>
-            <Typography variant="h5">Update Selected Teachers</Typography>  
+            <Typography variant="h5">Update Courses for Selected Teachers</Typography>  
             <Divider/>
             <div className={classes.items}>
                 <Autocomplete
@@ -108,15 +122,15 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
                     </React.Fragment>
                 )}
                 renderInput={(params) => (
-                    <TextField {...params}  label="Selected Teachers" placeholder=""/>
+                    <TextField {...params}  label="Select Teachers to Update Courses" placeholder=""/>
                 )}
                 />
             </div>
             <div className={classes.items}>
-                <Button variant="outlined" color="primary" onClick={handleSaveSelection}>Save Selection</Button>    
+                <Button variant="outlined" color="primary" onClick={handleSubmit}>Update Courses</Button>    
             </div>
         </div>
-        )
+        ))
     );
 }
 
@@ -129,4 +143,4 @@ const mapDispatchToProps = dispatch => ({
     setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ObservationTemplateEditPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UpdateCoursesPage));

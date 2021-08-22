@@ -25,76 +25,100 @@ const ObservationFormDetails = (props) => {
         readOnly      
      } = props;
 
-    const [ state, setState ] = useState({
-        courses: [],
-        options: [], 
-        canvasId: null
-    }); 
+    // const [ state, setState ] = useState({
+    //     courses: [],
+    //     options: [], 
+    //     canvasId: null
+    // }); 
 
-    const canvasId = observationDetails.teacher && observationDetails.teacher.canvasId;
+    // const canvasId = observationDetails.teacher && observationDetails.teacher.canvasId;
     const observationOptions = getObservationOptions(currentUser);
+    let teacher = observationDetails.teacher;
+    let courses = teacher ? teacher.courses : [];
+    let options = courses.map(course => course.name);
+
+    // const getCourses = async (id) => {
+    //     let courses =[];
+
+    //     try{
+    //         const response = await axios.post('/canvas-courses', {
+    //                 teacherId: id,
+    //             }
+    //         );
+    //         const fetchedCourses  = response.data;
+    //         courses = fetchedCourses.filter ( 
+    //             course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
+    //         ); 
+    //     }catch(e){
+    //         console.log(e.message);
+    //     }
+    //     return courses;
+    // }
     
-    const getCourses = async (id) => {
-        let courses =[];
+    // useEffect(() => { 
+    //     if(observationDetails.teacher){
 
-        try{
-            const response = await axios.post('/canvas-courses', {
-                    teacherId: id,
-                }
-            );
-            const fetchedCourses  = response.data;
-            courses = fetchedCourses.filter ( 
-                course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
-            ); 
-        }catch(e){
-            console.log(e.message);
-        }
-        return courses;
-    }
-    
-    useEffect(() => { 
-        if(observationDetails.teacher){
+    //         setState({
+    //             ...state,
+    //             canvasId: observationDetails.teacher.canvasId
+    //         });
 
-            setState({
-                ...state,
-                canvasId: observationDetails.teacher.canvasId
-            });
+    //         getCourses(observationDetails.teacher.canvasId).then(
+    //             fetchedCourses => setState({
+    //                 ...state,
+    //                 courses: fetchedCourses,
+    //                 options: fetchedCourses.map( c => c.name)
+    //         }));
+    //     }
 
-            getCourses(observationDetails.teacher.canvasId).then(
-                fetchedCourses => setState({
-                    ...state,
-                    courses: fetchedCourses,
-                    options: fetchedCourses.map( c => c.name)
-            }));
-        }
-
-        return () => {
-            setState({
-                courses: [],
-                options: [], 
-                canvasId: null
-            });
-        }
+    //     return () => {
+    //         setState({
+    //             courses: [],
+    //             options: [], 
+    //             canvasId: null
+    //         });
+    //     }
         
-    },[observationDetails.teacher, canvasId]);
+    // },[observationDetails.teacher, canvasId]);
+
+    // const handleChange = async e => {
+    //     const { name, value } = e.target;
+    //     if (name === 'teacher') {
+    //         const selectedTeacher = teachers[value];
+    //         if (selectedTeacher){
+    //             getCourses(selectedTeacher.canvasId)
+    //             .then(fetchedCourses => setState({
+    //                 courses: fetchedCourses,
+    //                 options: fetchedCourses.map( c => c.name)
+    //             }))
+    //             .then(() => setObservationFormDetails({
+    //                 ...observationDetails,
+    //                 teacher: selectedTeacher,
+    //                 department: selectedTeacher.department,
+    //                 school: selectedTeacher.school
+    //             }));
+    //         } 
+    //     } else {
+    //         setObservationFormDetails({
+    //             ...observationDetails,
+    //             [name]: value
+    //         });
+    //     }
+    // };
 
     const handleChange = async e => {
         const { name, value } = e.target;
         if (name === 'teacher') {
             const selectedTeacher = teachers[value];
-            if (selectedTeacher){
-                getCourses(selectedTeacher.canvasId)
-                .then(fetchedCourses => setState({
-                    courses: fetchedCourses,
-                    options: fetchedCourses.map( c => c.name)
-                }))
-                .then(() => setObservationFormDetails({
-                    ...observationDetails,
-                    teacher: selectedTeacher,
-                    department: selectedTeacher.department,
-                    school: selectedTeacher.school
-                }));
-            } 
+            // courses  = selectedTeacher;
+            // options = courses.map(course => course.name);
+
+            setObservationFormDetails({
+                ...observationDetails,
+                teacher: selectedTeacher,
+                department: (selectedTeacher && selectedTeacher.department) || '',
+                school: (selectedTeacher && selectedTeacher.school) || ''
+            }); 
         } else {
             setObservationFormDetails({
                 ...observationDetails,
@@ -133,7 +157,7 @@ const ObservationFormDetails = (props) => {
                             <ObservationInfoModal 
                             teacher={observationDetails.teacher}
                             currentYear={currentYear}
-                            courses={state.courses}
+                            courses={courses}
                             />
                         }
                     </div>
@@ -238,7 +262,7 @@ const ObservationFormDetails = (props) => {
                             name="course"
                             label="Course"
                             handleSelect={handleChange}
-                            options={ state.options }
+                            options={ options }
                             value={observationDetails.course}
                         />
                     </div>

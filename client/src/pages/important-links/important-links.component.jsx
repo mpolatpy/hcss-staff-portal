@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { firestore } from '../../firebase/firebase.utils';
-import { filterLinks } from './important-links.utils';
+import { filterAndCategorizeLinks } from './important-links.utils';
 import { List, Link, ListItem, Typography, CircularProgress, Paper, Divider } from '@material-ui/core';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import StarIcon from '@material-ui/icons/Star';
@@ -45,20 +45,14 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
 
     useEffect(() => {
         const fetchLinks = async () => {
-            const linksRef = firestore.doc('links/data');
+            const linksRef = firestore.collection('links/data/savedLinks');
             const linkSnapshot = await linksRef.get();
-            let fetchedLinks = linkSnapshot.exists ? linkSnapshot.data().all : [];
-            fetchedLinks = filterLinks(fetchedLinks, currentUser);
 
-            const links = {};
-
-            for (let link of fetchedLinks){
-                if(link.category in links){
-                    links[link.category].push(link);
-                } else {
-                    links[link.category] = [link];
-                }
+            let fetchedLinks = [];
+            if(!linkSnapshot.empty){
+                linkSnapshot.docs.forEach(doc => fetchedLinks = [...fetchedLinks, doc.data()])
             }
+            const links = filterAndCategorizeLinks(fetchedLinks, currentUser);
             setLinks(links);
         };
 
@@ -148,7 +142,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                     <List>
                     {
                         favorites.map((link, i) => ( 
-                            <ListItem key={`favorites-${i}`}>
+                            <ListItem key={`favs-${i}`}>
                                 <Link href={link.url} variant="subtitle1" target="_blank" rel="noopener">
                                     {link.label}
                                 </Link>
@@ -167,81 +161,58 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                  )}
                  </Paper>
             </div>
-            
             <div>
-                {/* {links && Object.keys(links).sort().map((item) => (
-                <Paper key={item} variant="outlined" style={{ padding: '18px', marginBottom: '10px'}}>
-                    <Typography variant="h5">{item}</Typography>
-                    <Divider/>
-                    <List>
-                    {
-                        links[item].map((link, i) => ( 
-                            <ListItem key={`${item}-${i}`}>
-                                <Link href={link.url} variant="subtitle1" target="_blank" rel="noopener">
-                                    {link.label}
-                                </Link>
-                                <Tooltip title="Add to Favorites">
-                                    <IconButton onClick={() => addToFavorites(link)} aria-label={`add-to-favorites-${item}-${i}`}>
-                                        <StarBorderIcon />
-                                    </IconButton>
-                                </Tooltip>
-                            </ListItem>
-                        ))
-                    }
-                    </List>
-                </Paper>   
-                ))} */}
-                {
-                    links && Object.keys(links).sort().map((item) => (
-                        <div className={classes.root}>
-                            <Accordion className={classes.accordion}>
-                                <AccordionSummary
-                                    className={classes.accordionSummary}
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-label="Expand"
-                                    aria-controls="additional-actions1-content"
-                                    id={`action-header-for-${item}`}
-                                >
-                                    <div className={classes.accordionHeader}>
-                                        <Typography variant="h6">{item}</Typography>
-                                    </div>
-                                </AccordionSummary>
-                                <AccordionDetails >
-                                <List>
-                                {
-                                    links[item].map((link, i) => ( 
-                                        <ListItem key={i}>
-                                            <Link href={link.url} variant="subtitle1" target="_blank" rel="noopener">
-                                                {link.label}
-                                            </Link>
-                                            {
-                                                favoriteUrls.includes( link.url ) ?
-                                                (
-                                                    <Tooltip title="Already in Quick Access">
-                                                        <IconButton style={{marginLeft:'10px'}} size="small" aria-label={`add-to-favorites-${item}-${i}`}>
-                                                            <StarIcon color="primary" fontSize="small" />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                ) : (
-                                                <Tooltip title="Add to Quick Access">
-                                                    <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => addToFavorites(link)} aria-label={`add-to-favorites-${item}-${i}`}>
-                                                        <StarBorderIcon fontSize="small" />
+            {
+                links && Object.keys(links).sort().map((item) => (
+                    <div className={classes.root}>
+                        <Accordion className={classes.accordion}>
+                            <AccordionSummary
+                                className={classes.accordionSummary}
+                                expandIcon={<ExpandMoreIcon />}
+                                aria-label="Expand"
+                                aria-controls="additional-actions1-content"
+                                id={`action-header-for-${item}`}
+                            >
+                                <div className={classes.accordionHeader}>
+                                    <Typography variant="h6">{item}</Typography>
+                                </div>
+                            </AccordionSummary>
+                            <AccordionDetails >
+                            <List>
+                            {
+                                links[item].map((link, i) => ( 
+                                    <ListItem key={i}>
+                                        <Link href={link.url} variant="subtitle1" target="_blank" rel="noopener">
+                                            {link.label}
+                                        </Link>
+                                        {
+                                            favoriteUrls.includes( link.url ) ?
+                                            (
+                                                <Tooltip title="Already in Quick Access">
+                                                    <IconButton style={{marginLeft:'10px'}} size="small" aria-label={`add-to-favorites-${item}-${i}`}>
+                                                        <StarIcon color="primary" fontSize="small" />
                                                     </IconButton>
                                                 </Tooltip>
-                                                )
-                                            }
-                                        </ListItem>
-                                    ))
-                                }
-                                </List>
-                                </AccordionDetails>
-                            </Accordion>
-                        </div>
-                    ))
-                }
-            </div>
-            </div>
-            )}
+                                            ) : (
+                                            <Tooltip title="Add to Quick Access">
+                                                <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => addToFavorites(link)} aria-label={`add-to-favorites-${item}-${i}`}>
+                                                    <StarBorderIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                            )
+                                        }
+                                    </ListItem>
+                                ))
+                            }
+                            </List>
+                            </AccordionDetails>
+                        </Accordion>
+                    </div>
+                ))
+            }
+        </div>
+        </div>
+        )}
         </div>
     );
 

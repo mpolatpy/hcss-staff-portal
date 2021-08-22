@@ -17,15 +17,22 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
         marginTop: theme.spacing(2),
     },
-    textInput: {
-        margin: theme.spacing(1),
-        width: '30vw',
-        minWidth: 270,
+    mainContainer:{
+        display: 'flex',
+        flexDirection: 'row',
     },
-    button: {
+    courses:{
+        border: "1px solid",
+        borderColor: "#d3d3d3",
+        borderRadius: '10px',
+        padding: theme.spacing(2),
         marginTop: theme.spacing(2),
-        marginLeft: theme.spacing(9),
-        alignSelf: 'flex-start'
+        marginLeft: theme.spacing(2)
+    },
+    textInput: {
+        margin: theme.spacing(),
+        minWidth: 270,
+        width: '30vw',
     }
 }));
 

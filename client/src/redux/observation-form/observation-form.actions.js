@@ -174,8 +174,8 @@ export const submitObservationFormAsync = (observationFormData) => {
                 transaction.set(emailRef, ({
                     to: teacher.email,
                     message: {
-                        subject: `New Observation Notification`,
-                        text: `Hi ${teacher.firstName}. 
+                        subject: `Notification - New Observation Feedback`,
+                        text: `Hi ${teacher.firstName},
 
 This is an automated observation notificication.
 

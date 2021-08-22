@@ -6,7 +6,6 @@ import TextField from '@material-ui/core/TextField';
 import SaveIcon from '@material-ui/icons/Save';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
 import CustomSelect from '../custom-select/custom-select.component';
 import useStyles from "./register-link.styles";
 
@@ -36,9 +35,12 @@ const RegisterLinkForm = ({ categories, links, setSubmissionMessage, currentUser
         let message;
 
         try {
-            const updatedLinks = [link, ...links];
-            const ref = firestore.doc('links/data');
-            await ref.set({all: updatedLinks});
+            // const updatedLinks = [link, ...links];
+            // const ref = firestore.doc('links/data');
+            // await ref.set({all: updatedLinks});
+
+            const ref = firestore.collection('links/data/savedLinks').doc();
+            await ref.set(link);
 
             message = {
                 content: 'Successfully saved link.',
@@ -74,6 +76,13 @@ const RegisterLinkForm = ({ categories, links, setSubmissionMessage, currentUser
         'District - All',
         'Central Office',
     ];
+
+    // const addLinksToCollection = () => {
+    //     links.forEach(async (link) => {
+    //         const ref = firestore.collection('links/data/savedLinks').doc();
+    //         await ref.set(link);
+    //     });
+    // }
 
     return ( 
         <div>

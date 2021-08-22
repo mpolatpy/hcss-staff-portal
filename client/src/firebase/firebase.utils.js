@@ -38,6 +38,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
                 email,
                 createdAt,
                 isActive: true,
+                firestoreId: userAuth.uid,
                 ...additionalData
             });
         } catch (error) {

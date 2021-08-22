@@ -66,7 +66,7 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
         { field: 'school', headerName: 'School', flex: 1, headerClassName: 'teacher-list-header', },
         { field: 'email', headerName: 'Email', flex: 1.5, headerClassName: 'teacher-list-header', },
         { field: 'status', headerName: 'Status', flex: 1, headerClassName: 'teacher-list-header',},
-    ]
+    ];
 
     return ( 
         <div className={classes.root}>

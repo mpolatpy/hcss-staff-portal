@@ -18,6 +18,10 @@ import { MenuItem } from '@material-ui/core';
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
+    '& .MuiTableCell-head': {
+        backgroundColor: '#3f51b5',
+        color: '#fff'
+    },
     flexGrow: 1,
   },
 });

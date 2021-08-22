@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import axios from 'axios';
 
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import RegistrationForm from '../../components/registration-form/registration-form.component';
@@ -35,13 +36,37 @@ const UserRegistrationPage = () => {
         });
     };
 
-    const handleSubmit = async event => {
-        event.preventDefault();
-        const { firstName, lastName, email, password, ...otherDetails} = staff;
+    
+    const updateCourses = async (id) => {
+        let courses =[];
 
+        try{
+            const response = await axios.post('/canvas-courses', {
+                    teacherId: id,
+                }
+            );
+            const fetchedCourses  = response.data;
+            courses = fetchedCourses.filter ( 
+                course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
+            ); 
+        }catch(e){
+            console.log(e.message);
+        }
+
+        setStaff({
+            ...staff,
+            courses: courses.map(({name, id}) => ({name, id}))
+        }); 
+    };
+
+    
+
+    const handleSubmit = async event => {
+        event.preventDefault(); 
+        const { firstName, lastName, email, password, ...otherDetails} = staff;
+        let status;
         try {
             setIsLoading(true);
-
             const { user } = await auth.createUserWithEmailAndPassword(
                 email,
                 password
@@ -49,16 +74,18 @@ const UserRegistrationPage = () => {
             await createUserProfileDocument(user, 
                 { firstName, lastName, ...otherDetails });
             
-            sendRegistrationEmail(email, password, firstName, lastName);
-            
-            auth.signOut();
+            await sendRegistrationEmail(email, password, firstName, lastName);
+            // setIsLoading(false);
+            status = 'success';
         } catch (error) {
             setSubmissionMessage({
                 type: 'error',
                 text: error.message
             });
-        } finally {
             setIsLoading(false);
+            status = 'error';
+        } finally{
+            if(status === 'success') auth.signOut();
         }
     };
 
@@ -70,8 +97,10 @@ const UserRegistrationPage = () => {
                 staff={staff}
                 isLoading={isLoading}
                 submissionMessage={submissionMessage}
+                updateCourses={updateCourses}
             />
         </div>
+        
     );
 
 }

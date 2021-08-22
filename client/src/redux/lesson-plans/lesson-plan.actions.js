@@ -67,7 +67,7 @@ export const saveLessonPlanCheckFail = (message) => ({
 });
 
 export const submitLessonPlanCheck = (lessonPlan, year, selectedTeachers) => {
-    const { teacher } = lessonPlan;
+    const { teacher, observer, date } = lessonPlan;
     const updatedTeacherList = selectedTeachers.filter ( element => element.id !== teacher.id );
 
     return async dispatch => {
@@ -78,9 +78,39 @@ export const submitLessonPlanCheck = (lessonPlan, year, selectedTeachers) => {
             const previous = await ref.get();
             const updatedScore = calculateLessonPlanAverage(previous, lessonPlan);
             const newRef = firestore.collection(`lessonPlanScores/${year}/${teacher.id}`).doc();
+            const emailRef = firestore.collection("emails").doc();
+            const notificationRef = firestore.collection(`notifications`).doc(year).collection(teacher.id).doc();
+
             await firestore.runTransaction(async (transaction) => {
                 transaction.set(newRef, lessonPlan);
-                transaction.update(ref, updatedScore);
+                transaction.update(ref, updatedScore); 
+                transaction.set(notificationRef, {
+                    message: 'Notification - New lesson plan feedback',
+                    display: true,
+                    date: date,
+                    viewLink: `/staff/lesson-plans/${teacher.id}`
+                });
+                transaction.set(emailRef, ({
+                    to: teacher.email,
+                    message: {
+                        subject: `Notification - Lesson Plan Feedback`,
+                        text: `Hi ${teacher.firstName},
+
+This is an automated notificication for a new lesson plan feedback.
+
+Observer: ${observer.firstName} ${observer.lastName}
+Date: ${date.toLocaleDateString("en-US")}
+
+Please view the details and the feedback in HCSS Staff Portal.
+
+https://staffportal.hampdencharter.org
+
+Thank you
+
+`,
+                            // html: "This is the <code>HTML</code> section of the email body.",
+                        },
+                    }));
             });
             dispatch(submitLessonPlanCheckSuccess(updatedTeacherList))
         } catch (e){

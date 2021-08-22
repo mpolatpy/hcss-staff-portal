@@ -24,6 +24,7 @@ import LessonPlans from './pages/lesson-plan/lesson-plan.routes';
 import ScrollToTop from './components/scroll-to-top/scroll-to-top.component';
 import ImportantLinks from './pages/important-links/important-links.component';
 import ParentCommunicationRoute from './pages/parent-communication/parent-communications.routes';
+import NotificationsPage from './pages/notifications/notifications.page';
 
 function App(props) {
 
@@ -83,6 +84,7 @@ function App(props) {
               <Route path="/staff" component={TeacherListOverview} />
               <Route path="/home" component={HomePage}  /> 
               <Route path="/observations" component={Observations} />
+              <Route path="/notifications" component={NotificationsPage} />
               <Route path="/lesson-plans" component={LessonPlans} />
               <Route path="/important-links" component={ImportantLinks} />
               <Route path="/parent-communication" component={ParentCommunicationRoute} />
