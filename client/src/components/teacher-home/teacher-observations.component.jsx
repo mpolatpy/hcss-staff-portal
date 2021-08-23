@@ -36,7 +36,7 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
         "fullClassObservationScores": "Full Class Observations",
         "quarterScores": "Quarter Evaluations",
         "midyearScores": "Midyear Evaluation",
-        "finalEvals": "End of Year Evaluation"
+        "endOfYearScores": "End of Year Evaluation"
     };
 
     const observationTypes = [ 
@@ -44,7 +44,7 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
         "fullClassObservationScores",
         "quarterScores",
         "midyearScores",
-        "finalEvals"
+        "endOfYearScores" 
     ];
 
     const slugs = [

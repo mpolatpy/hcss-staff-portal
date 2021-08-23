@@ -65,7 +65,7 @@ export default function VerticalTabs({labels, contents}) {
             variant="scrollable"
             value={value}
             onChange={handleChange}
-            aria-label="Vertical tabs example"
+            aria-label="Vertical tabs lesson plan check"
             className={classes.tabs}
         >
             { labels.map( 

@@ -59,10 +59,10 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
                     </>
                 ):( 
                     <div>
-                        <h2>Please initialize lesson plan checks for selected teachers.</h2>
+                        <h3>Please initialize lesson plan checks for selected teachers.</h3>
                         <div style={{ marginTop: '20px'}}>
                             <Button color="primary" variant="contained" onClick={() => setLessonPlans(currentUser.id)}>Create</Button>
-                            <Button style={{marginLeft: '15px', textTransform: 'none'}} color="primary" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
+                            <Button style={{marginLeft: '15px'}} color="primary" variant="outlined" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
                         </div>
                     </div>
                 ))

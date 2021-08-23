@@ -22,10 +22,11 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import ObservationStep, { getSteps } from './observation-form.utils';
 import { useStyles } from './observation-form.styles';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 
 const ObservationPage = (props) => {
     const { 
@@ -45,6 +46,7 @@ const ObservationPage = (props) => {
 
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
+    const [submitting, setSubmitting] = useState(false);
     const steps = getSteps();
     const {teacher, observationDate, observationType} = observationForm.observationDetails;
     const handleNext = (e) => {
@@ -66,152 +68,163 @@ const ObservationPage = (props) => {
         setActiveStep(0);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        submitObservationForm(observationForm);
+        setSubmitting(true);
+        await submitObservationForm(observationForm);
+        setSubmitting(false);
         history.push('/observations');
     };
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
-        saveObservationForm(observationForm);
+        setSubmitting(true);
+        await saveObservationForm(observationForm);
+        setSubmitting(false);
         history.push('/observations/saved');
     }; 
 
-    const handleDelete = (e) => {
+    const handleDelete = async (e) => {
         e.preventDefault();
-        deleteObservationForm(props.match.params.observationId)
+        setSubmitting(true);
+        await deleteObservationForm(props.match.params.observationId);
+        setSubmitting(false);
         history.push('/observations')
     }
 
     return (
+        submitting ?
+        (
+            <CircularProgress />
+        ):
+        (
         <div className={classes.root}>
-            <Stepper activeStep={activeStep} orientation="vertical">
-                {steps.map((label, index, steps) => (
-                    <Step key={label}>
-                        <StepLabel>{label}</StepLabel>
-                        <StepContent>
-                            <form onSubmit={
-                                index === steps.length - 1 ?
-                                    handleSubmit :
-                                    handleNext
-                            }>
-                            <ObservationStep
-                                readOnly={readOnly} 
-                                step={index}
-                                currentUser={currentUser}
-                                currentYear={currentYear}
-                                observationForm={observationForm}
-                                {...otherProps}
-                            />
-                            <div className={classes.actionsContainer}>
-                                <div>
-                                    <Button
-                                        disabled={activeStep === 0}
-                                        variant="outlined"
-                                        onClick={handleBack}
-                                        className={classes.button}
-                                    >
-                                        Back
-                                    </Button>
-                                    {
-                                        readOnly ? (
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                                color="primary"
-                                                disabled={activeStep === steps.length - 1}
-                                                className={classes.button}
-                                            >
-                                                Next
-                                            </Button>
-                                         ) : ( 
-                                            <Button
-                                                type="submit"
-                                                variant="contained"
-                                                color="primary"
-                                                className={classes.button}
-                                            >
-                                                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-                                            </Button>
-                                         )
-                                    }
-                                    
-                                </div>
-                                <div className={classes.resetSaveButtons}>
-                                    <CustomSpeedDial 
-                                        hidden={readOnly}
-                                        actions={[
-                                            {icon: (<IconButton
-                                                        aria-label="save"
-                                                        disabled={!teacher || !observationDate || !observationType}
-                                                        type="submit"
-                                                        onClick={handleSave}
-                                                    >
-                                                        <SaveIcon />
-                                                    </IconButton>), name: 'Save'
-                                            },
-                                            {
-                                                icon: (
-                                                    <CustomModal
-                                                        modalIcon= {( <NotesIcon /> )}
-                                                        modalBody={( 
-                                                            <div style={{width: '60vw'}}>
-                                                                <CustomTextArea />
-                                                            </div>
-                                                        )}
-                                                    />
-                                                 ),
-                                                name: 'Notes'
-                                            }, {
-                                                icon: ( observationForm.isSavedObservation ?
-                                                (
+        <Stepper activeStep={activeStep} orientation="vertical">
+            {steps.map((label, index, steps) => (
+                <Step key={label}>
+                    <StepLabel>{label}</StepLabel>
+                    <StepContent>
+                        <form onSubmit={
+                            index === steps.length - 1 ?
+                                handleSubmit :
+                                handleNext
+                        }>
+                        <ObservationStep
+                            readOnly={readOnly} 
+                            step={index}
+                            currentUser={currentUser}
+                            currentYear={currentYear}
+                            observationForm={observationForm}
+                            {...otherProps}
+                        />
+                        <div className={classes.actionsContainer}>
+                            <div>
+                                <Button
+                                    disabled={activeStep === 0}
+                                    variant="outlined"
+                                    onClick={handleBack}
+                                    className={classes.button}
+                                >
+                                    Back
+                                </Button>
+                                {
+                                    readOnly ? (
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            disabled={activeStep === steps.length - 1}
+                                            className={classes.button}
+                                        >
+                                            Next
+                                        </Button>
+                                        ) : ( 
+                                        <Button
+                                            type="submit"
+                                            variant="contained"
+                                            color="primary"
+                                            className={classes.button}
+                                        >
+                                            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+                                        </Button>
+                                        )
+                                }
+                                
+                            </div>
+                            <div className={classes.resetSaveButtons}>
+                                <CustomSpeedDial 
+                                    hidden={readOnly}
+                                    actions={[
+                                        {icon: (<IconButton
+                                                    aria-label="save"
+                                                    disabled={!teacher || !observationDate || !observationType}
+                                                    type="submit"
+                                                    onClick={handleSave}
+                                                >
+                                                    <SaveIcon />
+                                                </IconButton>), name: 'Save'
+                                        },
+                                        {
+                                            icon: (
                                                 <CustomModal
-                                                    modalIcon = {( <DeleteIcon /> )}
+                                                    modalIcon= {( <NotesIcon /> )}
                                                     modalBody={( 
-                                                        <div>
-                                                            <Typography variant="h5">
-                                                                Please Confirm Delete
-                                                            </Typography>
-                                                            <p>Once deleted, you will not be able to retrieve this observation back</p>
-                                                            <div>
-                                                            <Button
-                                                            type="submit"
-                                                            variant="contained"
-                                                            color="secondary"
-                                                            onClick={handleDelete}
-                                                            className={classes.button}
-                                                            >
-                                                                Delete
-                                                            </Button>
-                                                            </div>
+                                                        <div style={{width: '60vw'}}>
+                                                            <CustomTextArea />
                                                         </div>
                                                     )}
                                                 />
-                                                ) : (
-                                                <IconButton
-                                                    aria-label="reset"
-                                                    onClick={handleReset}
-                                                    // className={classes.button}
-                                                >
-                                                    <CachedIcon />
-                                                </IconButton>
-                                                )
-                                                    
                                                 ),
-                                                name: observationForm.isSavedObservation ? 'Delete' : 'Reset'
-                                            }
-                                        ]}
-                                    />
-                                </div>
+                                            name: 'Notes'
+                                        }, {
+                                            icon: ( observationForm.isSavedObservation ?
+                                            (
+                                            <CustomModal
+                                                modalIcon = {( <DeleteIcon /> )}
+                                                modalBody={( 
+                                                    <div>
+                                                        <Typography variant="h5">
+                                                            Please Confirm Delete
+                                                        </Typography>
+                                                        <p>Once deleted, you will not be able to retrieve this observation back</p>
+                                                        <div>
+                                                        <Button
+                                                        type="submit"
+                                                        variant="contained"
+                                                        color="secondary"
+                                                        onClick={handleDelete}
+                                                        className={classes.button}
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            />
+                                            ) : (
+                                            <IconButton
+                                                aria-label="reset"
+                                                onClick={handleReset}
+                                                // className={classes.button}
+                                            >
+                                                <CachedIcon />
+                                            </IconButton>
+                                            )
+                                                
+                                            ),
+                                            name: observationForm.isSavedObservation ? 'Delete' : 'Reset'
+                                        }
+                                    ]}
+                                />
                             </div>
-                            </form>
-                        </StepContent>
-                    </Step>
-                ))}
-            </Stepper>
-            
+                        </div>
+                        </form>
+                    </StepContent>
+                </Step>
+            ))}
+        </Stepper>
         </div>
+        )
     );
 }
 
