@@ -23,7 +23,7 @@ const lessonPlanChecksReducer = (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 isLoading: false,
-                errorMessage: "An error occurred! Please try again"
+                errorMessage: "An error occurred! Please try again."
             };
         case LessonPlanActionTypes.SUBMIT_LESSON_PLAN_CHECK_START:
             return {

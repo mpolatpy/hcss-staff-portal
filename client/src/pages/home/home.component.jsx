@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const HomePage = () => {
+const HomePage = ({currentUser}) => {
 
     const classes = useStyles();
 
@@ -78,6 +78,18 @@ const HomePage = () => {
                     header="Student Achievement"
                     buttonText="View Student Achievement"
                     to="#"
+                >
+                    {/* <Typography>View observations here</Typography> */}
+                </CustomCard>
+            </div>
+            <div className={classes.card}>
+                <CustomCard
+                    className={classes.card}
+                    imageUrl="https://hampdencharter.org/wp-content/uploads/2019/11/music1.jpg"
+                    title='Attendance Records'
+                    header="Attendance Records"
+                    buttonText="View Attendance Records"
+                    to={`/staff/attendance/${currentUser.id}`}
                 >
                     {/* <Typography>View observations here</Typography> */}
                 </CustomCard>

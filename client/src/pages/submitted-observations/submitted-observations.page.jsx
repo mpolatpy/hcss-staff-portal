@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 
-import withAuthorization from '../../components/with-authorization/withAuthorization.component';
 import SubmittedObservationsPage from './submitted-observations.component';
 import SubmittedObservationDetails from './submitted-observation.detail';
 import SubmittedObservation from './single-submitted-observation';
@@ -32,5 +31,4 @@ const SubmittedObservations = (props) => {
     );
 }
 
-// export default withAuthorization(['superadmin', 'dci', 'admin'])(SubmittedObservations);
 export default (SubmittedObservations);

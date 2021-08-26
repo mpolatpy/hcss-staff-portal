@@ -31,6 +31,8 @@ export const setLessonPlans = (currentUserId) => {
                 } else {
                     dispatch(setLessonPlanChecksFail());
                 }
+            } else {
+                dispatch(setLessonPlanChecksFail());
             }
         } catch (e){
             dispatch(setLessonPlanChecksFail());

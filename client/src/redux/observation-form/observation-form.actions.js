@@ -200,22 +200,6 @@ Thank you
             dispatch(submitObservationFormFail(e.message));
         }
     }
-
-    // return dispatch => {
-    //     dispatch(submitObservationFormStart());
-
-    //     newObservationRef
-    //         .set(observationForm)
-    //         .then( () => dispatch(submitObservationFormSuccess()))
-    //         .then( () => {
-    //             if(observationFormData.isSavedObservation){
-    //                 firestore.collection('savedObservations')
-    //                         .doc(observationFormData.firestoreRef)
-    //                         .delete()
-    //             }
-    //         })
-    //         .catch( e => dispatch(submitObservationFormFail(e.message)))
-    // }
 }
 
 const deleteObservationFormStart = () => ({

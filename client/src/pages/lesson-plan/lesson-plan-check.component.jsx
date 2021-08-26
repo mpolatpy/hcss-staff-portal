@@ -11,6 +11,7 @@ import VerticalTabs from '../../components/vertical-tabs/vertical-tabs-component
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import SettingsBackupRestoreIcon from '@material-ui/icons/SettingsBackupRestore';
+import Typography from '@material-ui/core/Typography';
 
 const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoading,
     setLessonPlans, resetLessonPlans, submitLessonPlanCheck }) => {
@@ -59,7 +60,10 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
                     </>
                 ):( 
                     <div>
-                        <h3>Please initialize lesson plan checks for selected teachers.</h3>
+                        <Typography variant="h5">Lesson Plan Check</Typography>
+                        <div style={{marginTop: '20px'}}>
+                            <Typography>Please initialize lesson plan checks for selected teachers. You need to have at least one selected teacher.</Typography>
+                        </div>
                         <div style={{ marginTop: '20px'}}>
                             <Button color="primary" variant="contained" onClick={() => setLessonPlans(currentUser.id)}>Create</Button>
                             <Button style={{marginLeft: '15px'}} color="primary" variant="outlined" component={Link} to="/observations/templates/edit">Update Selected Teachers</Button>
@@ -76,7 +80,7 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     selectedTeachers: selectTeachersForLPCheck,
     currentYear: selectCurrentYear, 
-    isLoading: selectIsLessonPlanChecksLoading
+    isLoading: selectIsLessonPlanChecksLoading,
 });
 
 const mapDispatchToProps = dispatch => ({

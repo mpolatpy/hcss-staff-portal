@@ -11,7 +11,6 @@ import SavedObservationDetail from '../saved-observations/saved-observation-deta
 import SubmittedObservations from '../submitted-observations/submitted-observations.page';
 import ObservationTemplatesPage from './observation-template.component';
 import ObservationTemplateEditPage from './observation-template-edit.component';
-import LessonPlanCheckPage from '../lesson-plan/lesson-plan-check.component';
 
 const Observations = (props) => {
     const {match, currentUser} = props;
@@ -28,7 +27,6 @@ const Observations = (props) => {
             }
             </Route>
             <Route path={`${match.path}/submitted`} render={(props) => <SubmittedObservations currentUser={currentUser} {...props} />} />
-            <Route path={`${match.path}/lesson-plans`} component={LessonPlanCheckPage} />
             <Route exact path={`${match.path}/templates`} component={ObservationTemplatesPage} />
             <Route path={`${match.path}/templates/edit`} component={ObservationTemplateEditPage} />
             <Route exact path={`${match.path}/new`} component={NewObservationPage}/>

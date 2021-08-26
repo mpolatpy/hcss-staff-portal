@@ -82,7 +82,7 @@ function App(props) {
               <Route exact path="/directory" component={Directory}/>
               <Route exact path="/register" component={UserRegistrationPage}/>
               <Route path="/staff" component={TeacherListOverview} />
-              <Route path="/home" component={HomePage}  /> 
+              <Route path="/home" render={() => <HomePage currentUser={currentUser}/>}  /> 
               <Route path="/observations" component={Observations} />
               <Route path="/notifications" component={NotificationsPage} />
               <Route path="/lesson-plans" component={LessonPlans} />

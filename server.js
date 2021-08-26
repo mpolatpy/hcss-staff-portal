@@ -1,9 +1,8 @@
 const express = require('express');
-// const cors = require('cors');
-// const bodyParser = require('body-parser');
 const path = require('path');
 const axios = require('axios');
 const {PowerSchoolClient} = require('./powerschool');
+const {getGoogleSheetsData}  = require('./google-sheets');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -17,8 +16,6 @@ const port = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// app.use(cors());
 
 if (process.env.NODE_ENV === 'production') {
 
@@ -60,3 +57,12 @@ app.post('/get-powerschool-data', (req, res) => {
         .then( (response) => res.send( response ) )
         .catch( e => res.send({ error: e  }))
 });
+
+app.post('/read-google-sheets-data', (req, res) => {
+    const options = req.body.options;
+
+    getGoogleSheetsData(options)
+    .then( (response) => res.send(response))
+    .catch ((e) => res.send({error: e}));
+});
+
