@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -8,11 +8,12 @@ import { selectTeacherList, selectTeachersIsLoading } from "../../redux/teachers
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add';
-import {DataGrid} from '@material-ui/data-grid'
+import {DataGrid} from '@material-ui/data-grid';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        '& .teacher-list-header': {
+        '& .MuiDataGrid-columnsContainer': {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.info.contrastText
         },
@@ -28,8 +29,10 @@ const useStyles = makeStyles((theme) => ({
 const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
 
     const classes = useStyles();
+    const [teachers, setTeachers ] = useState(teacherList);
+    const [search, setSearch] = useState('');
 
-    const rows = teacherList.map( teacher => ({
+    const rows = teachers.map( teacher => ({
         name: {
             firstName: teacher.firstName,
             lastName: teacher.lastName,
@@ -44,7 +47,7 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
     }));
     
     const columns = [
-        { field: 'name', headerName: 'Name', flex: 1.5, headerClassName: 'teacher-list-header', 
+        { field: 'name', headerName: 'Name', flex: 1.5, 
             renderCell: (params) => ( 
                 <Link to={`staff/home/${params.value.id}`} >
                     {`${params.value.lastName}, ${params.value.firstName}`}
@@ -62,11 +65,30 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
                 return 0;
             }
         },
-        { field: 'department', headerName: 'Department', flex: 1, headerClassName: 'teacher-list-header', },
-        { field: 'school', headerName: 'School', flex: 1, headerClassName: 'teacher-list-header', },
-        { field: 'email', headerName: 'Email', flex: 1.5, headerClassName: 'teacher-list-header', },
-        { field: 'status', headerName: 'Status', flex: 1, headerClassName: 'teacher-list-header',},
+        { field: 'department', headerName: 'Department', flex: 1, },
+        { field: 'school', headerName: 'School', flex: 1, },
+        { field: 'email', headerName: 'Email', flex: 1.5, },
+        { field: 'status', headerName: 'Status', flex: 1,},
     ];
+
+    const handleChange = (e) => {
+        let {value} = e.target;
+        setSearch(value);
+
+        const teachers = teacherList.filter( teacher => {
+            value = value.toLowerCase();
+            const lastNameMatch  = teacher.lastName.toLowerCase().includes(value);
+            const firstNameMatch  = teacher.firstName.toLowerCase().includes(value);
+            const schoolMatch  = teacher.school.toLowerCase().includes(value);
+            const departmentMatch  = teacher.department.toLowerCase().includes(value);
+            
+            return (lastNameMatch || firstNameMatch || schoolMatch || departmentMatch );
+        });
+
+        setTeachers(teachers);
+    }
+
+    
 
     return ( 
         <div className={classes.root}>
@@ -79,16 +101,16 @@ const TeacherTableContainer = ({ teacherList, history, currentUser }) => {
                 </div> )
                 : null
             }
-            
-            <div style={{ height: 650, width: '100%'}}>
+            <TextField onChange={handleChange} value={search} label="Search" fullWidth size="small" variant="outlined" />
+            <div style={{ height: 650, width: '100%', marginTop:'10px'}}>
                 <DataGrid 
                 rows={rows}
                 columns={columns}
                 pageSize={10}
+                rowsPerPageOptions={[10, 25, 50, 100]}
                 // hideFooter
                 />
             </div>
-            
         </div>
     );
 }

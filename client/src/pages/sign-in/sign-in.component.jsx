@@ -9,7 +9,7 @@ import Alert from '@material-ui/lab/Alert';
 
 import useStyles from "./sign-in.styles";
 
-import { auth, firestore } from '../../firebase/firebase.utils';
+import { auth } from '../../firebase/firebase.utils';
 
 function SignInForm({ history })  {
 

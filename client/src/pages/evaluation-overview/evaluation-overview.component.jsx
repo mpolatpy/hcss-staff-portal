@@ -8,11 +8,12 @@ import { Link } from 'react-router-dom';
 import WithSpinnner from '../../components/with-spinner/with-spinner.component';
 import DataTable from '../../components/custom-table/custom-table.component';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import { useStyles } from './evaluation-overview.styles';
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
 import { observationTypeMap, applyStyles, 
     RenderRating, createRows } from './evaluation-overview.utils';
 
@@ -93,10 +94,10 @@ const EvaluationOverview = ({ match, currentYear }) => {
 
     return ( 
         <div className={classes.root}>
+            {/* <Typography variant="h5">Evaluation Data</Typography> */}
             <div className={classes.header}>
-                <div>
-                    <Typography variant="h5">Evaluation Data</Typography>
-                </div>
+                <Typography variant="h5">Evaluation Data</Typography>
+                {/* <TextField label="Search" variant="outlined"  size="small"  /> */}
                 <div className={classes.selectOptions}>
                     <CustomSelect
                         label="Observation Type"

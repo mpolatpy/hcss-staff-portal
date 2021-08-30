@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
@@ -50,7 +50,6 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
     }
 
     const updateCoursesForTeacher = async (teacher, submissions) => {
-        let status;
         try{
             const courses = await getCourses(teacher);
             const ref = firestore.doc(`users/${teacher.firestoreId}`);

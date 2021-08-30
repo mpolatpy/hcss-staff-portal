@@ -1,51 +1,36 @@
-import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
-import axios from "axios";
-import Typography from '@material-ui/core/Typography';
+import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 
-const AttendancePage = ({currentUser}) => {
-    const [records, setRecords ] = useState([]);
+import SimpleTabs from '../../components/tab-panels/tabs.component'; 
+import SpreadSheetTable from '../../components/spreadsheet-table/spreadsheet-table';
 
-    useEffect(() => {
-        const fetchAttendanceData = async () => {
-            try{
-                const response = await axios.post('/read-google-sheets-data', {
-                    options: {
-                        spreadsheetId: '1kWFDhpp3yJRcDXyIWAXZ9YAr6jb22JTY15vkZsXaMfo',
-                        range: 'PowerSchool!A1:B4',
-                    }
-                });
-    
-                if(response.data && response.data.status === 'success'){
-                    setRecords(response.data.result)
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        };
-
-        fetchAttendanceData();
-    }, []);
+const AttendancePage = ({currentUser, currentYear}) => {
+    const school = currentUser.school === 'HCSS West' ? 'west' : 'east';
+    const labels = ['Attendance Summary', 'Attendance Recors', 'Leave Requests'];
+    const docs = ['staffAttendance', 'staffAttendanceDetails', 'leaveRequests'];
 
     return ( 
-    <div>
-        <Typography variant="h5">Attendance Page - Under Construction</Typography>
-        {/* <div>
-        {
-            records.map( (record, i) => (
-                <Typography key={i}>{record[0]}</Typography>    
-            ))
-        }
-        </div> */}
-        <button onClick={() => console.log(records)}>View Data</button>
-    </div>
+        <div>
+            <SimpleTabs
+            labels={labels}
+            contents={ docs.map((doc, i) => (
+                        <SpreadSheetTable 
+                        key={`table-${i}`} 
+                        spreadSheetInfoRef={`googleSheets/${doc}/${currentYear}/${school}`} 
+                        currentUser={currentUser}
+                        />
+                        ))
+                    }
+            />
+        </div>
     );
 };
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
+    currentYear: selectCurrentYear,
 });
 
 export default connect(mapStateToProps)(AttendancePage);

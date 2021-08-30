@@ -4,13 +4,14 @@ import{ Link } from 'react-router-dom';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from "../../redux/school-year/school-year.selectors";
 import DataTable from '../../components/custom-table/custom-table.component';
-import { Typography, Box, CircularProgress } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles'
 import CustomSelect from "../../components/custom-select/custom-select.component";
 
 const useStyles = makeStyles((theme) => ({
     dataTable: {
-        '& .teacher-list-header': {
+        '& .MuiDataGrid-columnsContainer': {
             backgroundColor: theme.palette.primary.main,
             color: theme.palette.info.contrastText
         },
@@ -38,16 +39,16 @@ const ParentCommunicationPage = ({isLoading, match, communications, currentUser,
     });
 
     const columns = [
-        {field: 'student_number', headerName: 'ID', headerClassName: 'teacher-list-header', flex: 0.5,
+        {field: 'student_number', headerName: 'ID', flex: 0.5,
             renderCell: param => ( 
                 <Link to={`${match.path}/student/${param.value}`}>
                     {param.value}
                 </Link>
             )
         },
-        {field: 'lastfirst', headerName: 'Name', headerClassName: 'teacher-list-header', flex: 2,},
-        {field: 'grade_level', headerName: 'Grade', headerClassName: 'teacher-list-header', flex: 1,},
-        {field: 'count', headerName: 'Count', headerClassName: 'teacher-list-header', flex: 1,},
+        {field: 'lastfirst', headerName: 'Name', flex: 2,},
+        {field: 'grade_level', headerName: 'Grade', flex: 1,},
+        {field: 'count', headerName: 'Count', flex: 1,},
     ];
 
     const handleSelect = (e) => {
