@@ -35,17 +35,24 @@ const SubmittedLessonPlans = ({currentUser, currentYear, teachers}) => {
         const fetchLessonPlanSummary = async (selectedTeachers) => {
             let fetchedLessonPlanSummary = [];
             if(selectedTeachers.length){
-                const ref = firestore.collection(`lessonPlanScores/${currentYear}/summary`)
-                                .where('teacherId', 'in', selectedTeachers )
-                const snapshot = await ref.get();
 
-                if(!snapshot.empty){
-                    snapshot.docs.forEach(doc => {
-                        fetchedLessonPlanSummary = [...fetchedLessonPlanSummary, doc.data()]
-                    });
+                let i = 0;
 
-                    setLessonPlanSummary(fetchedLessonPlanSummary);
+                while (i < selectedTeachers.length){
+                    const ref = firestore.collection(`lessonPlanScores/${currentYear}/summary`)
+                                .where('teacherId', 'in', selectedTeachers.slice(i, i+10) )
+                    const snapshot = await ref.get();
+
+                    if(!snapshot.empty){
+                        snapshot.docs.forEach(doc => {
+                            fetchedLessonPlanSummary = [...fetchedLessonPlanSummary, doc.data()]
+                        });
+                    }
+
+                    i += 10;
                 }
+
+                setLessonPlanSummary(fetchedLessonPlanSummary);
             }
         };
 

@@ -42,7 +42,7 @@ app.listen(port, error => {
 
 app.post('/canvas-courses', (req, res) => {
     const teacherId = req.body.teacherId;
-    const URL = `https://hcss.instructure.com/api/v1/users/${teacherId}/courses?state[]=available`;
+    const URL = `https://hcss.instructure.com/api/v1/users/${teacherId}/courses?state[]=available&per_page=100`;
 
     axios.get(URL, { headers: { Authorization: 'Bearer ' + CANVAS_ACCESS_KEY}})
         .then( (response) => res.status(200).send( response.data ) )
