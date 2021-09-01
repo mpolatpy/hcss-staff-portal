@@ -4,8 +4,9 @@ import { firestore } from '../../firebase/firebase.utils';
 import {selectCurrentYear} from '../../redux/school-year/school-year.selectors';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectTeacher, selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../redux/teachers/teachers.selectors';
-
-import { CircularProgress, Typography } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -19,15 +20,18 @@ import Grid from '@material-ui/core/Grid'
 import CustomSelect from '../custom-select/custom-select.component';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    marginTop: theme.spacing(2),
+    root: {
+        width: '100%',
+        marginTop: theme.spacing(2),
 
-    '& .MuiTableCell-head': {
-        backgroundColor: '#3f51b5',
-        color: '#fff'
+        '& .MuiTableCell-head': {
+            backgroundColor: '#3f51b5',
+            color: '#fff'
+        }
+    },
+    link: {
+        textDecoration: 'none',
     }
-  },
 }));
 
 const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teachersOptions, teachersMap, match, history}) => {
@@ -55,7 +59,7 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
             const snapshot = await ref.get();
             let fetchedLessonPlans = [];
             if(!snapshot.empty){
-                snapshot.docs.forEach(doc => fetchedLessonPlans = [...fetchedLessonPlans, doc.data()] );
+                snapshot.docs.forEach(doc => fetchedLessonPlans = [...fetchedLessonPlans, {id: doc.id, ...doc.data()}] );
             }
 
             setLessonPlans(fetchedLessonPlans);
@@ -65,7 +69,6 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
         getLPScores();
         getLessonPlans();
         setIsLoading(false);
-        
     }, [teacher, currentYear]);
 
     const handleSelect = (e) => {
@@ -137,7 +140,7 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
                                     <Table>
                                         <TableHead>
                                             <TableRow>
-                                                <TableCell>Date</TableCell>
+                                                <TableCell>Date & Time</TableCell>
                                                 <TableCell>Observer</TableCell>
                                                 <TableCell>Submitted LP (%)</TableCell>
                                                 <TableCell>On Time (%)</TableCell>
@@ -149,7 +152,22 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
                                                 lessonPlans.sort((a, b) => (b.date-a.date))
                                                     .map((lessonPlan, idx) => ( 
                                                     <TableRow hover key={idx}>
-                                                        <TableCell>{new Date(lessonPlan.date.seconds*1000).toLocaleDateString()}</TableCell>
+                                                        {
+                                                            currentUser.id === lessonPlan.observer.id ? (
+                                                                <TableCell>
+                                                                    <Link 
+                                                                    className={classes.link}
+                                                                    to={`/lesson-plans/submitted/${lessonPlan.id}?tid=${lessonPlan.teacher.id}`}
+                                                                    >
+                                                                        {lessonPlan.date.toDate().toLocaleString()}
+                                                                    </Link>
+                                                                </TableCell>
+                                                            ):(
+                                                                <TableCell>
+                                                                    {lessonPlan.date.toDate().toLocaleString()}
+                                                                </TableCell>
+                                                            )
+                                                        }
                                                         <TableCell>{`${lessonPlan.observer.firstName} ${lessonPlan.observer.lastName}`}</TableCell>
                                                         <TableCell>{lessonPlan.scores.average.percentSubmitted.rate.toFixed(1)}</TableCell>
                                                         <TableCell>{lessonPlan.scores.average.onTime.rate.toFixed(1)}</TableCell>

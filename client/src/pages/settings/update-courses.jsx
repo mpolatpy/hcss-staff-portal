@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
-import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 import axios from 'axios';
 import { useStyles } from '../observations/observation-template.styles';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -22,14 +20,23 @@ import Typography from '@material-ui/core/Typography';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-
-
- const UpdateCoursesPage = ({ teachers, currentUser, history, setSubmissionMessage }) => {
+ const UpdateCoursesPage = ({ teachers, currentUser }) => {
     const [selectedTeachers, setSelectedTeachers ] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [showReport, setShowReport] = useState(false);
     const classes = useStyles();
     const [submitStatus, setSubmitStatus] = useState([]);
+    const [canvasTerms, setCanvasTerms] = useState([]);
+
+    useEffect(() => {
+        const getCanvasTerms = async () => {
+            const snapshot = await firestore.collection('years').where('isActiveYear', '==', true).get();
+            const canvasTerms = snapshot.docs[0].data().canvasTerms;
+            return canvasTerms;
+        };
+
+        getCanvasTerms().then(canvasTerms => setCanvasTerms(canvasTerms));
+    },[]);
 
     const handleChange = (e, values) => {
         setSelectedTeachers(values);
@@ -40,7 +47,9 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
             teacherId: teacher.canvasId,
         });
         const courses = response.data.filter ( 
-            course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
+            course => course.enrollments[0].type === 'teacher' 
+            && !course.name.includes('SandBox') 
+            && canvasTerms.includes(course.enrollment_term_id)
         ).map(course => ({
             name: course.name,
             id: course.id
@@ -138,8 +147,4 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
 });
 
-const mapDispatchToProps = dispatch => ({
-    setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UpdateCoursesPage));
+export default connect(mapStateToProps)(UpdateCoursesPage);

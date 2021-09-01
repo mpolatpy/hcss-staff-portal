@@ -5,8 +5,9 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from "../../redux/school-year/school-year.selectors";
 import DataTable from '../../components/custom-table/custom-table.component';
 import { CircularProgress, Typography, Box } from "@material-ui/core";
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles';
 import CustomSelect from "../../components/custom-select/custom-select.component";
+
 const useStyles = makeStyles((theme) => ({
     dataTable: {
         '& .teacher-list-header': {
@@ -40,7 +41,7 @@ const ParentCommunicationDetailPage = ({communications, students, isLoading, his
         {field: 'entry_date', headerName: 'Date', headerClassName: 'teacher-list-header', flex: 1,
             renderCell: (params) => new Date(params.value).toLocaleDateString('en-US')
         },
-        // {field: 'lastfirst', headerName: 'Name', headerClassName: 'teacher-list-header', flex: 1.5,},
+        {field: 'entry_author', headerName: 'Teacher', headerClassName: 'teacher-list-header', flex: 1.5,},
         // {field: 'grade_level', headerName: 'Grade', headerClassName: 'teacher-list-header', flex: 0.9,},
         {field: 'name', headerName: 'Category', headerClassName: 'teacher-list-header', flex: 1.2,},
         {field: 'subtype', headerName: 'Type', headerClassName: 'teacher-list-header', flex: 1.2,},

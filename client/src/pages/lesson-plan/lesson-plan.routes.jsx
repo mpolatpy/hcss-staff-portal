@@ -1,10 +1,14 @@
+import {useEffect, useState} from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import LessonPlanPage from './lesson-plan.page';
 import LessonPlanCheckPage from './lesson-plan-check.component';
 import SubmittedLessonPlans from './submitted-lesson-plans';
+import LessonPlanReport from './lesson-plan-report';
+import LessonPlanEditPage from './lesson-plan-edit';
 
 const LessonPlans = (props) => {
     const {match, currentUser} = props;
@@ -21,8 +25,10 @@ const LessonPlans = (props) => {
                 )
             }
         </Route>
-        <Route exact path={`${match.path}/check`}  component={LessonPlanCheckPage}/>
+        <Route exact path={`${match.path}/check`} component={LessonPlanCheckPage} />
         <Route exact path={`${match.path}/submitted`}  component={SubmittedLessonPlans}/>
+        <Route exact path={`${match.path}/submitted/:lessonPlanId`}  component={LessonPlanEditPage}/>
+        <Route exact path={`${match.path}/summary`}  component={LessonPlanReport}/>
     </>
     );
 };

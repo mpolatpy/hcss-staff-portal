@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { firestore } from '../../firebase/firebase.utils';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
@@ -14,6 +15,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import { MenuItem } from '@material-ui/core';
+import { calculateAverageScores } from './lesson-plan-content-utils';
 
 const useStyles = makeStyles({
   table: {
@@ -24,9 +26,9 @@ const useStyles = makeStyles({
     },
     flexGrow: 1,
   },
-});
+}); 
 
-const Content = ({teacher, submitLessonPlanCheck, saveLessonPlanCheck, observer, currentYear, teachers, setSubmissionMessage }) => {
+const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teachers, setSubmissionMessage }) => {
     const classes = useStyles();
     const [ isFetching, setIsFetching ] = useState(false);
     const [ lessonPlanScores, setLessonPlanScores ] = useState({
@@ -38,15 +40,20 @@ const Content = ({teacher, submitLessonPlanCheck, saveLessonPlanCheck, observer,
         setIsFetching(true);
         const getCourses = async () => {
             let teacherCourses =[];
-    
+
             try{
+                const snapshot = await firestore.collection('years').where('isActiveYear', '==', true).get();
+                const canvasTerms = snapshot.docs[0].data().canvasTerms;
                 const response = await axios.post('/canvas-courses', {
                         teacherId: teacher.canvasId,
                     }
                 );
                 const fetchedCourses  = response.data;
                 teacherCourses = fetchedCourses.filter ( 
-                    course => course.enrollments[0].type === 'teacher' && !course.name.includes('SandBox')
+                    course => 
+                    course.enrollments[0].type === 'teacher' 
+                    && !course.name.includes('SandBox')
+                    && canvasTerms.includes(course.enrollment_term_id)
                 ); 
                 
                 const initialScores = {};
@@ -130,7 +137,7 @@ const Content = ({teacher, submitLessonPlanCheck, saveLessonPlanCheck, observer,
             field = 'onTime'
         }
 
-        averageScore = calculateAverageScores(field, value, courseId);
+        averageScore = calculateAverageScores(field, value, courseId, lessonPlanScores);
 
         setLessonPlanScores({
             ...lessonPlanScores,
@@ -147,41 +154,6 @@ const Content = ({teacher, submitLessonPlanCheck, saveLessonPlanCheck, observer,
             }
         });
             
-    }
-
-    const calculateAverageScores = (type, value, courseId) => {
-        const previousScore = lessonPlanScores.average[type];
-        let numScores, rate;
-        let previousCourseScore = lessonPlanScores.courses[courseId][type];
-
-        if( value !== ''){
-            if (previousCourseScore !== ''){
-                numScores = previousScore.numScores;            
-                rate = (numScores*previousScore.rate - previousCourseScore + parseInt(value)) / numScores;
-            } else {
-                numScores = previousScore.numScores + 1;
-                rate = (previousScore.rate * previousScore.numScores + parseInt(value)) / numScores;
-            }
-        } else {
-            const filteredCourses = Object.values(lessonPlanScores.courses).filter(
-                item => (item.percentSubmitted && lessonPlanScores.courses[courseId].id !== item.id)
-            );
-
-            let total = 0;
-            numScores = 0;
-
-            for( let course of filteredCourses ){
-                total += parseInt(course.percentSubmitted);
-                numScores++;
-            }
-
-            rate = (total!==0 && numScores!==0) ? total/numScores : 0;
-        }
-        
-        return {
-            rate,
-            numScores
-        }
     }
 
     return ( 
@@ -294,6 +266,8 @@ const Content = ({teacher, submitLessonPlanCheck, saveLessonPlanCheck, observer,
         </>
     );
 }; 
+
+
 
 const mapDispatchToProps = (dispatch) => ({
     setSubmissionMessage: (message) => dispatch(setSubmissionMessage(message))

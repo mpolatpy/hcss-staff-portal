@@ -2,6 +2,7 @@ import {Link} from 'react-router-dom';
 
 import EditIcon from '@material-ui/icons/Edit';
 import TelegramIcon from '@material-ui/icons/Telegram';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -59,6 +60,14 @@ const LessonPlanPage = ({ match }) => {
                         <TelegramIcon color="primary" />
                     </ListItemIcon>
                     <ListItemText primary="Submitted Lesson Plans - Selected Teachers" />
+                </ListItem>
+            </Link>
+            <Link to={`${match.path}/summary`} className={classes.links} >
+                <ListItem button>
+                    <ListItemIcon>
+                        <AssessmentIcon color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="Submitted Lesson Plans - All" />
                 </ListItem>
             </Link>
             <Link to="/observations/templates/edit" className={classes.links} >

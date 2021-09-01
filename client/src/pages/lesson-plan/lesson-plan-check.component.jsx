@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -15,7 +14,6 @@ import Typography from '@material-ui/core/Typography';
 
 const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoading,
     setLessonPlans, resetLessonPlans, submitLessonPlanCheck }) => {
-
 
     const labels = selectedTeachers.length > 0 ?  
                     selectedTeachers.map( 
@@ -51,8 +49,8 @@ const LessonPlanCheckPage = ({ currentUser, currentYear, selectedTeachers, isLoa
                 (
                     <>
                     <VerticalTabs labels={labels} contents={contents}/>
-                    <div style={{ marginTop: '20px', display: 'flex', justifyContent:'flex-end'}}>
-                        <Button color="secondary" onClick={() => resetLessonPlans()}>
+                    <div style={{ marginTop: '20px', display: 'flex', justifyContent:'flex-start'}}>
+                        <Button color="secondary" variant="outlined" onClick={() => resetLessonPlans()}>
                             <SettingsBackupRestoreIcon/>
                             Clear All
                         </Button>
