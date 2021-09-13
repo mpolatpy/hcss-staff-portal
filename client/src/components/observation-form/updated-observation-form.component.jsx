@@ -234,15 +234,18 @@ const ObservationPage = (props) => {
                                             </Button>
                                         )
                                     }
-                                    <Button 
-                                        className={classes.button} 
-                                        variant="contained" 
-                                        disabled={isLastStep()} 
-                                        color="primary" 
-                                        onClick={handleComplete}
-                                    >
-                                        Complete Step
-                                    </Button>
+                                    {
+                                        !isReadOnly && !isLastStep() && (
+                                            <Button 
+                                                className={classes.button} 
+                                                variant="contained" 
+                                                color="primary" 
+                                                onClick={handleComplete}
+                                            >
+                                                Complete Step
+                                            </Button>
+                                        )
+                                    }
 
                                 </div>
                                 <div className={classes.resetSaveButtons}>
