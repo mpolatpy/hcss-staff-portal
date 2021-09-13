@@ -5,7 +5,7 @@ import { resetObservationForm } from '../../redux/observation-form/observation-f
 import { selectObservationForm } from '../../redux/observation-form/observation-form.selectors'
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
-import ObservationPage from '../../components/observation-form/observation-form.component';
+import ObservationPage from '../../components/observation-form/updated-observation-form.component';
 
 const NewObservationPage = (props) => {
     const { resetObservationForm, currentUser, currentYear, observationForm, ...otherProps } = props;

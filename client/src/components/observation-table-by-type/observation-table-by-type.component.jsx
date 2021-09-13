@@ -5,6 +5,7 @@ import { applyStyles, RenderRating } from '../../pages/evaluation-overview/evalu
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import { makeStyles } from '@material-ui/core/styles'
+import ObservationNotesTable from './observations-notes-table';
 
 const useStyles = makeStyles((theme) => ({
     dataTable: {
@@ -17,7 +18,8 @@ const useStyles = makeStyles((theme) => ({
     switch: {
         display: 'flex',
         justifyContent: 'flex-start',  
-    }
+    },
+
 }));
 
 const ObservationTableByType = ({observations}) => {
@@ -36,7 +38,8 @@ const ObservationTableByType = ({observations}) => {
             domainOne: observation.observationScore? observation.observationScore.domainOne : null,
             domainTwo: observation.observationScore? observation.observationScore.domainTwo : null,
             domainThree: observation.observationScore? observation.observationScore.domainThree : null,
-            domainFour: observation.observationScore? observation.observationScore.domainFour : null
+            domainFour: observation.observationScore? observation.observationScore.domainFour : null,
+            observationNotes: observation.observationNotes
     }));
 
     const observationColumns = [
@@ -68,27 +71,47 @@ const ObservationTableByType = ({observations}) => {
     ];
 
     const [isShowingNumbers, setIsShowingNumbers] = useState(false);
+    const [isShowingNotes, setIsShowingNotes] = useState(false);
 
     const handleToggle = (e) => {
         setIsShowingNumbers(!isShowingNumbers);
     }
 
+    const handleToggleNotes = (e) => {
+        setIsShowingNotes(!isShowingNotes);
+    }
+
     return (
-        <div className={classes.dataTable}>   
-            <DataTable
-                customStyle = {{ height: 450, width: '100%', overflowX: 0 }}
-                rows={observations.length ? rows : []}
-                rowHeight={35}
-                columns={observationColumns}
-                pageSize={10}
-                rowsPerPageOptions={[5,10,25,100]}
-            />
-            <div className={classes.switch}>
+        <div className={classes.dataTable}>  
+             <div className={classes.switch}>
                 <FormControlLabel
-                    control={<Switch checked={isShowingNumbers} onChange={handleToggle} color="primary" name="toggleShowNumbers" />}
-                    label="Show Values"
+                    control={<Switch checked={isShowingNotes} onChange={handleToggleNotes} color="primary" name="toggleShowNotes" />}
+                    label="Show Notes"
                 />
+                {
+                    isShowingNotes ? null : ( 
+                        <FormControlLabel
+                            control={<Switch checked={isShowingNumbers} onChange={handleToggle} color="primary" name="toggleShowNumbers" />}
+                            label="Show Values"
+                        />
+                    ) 
+                }
             </div>
+            {
+                isShowingNotes ? (
+                    <ObservationNotesTable observations={observations}/>
+                ):(
+                    <DataTable
+                        customStyle = {{ height: 500, width: '100%', overflowX: 0 }}
+                        rows={observations.length ? rows : []}
+                        rowHeight={35}
+                        columns={observationColumns}
+                        pageSize={10}
+                        rowsPerPageOptions={[5,10,25,100]}
+                    />
+                )
+            } 
+           
         </div>
     );
 };

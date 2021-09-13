@@ -1,12 +1,6 @@
 import ObservationFormActionTypes from './observation-form.types';
 import { firestore } from '../../firebase/firebase.utils';
-import { 
-    getUpdatedObservationScore, 
-    getOrCreateScoreDocument, 
-    getOrCreateObservationCountsDocRef,
-    getUpdatedObservationCount,
-    calculateObservationScore
- } from './observation.utils';
+import { submitInitialObservation,submitEditedObservation, calculateObservationScore} from './observation.utils';
 
 export const setObservationForm = observationForm => ({
     type: ObservationFormActionTypes.SET_OBSERVATION_FORM,
@@ -116,23 +110,24 @@ export const saveObservationForm = (observationFormData) => {
 
 export const submitObservationFormAsync = (observationFormData) => {
     const {isSavedObservation, observationDetails, domainOne, domainTwo, 
-        domainThree, domainFour, observationNotes} = observationFormData;
+        domainThree, domainFour, edited, observationNotes} = observationFormData;
     const observerId = observationDetails.observer.id;
     const {observationDate, observationType, teacher} = observationDetails;
     const teacherId= teacher.id;
 
-    const newObservationRef = firestore.collection('observations').doc();
+    const firestoreRef = edited ? observationFormData.firestoreRef : firestore.collection('observations').doc();
     const observationScore = calculateObservationScore(observationFormData);
+    const submittedAt = edited ? observationFormData.submittedAt : new Date();
 
     const observationForm = {
         observerId: observerId, 
         teacherid: teacherId,
-        observationType: observationType,
-        observationDate: observationDate,
-        observationScore: observationScore,
-        firestoreRef: newObservationRef,
-        isSavedObservation: isSavedObservation,
-        submittedAt: new Date(),
+        observationType,
+        observationDate,
+        observationScore,
+        firestoreRef,
+        isSavedObservation,
+        submittedAt, //if edited submit date should remain the same
         observationDetails,
         domainOne,
         domainTwo,
@@ -141,61 +136,18 @@ export const submitObservationFormAsync = (observationFormData) => {
         observationNotes
     };
 
+    console.log(observationForm); 
     return async dispatch => {
         dispatch(submitObservationFormStart());
         try{
-            const schoolYear = observationDetails.schoolYear;
-            
-            const scoreRef = await getOrCreateScoreDocument(teacher, schoolYear, observationType);
-            const prev = await scoreRef.get();
-            const updatedScore = getUpdatedObservationScore(prev, observationFormData);
-            const observationCountRef = await getOrCreateObservationCountsDocRef(observerId, teacher, schoolYear);
-            const prevObservationCount = await observationCountRef.get();
-            const updatedObservationCount = getUpdatedObservationCount(prevObservationCount, observationType);
-            const notificationRef = firestore.collection(`notifications`).doc(schoolYear).collection(teacher.id).doc();
-            const emailRef = firestore.collection("emails").doc();
-
-            await firestore.runTransaction(async (transaction) => {
-                transaction.set(newObservationRef, observationForm);
-
-                if (observationFormData.isSavedObservation) {
-                    const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef.id);
-                    transaction.delete(prevRef);
-                }
-                
-                transaction.set(observationCountRef, updatedObservationCount);
-                transaction.update(scoreRef, updatedScore);
-                transaction.set(notificationRef, {
-                    message: 'You have a new observation',
-                    display: true,
-                    date: observationForm.submittedAt,
-                    viewLink: `/observations/submitted/observation/${newObservationRef.id}`
-                });
-                transaction.set(emailRef, ({
-                    to: teacher.email,
-                    message: {
-                        subject: `Notification - New Observation Feedback`,
-                        text: `Hi ${teacher.firstName},
-
-This is an automated observation notificication.
-
-Observation Type: ${observationType}
-Observer: ${observationDetails.observer.lastName} ${observationDetails.observer.firstName}
-Date: ${observationDate.toLocaleDateString("en-US")}
-
-Please view the details and the feedback in HCSS Staff Portal.
-
-https://staffportal.hampdencharter.org
-
-Thank you
-
-`,
-                            // html: "This is the <code>HTML</code> section of the email body.",
-                        },
-                    }));
-            });
-            
-            dispatch(submitObservationFormSuccess('Successfully submitted the observation form')); 
+            if(edited){
+                const previousScore = observationFormData.observationScore;
+                await submitEditedObservation(observationForm, previousScore, firestoreRef);
+                dispatch(submitObservationFormSuccess('Successfully updated the observation form'));
+            } else {
+                await submitInitialObservation(observationFormData, firestoreRef, observationForm, observerId);
+                dispatch(submitObservationFormSuccess('Successfully submitted the observation form'));
+            } 
         } catch(e) {
             dispatch(submitObservationFormFail(e.message));
         }

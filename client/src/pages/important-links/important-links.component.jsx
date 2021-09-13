@@ -50,7 +50,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
 
             let fetchedLinks = [];
             if(!linkSnapshot.empty){
-                linkSnapshot.docs.forEach(doc => fetchedLinks = [...fetchedLinks, doc.data()])
+                linkSnapshot.docs.forEach(doc => fetchedLinks = [...fetchedLinks, {id: doc.id, ...doc.data()}])
             }
             const links = filterAndCategorizeLinks(fetchedLinks, currentUser);
             setLinks(links);
@@ -125,6 +125,35 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
         setSubmissionMessage(message);
     };
 
+    const deleteLink = async (link) => {
+        if(currentUser.role !== 'superadmin') {
+            alert('Please contact site admin to delete the link.')
+            return;
+        }
+        let message;
+        try {
+            const ref = firestore.doc(`links/data/savedLinks/${link.id}`);
+            await ref.delete();
+
+            const updatedLinks = links[link.category].filter(item => item.id !== link.id);
+            setLinks({
+                ...links,
+                [link.category]: updatedLinks
+            });
+
+            message = {
+                content: 'Successfully deleted the link',
+                status: 'success'
+            };
+        } catch (e) {
+            message = {
+                content: e.message,
+                status: 'error'
+            };
+        }
+        setSubmissionMessage(message);
+    }
+
     return ( 
         <div>
             {
@@ -148,7 +177,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                                 </Link>
                                 <Tooltip title="Remove From Quick Access">
                                     <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => removeFromFavorites(link.ref)} aria-label={`add-to-favorites-${i}`}>
-                                        <DeleteOutlineIcon fontSize="small" />
+                                        <DeleteOutlineIcon color="primary" fontSize="small" />
                                     </IconButton>
                                 </Tooltip>
                             </ListItem>
@@ -196,10 +225,20 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                                             ) : (
                                             <Tooltip title="Add to Quick Access">
                                                 <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => addToFavorites(link)} aria-label={`add-to-favorites-${item}-${i}`}>
-                                                    <StarBorderIcon fontSize="small" />
+                                                    <StarBorderIcon color="primary" fontSize="small" />
                                                 </IconButton>
                                             </Tooltip>
                                             )
+                                        }
+                                        {
+                                            currentUser.role === 'superadmin' ?
+                                            ( 
+                                                <Tooltip title="Delete Link">
+                                                    <IconButton style={{marginLeft:'10px'}} size="small" onClick={() => deleteLink(link)} aria-label={`add-to-favorites-${item}-${i}`}>
+                                                        <DeleteOutlineIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            ) : null
                                         }
                                     </ListItem>
                                 ))

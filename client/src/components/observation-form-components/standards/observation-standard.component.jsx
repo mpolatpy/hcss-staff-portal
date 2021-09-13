@@ -19,6 +19,13 @@ const ObservationStandardComponent = ({ domain, domainRdx, setDomainRdx, readOnl
         });
     }
 
+    const handleReset = (name) => {
+        setDomainRdx({
+            ...domainRdx,
+            [name]: 0
+        });
+    }
+
     return ( 
         <div className={classes.observationDomain}>
             <div className={classes.observationDomainInner}>
@@ -33,6 +40,7 @@ const ObservationStandardComponent = ({ domain, domainRdx, setDomainRdx, readOnl
                             label={components[key].componentName}
                             value={parseInt(domainRdx[key])}
                             handleStarChange={handleStarChange}
+                            handleReset={handleReset}
                         />
                     )
                 }

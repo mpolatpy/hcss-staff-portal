@@ -6,7 +6,9 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-
+import UndoIcon from '@material-ui/icons/Undo';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import ObservationItemTable from '../observation-item-table/observation-item-table.component';
 import StarRating from '../star-rating/star-rating.component';
 
@@ -16,7 +18,7 @@ const useStyles = makeStyles({
     },
     accordion: {
         boxShadow: 'none',
-    }, 
+    },
     accordionHeader: {
         display: 'flex',
         flexDirection: 'column',
@@ -30,7 +32,7 @@ const useStyles = makeStyles({
 
 export default function CustomAccordion(props) {
     const classes = useStyles();
-    const { name, label, value, observationItem, handleStarChange, readOnly} = props;
+    const { name, label, value, observationItem, handleStarChange, handleReset, readOnly} = props;
 
     return (
         <div className={classes.root}>
@@ -50,10 +52,20 @@ export default function CustomAccordion(props) {
                             value={value}
                             handleStarChange={handleStarChange}
                         />
-                    </div>
-                    
+                    </div> 
                 </AccordionSummary>
                 <AccordionDetails >
+                    {
+                        !readOnly && (
+                        <span>
+                            <Tooltip title="Reset Rating">
+                                <IconButton aria-label="undo" size="small" onClick={() => handleReset(name)}>
+                                    <UndoIcon color="inherit"/>
+                                </IconButton>
+                            </Tooltip>
+                        </span>
+                        )
+                    }
                     <ObservationItemTable observationItem={observationItem}/>
                 </AccordionDetails>
             </Accordion>

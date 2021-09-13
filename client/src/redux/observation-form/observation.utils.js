@@ -29,7 +29,7 @@ export const calculateObservationScore = (observation) => {
     };
 }
 
-export const getUpdatedObservationScore = (prevData, observation) => {
+const getUpdatedObservationScore = (prevData, observation) => {
     const domains = [ 'domainOne', 'domainTwo', 'domainThree', 'domainFour' ];
     const newScore = calculateObservationScore(observation);
 
@@ -55,7 +55,7 @@ export const getUpdatedObservationScore = (prevData, observation) => {
     return updatedScores;
 }
 
-export const getOrCreateScoreDocument = async (teacher, currentYear, observationType) => {
+const getOrCreateScoreDocument = async (teacher, currentYear, observationType) => {
     const teacherId = teacher.id;
     const observationTypeMap = {
         'Weekly Observation': 'weeklyObservationScores',
@@ -64,7 +64,6 @@ export const getOrCreateScoreDocument = async (teacher, currentYear, observation
         'Midyear Evaluation': 'midyearScores',
         'End of Year Evaluation': 'endOfYearScores'
     };
-
 
     const collectionType = observationTypeMap[observationType];
     const scoreRef = firestore.doc(`observationScores/${currentYear}/${collectionType}/${teacherId}`);
@@ -99,7 +98,7 @@ export const getOrCreateScoreDocument = async (teacher, currentYear, observation
     return scoreRef;
 }
 
-export const getOrCreateObservationCountsDocRef = async (observerId, teacher, currentYear) => {
+const getOrCreateObservationCountsDocRef = async (observerId, teacher, currentYear) => {
     const teacherId = teacher.id;
     const ref = firestore.doc(`observationCounts/${currentYear}/${observerId}/${teacherId}`);
     const snapShot = await ref.get();
@@ -122,7 +121,7 @@ export const getOrCreateObservationCountsDocRef = async (observerId, teacher, cu
     return ref;
 }
 
-export const getUpdatedObservationCount = (prevObservationCount, observationType) => {
+const getUpdatedObservationCount = (prevObservationCount, observationType) => {
     
     const prevData = prevObservationCount.data();
     const count = prevData[observationType] + 1;
@@ -131,4 +130,112 @@ export const getUpdatedObservationCount = (prevObservationCount, observationType
         ...prevData,
         [observationType]: count
     }
+};
+
+export const submitInitialObservation = async (observationFormData, newObservationRef, observationForm, observerId) => {
+    const { observationDetails } = observationFormData;
+    const { observationDate, observationType, teacher} = observationDetails;
+    const schoolYear = observationDetails.schoolYear;  
+    const scoreRef = await getOrCreateScoreDocument(teacher, schoolYear, observationType);
+    const prev = await scoreRef.get();
+    const updatedScore = getUpdatedObservationScore(prev, observationFormData);
+    const observationCountRef = await getOrCreateObservationCountsDocRef(observerId, teacher, schoolYear);
+    const prevObservationCount = await observationCountRef.get();
+    const updatedObservationCount = getUpdatedObservationCount(prevObservationCount, observationType);
+    const notificationRef = firestore.collection(`notifications`).doc(schoolYear).collection(teacher.id).doc();
+    const emailRef = firestore.collection("emails").doc();
+
+    return await firestore.runTransaction(async (transaction) => {
+        transaction.set(newObservationRef, observationForm);
+
+        if (observationFormData.isSavedObservation) {
+            const prevRef = firestore.collection('savedObservations').doc(observationFormData.firestoreRef.id);
+            transaction.delete(prevRef);
+        }
+        
+        transaction.set(observationCountRef, updatedObservationCount);
+        transaction.update(scoreRef, updatedScore);
+        transaction.set(notificationRef, {
+            message: 'You have a new observation',
+            display: true,
+            date: observationForm.submittedAt,
+            viewLink: `/observations/submitted/observation/${newObservationRef.id}`
+        });
+        transaction.set(emailRef, ({
+            to: teacher.email,
+            message: {
+                subject: `Notification - New Observation Feedback`,
+                text: `Hi ${teacher.firstName},
+
+This is an automated observation notificication.
+
+Observation Type: ${observationType}
+Observer: ${observationDetails.observer.lastName} ${observationDetails.observer.firstName}
+Date: ${observationDate.toLocaleDateString("en-US")}
+
+Please view the details and the feedback in HCSS Staff Portal.
+
+https://staffportal.hampdencharter.org
+
+Thank you
+
+`,
+                    // html: "This is the <code>HTML</code> section of the email body.",
+                },
+            }));
+    });
+
+};
+
+export const submitEditedObservation = async (observationForm, previousScore, firestoreRef) => {
+    const { observationDetails, observationScore } = observationForm;
+    const { observationType, teacher} = observationDetails;
+    const schoolYear = observationDetails.schoolYear;  
+    const scoreRef = await getOrCreateScoreDocument(teacher, schoolYear, observationType);
+    const previousAverageSnapshot = await scoreRef.get();
+    const previousAverage = previousAverageSnapshot.data();
+    const updatedAveScore = getUpdatedAverageForEditedObservation(previousAverage, previousScore, observationScore);
+
+    return await firestore.runTransaction(async (transaction) => {
+        transaction.update(firestoreRef, observationForm);
+        transaction.update(scoreRef, updatedAveScore);
+    });
+}
+
+const getUpdatedAverageForEditedObservation = (previousAverage, previousScore, observationScore) => {
+    const domains = [ 'domainOne', 'domainTwo', 'domainThree', 'domainFour' ];
+
+    const updateDomainScore = (previousAverage, previousScore, observationScore, domain) => {
+        
+        const newDomainScore = observationScore[domain];
+        const previousDomainScore = previousScore[domain];
+        const num = previousAverage[domain].numScores;
+        const previousDomainAve = previousAverage[domain].score
+        let updatedNum, updatedScore;
+
+        
+        if (newDomainScore && previousDomainScore) {
+            updatedNum = num;
+            const difference = newDomainScore - previousDomainScore;
+            updatedScore = (previousDomainAve * num + difference)/(num);
+        } else if (!newDomainScore && previousDomainScore) {
+            updatedNum = num - 1;
+            updatedScore = (previousDomainAve * num - previousDomainScore)/(num - 1);
+        } else if (newDomainScore && !previousDomainScore) {
+            updatedNum = num + 1;
+            updatedScore = (previousDomainAve * num + newDomainScore)/(num + 1);
+        } else {
+            updatedNum = num;
+            updatedScore = previousDomainAve;
+        }
+        
+        return ({
+            numScores: updatedNum,
+            score: updatedScore
+        });
+    };
+
+    const updatedScores = {}
+    domains.forEach( domain => updatedScores[domain] = updateDomainScore(previousAverage, previousScore, observationScore, domain));
+    return updatedScores;
 }

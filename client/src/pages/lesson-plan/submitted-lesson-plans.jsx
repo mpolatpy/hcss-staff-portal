@@ -43,9 +43,9 @@ const SubmittedLessonPlans = ({currentUser, currentYear, teachers}) => {
                 const snapshot = await ref.get();
 
                 if(!snapshot.empty){
-                    snapshot.docs.forEach(doc => {
-                        fetchedLessonPlanSummary = [...fetchedLessonPlanSummary, doc.data()]
-                    });
+                    snapshot.docs.forEach(doc => (
+                        fetchedLessonPlanSummary.push( doc.data())
+                    ));
                 }
 
                 i += 10;

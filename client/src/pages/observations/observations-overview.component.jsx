@@ -8,6 +8,9 @@ import { saveObservationForm } from '../../redux/observation-form/observation-fo
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import { INITIAL_STATE } from '../../redux/observation-form/observation-form.reducer';
 
+import CustomModal from '../../components/modal/modal.component';
+import Button from '@material-ui/core/Button';
+import ViewListRoundedIcon from '@material-ui/icons/ViewListRounded';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
@@ -21,8 +24,7 @@ import Divider from '@material-ui/core/Divider';
 import SaveIcon from '@material-ui/icons/Save';
 import TelegramIcon from '@material-ui/icons/Telegram';
 import TocIcon from '@material-ui/icons/Toc';
-import { Typography } from '@material-ui/core';
-import ListAltIcon from '@material-ui/icons/ListAlt';
+import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
     },
     addNew: {
         marginTop: theme.spacing(2),
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     addIcon: {
         backgroundColor: theme.palette.info.main,
@@ -127,7 +132,6 @@ const ObservationsOverview = ({ match, history, currentYear, currentUser, saveOb
                             <ListItemText primary="Submitted Observations" />
                         </ListItem>
                     </Link>
-                    {/* <Divider /> */}
                     <Link to={`${match.path}/templates`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
@@ -136,22 +140,12 @@ const ObservationsOverview = ({ match, history, currentYear, currentUser, saveOb
                             <ListItemText primary="Create Observations For Selected Teachers" />
                         </ListItem>
                     </Link>
-                    <ListItem button onClick={handleSaveTemplates}>
-                            <ListItemIcon>
-                                <ListAltIcon color="primary" />
-                            </ListItemIcon>
-                            <ListItemText primary="Create Weekly Observations For Selected Teachers (Shortcut)" />
-                    </ListItem>
-                    {/* <Divider /> */}
-                    {/* <Link to={`${match.path}/lesson-plans`} className={classes.links} >
-                        <ListItem button>
-                            <ListItemIcon>
-                                <PlaylistAddCheckIcon color="primary" />
-                            </ListItemIcon>
-                            <ListItemText primary="Lesson Plan Check for Selected Teachers" />
-                        </ListItem>
-                    </Link> */}
-                    {/* <Divider /> */}
+                    {/* <ListItem button onClick={handleSaveTemplates}>
+                        <ListItemIcon>
+                            <ListAltIcon color="primary" />
+                        </ListItemIcon>
+                        <ListItemText primary="Create Weekly Observations For Selected Teachers (Shortcut)" />
+                    </ListItem> */}
                     <Link to={`${match.path}/templates/edit`} className={classes.links} >
                         <ListItem button>
                             <ListItemIcon>
@@ -169,6 +163,32 @@ const ObservationsOverview = ({ match, history, currentYear, currentUser, saveOb
                             </Fab>
                         </Tooltip>
                     </Link>
+                    <CustomModal
+                        style={{ marginLeft: '15px'}}
+                        modalIcon={(
+                            <Tooltip title="Create Weekly Observations for Selected Teachers">
+                                <ViewListRoundedIcon  fontSize="large" color="primary" />
+                            </Tooltip>
+                        )}
+                        modalBody={(
+                            <div>
+                                <Typography variant="h5">
+                                    Please Confirm!
+                                </Typography>
+                                <p>Create Weekly Observations for Selected Teachers</p>
+                                <div>
+                                    <Button
+                                        variant="contained"
+                                        color="secondary"
+                                        onClick={handleSaveTemplates}
+                                        // className={classes.button}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    />
                 </div>
             </>
             )

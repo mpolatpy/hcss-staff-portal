@@ -69,7 +69,7 @@ const LessonPlanReport = ({currentUser, currentYear, teachers}) => {
         };
 
         fetchLessonPlanSummary();
-    }, [currentYear]);
+    }, [currentYear, teachers]);
 
     const columns = [
         {field: 'teacher', headerName: 'Teacher', flex: 1.5,

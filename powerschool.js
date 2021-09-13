@@ -9,9 +9,9 @@ class PowerSchoolClient {
 
     fetchData = async (URL, queryParam=null) => {
         let page = 1;
-        if(queryParam && queryParam.includes(',')){
-            queryParam = queryParam.replace(',', '%2C');
-        }
+        // if(queryParam && queryParam.includes(',')){
+        //     queryParam = queryParam.replace(',', '%2C');
+        // }
         const data = queryParam? {'$q': queryParam} : {};
         const url = 'https://hcss.powerschool.com/oauth/access_token/';
         let result = [], status;

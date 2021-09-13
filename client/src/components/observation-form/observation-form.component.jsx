@@ -23,6 +23,7 @@ import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Switch from '@material-ui/core/Switch';
 
 import ObservationStep, { getSteps } from './observation-form.utils';
 import { useStyles } from './observation-form.styles';
@@ -47,6 +48,8 @@ const ObservationPage = (props) => {
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
     const [submitting, setSubmitting] = useState(false);
+    const [editing, setEditing] = useState(false);
+    const [isReadOnly, setReadOnly] = useState(readOnly);
     const steps = getSteps();
     const {teacher, observationDate, observationType} = observationForm.observationDetails;
     const handleNext = (e) => {
@@ -57,7 +60,6 @@ const ObservationPage = (props) => {
 
     const handleBack = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
-        // window.scrollTo(0, 0);
     };
 
     const handleReset = () => {
@@ -71,8 +73,10 @@ const ObservationPage = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmitting(true);
-        await submitObservationForm(observationForm);
-        setSubmitting(false);
+        await submitObservationForm({
+            ...observationForm,
+            edited: editing,
+        });
         history.push('/observations');
     };
 
@@ -80,7 +84,6 @@ const ObservationPage = (props) => {
         e.preventDefault();
         setSubmitting(true);
         await saveObservationForm(observationForm);
-        setSubmitting(false);
         history.push('/observations/saved');
     }; 
 
@@ -88,8 +91,12 @@ const ObservationPage = (props) => {
         e.preventDefault();
         setSubmitting(true);
         await deleteObservationForm(props.match.params.observationId);
-        setSubmitting(false);
         history.push('/observations')
+    }
+
+    const handleEditing = () => {
+        setEditing(!editing);
+        setReadOnly(!isReadOnly);
     }
 
     return (
@@ -99,6 +106,40 @@ const ObservationPage = (props) => {
         ):
         (
         <div className={classes.root}>
+        {
+            isReadOnly && currentUser.id === observationForm.observerId && !editing?
+            (   <>
+                <span style={{ marginRight: '10px'}} >
+                <Switch
+                    checked={editing}
+                    size="small"
+                    onChange={handleEditing}
+                    name="switch_editing"
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                />
+                </span>
+                <Typography variant="caption">This form is submitted by you and it is read-only. If you want to edit, turn on editing.</Typography>
+                </>
+            ) 
+            : null
+        }
+        {
+            currentUser.id === observationForm.observerId && editing?
+            (   <>
+                <span style={{ marginRight: '10px'}} >
+                <Switch
+                    checked={editing}
+                    size="small"
+                    onChange={handleEditing}
+                    name="switch_editing"
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                />
+                </span>
+                <Typography variant="caption">You are editing an exisiting observation form. Turn off editing mode if you don't want to edit.</Typography>
+                </>
+            ) 
+            : null
+        }
         <Stepper activeStep={activeStep} orientation="vertical">
             {steps.map((label, index, steps) => (
                 <Step key={label}>
@@ -110,7 +151,7 @@ const ObservationPage = (props) => {
                                 handleNext
                         }>
                         <ObservationStep
-                            readOnly={readOnly} 
+                            readOnly={isReadOnly} 
                             step={index}
                             currentUser={currentUser}
                             currentYear={currentYear}
@@ -128,7 +169,7 @@ const ObservationPage = (props) => {
                                     Back
                                 </Button>
                                 {
-                                    readOnly ? (
+                                    isReadOnly ? (
                                         <Button
                                             type="submit"
                                             variant="contained"
@@ -153,11 +194,11 @@ const ObservationPage = (props) => {
                             </div>
                             <div className={classes.resetSaveButtons}>
                                 <CustomSpeedDial 
-                                    hidden={readOnly}
+                                    hidden={isReadOnly}
                                     actions={[
                                         {icon: (<IconButton
                                                     aria-label="save"
-                                                    disabled={!teacher || !observationDate || !observationType}
+                                                    disabled={!teacher || !observationDate || !observationType || editing}
                                                     type="submit"
                                                     onClick={handleSave}
                                                 >
@@ -205,6 +246,7 @@ const ObservationPage = (props) => {
                                             <IconButton
                                                 aria-label="reset"
                                                 onClick={handleReset}
+                                                disabled={editing}
                                                 // className={classes.button}
                                             >
                                                 <CachedIcon />

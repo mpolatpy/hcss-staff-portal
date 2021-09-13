@@ -1,8 +1,6 @@
-import {useEffect, useState} from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import LessonPlanPage from './lesson-plan.page';
 import LessonPlanCheckPage from './lesson-plan-check.component';
@@ -15,7 +13,6 @@ const LessonPlans = (props) => {
 
     return ( 
     <>
-        {/* <Route exact path={match.path}  component={LessonPlanPage}/> */}
         <Route exact path={match.path}>
             {
                 currentUser.role === 'teacher' ? ( 

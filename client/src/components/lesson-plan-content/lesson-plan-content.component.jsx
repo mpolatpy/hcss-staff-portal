@@ -35,6 +35,7 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
         courses: {},
         notes: ''
     });
+    const [initialValues, setInitialValues] = useState(null);
     
     useEffect(() => {
         setIsFetching(true);
@@ -66,6 +67,19 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                     }
                 });
 
+                setInitialValues({
+                    courses: initialScores,
+                    average: {
+                        percentSubmitted: {
+                            rate: 0,
+                            numScores: 0
+                        }, 
+                        onTime: {
+                            rate: 0,
+                            numScores: 0
+                        }, 
+                    }
+                });
                 setLessonPlanScores({
                     courses: initialScores,
                     average: {
@@ -129,6 +143,11 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
             return;
         }
 
+        if(value > 100){
+            alert('Please enter a number between 0 and 100');
+            return;
+        }
+
         if(name.includes('percent')){
             courseId = name.split('percent')[0];
             field = 'percentSubmitted';
@@ -154,7 +173,11 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
             }
         });
             
-    }
+    };
+
+    const handleReset = () => {
+        setLessonPlanScores(initialValues)
+    };
 
     return ( 
         <>
@@ -259,6 +282,9 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                 </div>
                 <div style={{ marginTop: '15px'}}>
                     <Button onClick={handleSubmit} color="primary" variant="contained" >Submit</Button>
+                    <span style={{marginLeft: '15px'}}>
+                        <Button onClick={handleReset} color="inherit" variant="outlined" >Reset</Button>
+                    </span>
                 </div>
                 </>
             )

@@ -33,8 +33,8 @@ const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}
     
     const fetchCommunications = async () => {
         setLoading(true);
-        const schoolYear = await fetchSchoolYear();
-        const queryParam = `LOG.entry_author==${teacher};Log.entry_date=ge=${schoolYear.start_date}`;
+        const schoolYear = await fetchSchoolYear(); 
+        const queryParam = `LOG.entry_author==${teacher.replace(',', '%2C')};Log.entry_date=ge=${schoolYear.start_date}`;
 
         try{
             const response = await axios({

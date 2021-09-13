@@ -70,8 +70,8 @@ function SignInForm({ history })  {
                     <img width="125" alt="logo" src="https://east.hampdencharter.org/wp-content/uploads/2020/01/logo-east-big.png" />
                 </div>
                 <div className={`${classes.form_input} ${classes.logo}`}>
-                        <h2 className={classes.sign_in_text}>Sign in</h2>
-                    <span>to continue HCSS Staff Portal.</span>
+                        <h2 className={classes.sign_in_text}>LOG IN</h2>
+                        <span>to continue HCSS Staff Portal.</span>
                 </div>
                 <form onSubmit={handleSubmit}>
                     <TextField
@@ -101,7 +101,7 @@ function SignInForm({ history })  {
                         <Alert className={classes.errorMessage} severity="error">{state.errorMessage}</Alert>:
                         null
                     }
-                    <Button fullWidth className={classes.sign_in_button} type="submit" variant="contained">Signin</Button>
+                    <Button fullWidth className={classes.sign_in_button} type="submit" variant="contained">Login</Button>
                 </form>
                 </div>
             </Grid>

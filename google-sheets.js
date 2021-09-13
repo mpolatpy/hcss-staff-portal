@@ -15,7 +15,7 @@ async function getGoogleSheetsData (options){
             result = response.data.values;
             status = "success";
         } catch(e){
-            result = err;
+            result = e;
             status = "error";
         }
         return ({status, result});
@@ -27,7 +27,7 @@ async function getGoogleSheetsData (options){
         response = await readData(auth, options);
     } catch(e) {
         response = {
-            result: err,
+            result: e,
             status: "error"
         }
     }
@@ -67,7 +67,7 @@ async function readData(auth, options){
         result = response.data.values;
         status = "success";
     } catch(e){
-        result = err;
+        result = e;
         status = "error";
     }
     console.log('readData');

@@ -32,6 +32,9 @@ export const useStyles = makeStyles((theme) => ({
     stepContainer: {
         display: 'flex',
         flexDirection: 'row',
-    }
+    },
+    completed: {
+        display: 'inline-block',
+    },
 }));
 

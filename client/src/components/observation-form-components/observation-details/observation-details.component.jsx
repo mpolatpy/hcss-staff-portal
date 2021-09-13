@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { getObservationOptions } from './observation-details.utils';
+import { getObservationOptions, sectionOptions } from './observation-details.utils';
 import CustomSelect from '../../custom-select/custom-select.component';
 import DatePicker from '../../date-picker/date-picker.component';
 import {selectIsSavedObservation, selectObservationFormDetails} from '../../../redux/observation-form/observation-form.selectors';
@@ -183,6 +183,21 @@ const ObservationFormDetails = (props) => {
                             handleSelect={handleChange}
                             options={ options }
                             value={observationDetails.course}
+                        />
+                    </div>
+                    <div className={classes.form_items}>
+                        <CustomSelect
+                            readOnly={readOnly}
+                            disabled={
+                                ['Quarter Evaluation',
+                                'Midyear Evaluation',
+                                'End of Year Evaluation'
+                                ].includes(observationDetails.observationType)}
+                            name="section"
+                            label="Section"
+                            handleSelect={handleChange}
+                            value={observationDetails.section || ''}
+                            options={sectionOptions}
                         />
                     </div>
                     <div className={classes.form_items}>

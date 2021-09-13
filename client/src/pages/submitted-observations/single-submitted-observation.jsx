@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { firestore } from '../../firebase/firebase.utils';
 import { setObservationForm } from '../../redux/observation-form/observation-form.actions';
 import { selectObservationForm } from '../../redux/observation-form/observation-form.selectors';
-import ObservationPage from '../../components/observation-form/observation-form.component';
+import ObservationPage from '../../components/observation-form/updated-observation-form.component';
 
 const SubmittedObservation = ({ observationForm, match, setObservationForm, ...otherProps}) => {
     
@@ -30,7 +30,7 @@ const SubmittedObservation = ({ observationForm, match, setObservationForm, ...o
 }
 
 const mapStateToProps = createStructuredSelector({
-    observationForm: selectObservationForm
+    observationForm: selectObservationForm,
 });
 
 const mapDispatchToProps = (dispatch) => ({

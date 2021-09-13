@@ -44,6 +44,7 @@ const LessonPlanEditPage = ({match, history, location, currentYear, setSubmissio
     const [observer, setObserver ] = useState(null);
     const [date, setDate ] = useState(null);
     const [editDate, setEditDate ] = useState(null);
+    const [initialValues, setInitialValues] = useState(null);
 
     useEffect(() =>{
         const getLessonPlanScore = async () => {
@@ -59,9 +60,39 @@ const LessonPlanEditPage = ({match, history, location, currentYear, setSubmissio
             setDate(date.toDate());
             setIsFetching(false);
             if(editDate) setEditDate(editDate.toDate());
+
+            return teacher;
+        };
+
+        const getInitialValues = (teacher) => {
+            const initialScores = {};
+            console.log(teacher)
+            teacher.courses.forEach(course => {
+                initialScores[course.id] = {
+                    course: course.name,
+                    id: course.id,
+                    percentSubmitted: '',
+                    onTime: ''
+                }
+            });
+
+            setInitialValues({
+                courses: initialScores,
+                average: {
+                    percentSubmitted: {
+                        rate: 0,
+                        numScores: 0
+                    }, 
+                    onTime: {
+                        rate: 0,
+                        numScores: 0
+                    }, 
+                }
+            });
         }
-        getLessonPlanScore();
-    },[]);
+
+        getLessonPlanScore().then( teacher => getInitialValues(teacher));
+    },[currentYear, lessonPlanId, teacherId]);
 
     const handleNoteChange = (e) => {
         const { value } = e.target;
@@ -143,7 +174,14 @@ const LessonPlanEditPage = ({match, history, location, currentYear, setSubmissio
             });
         }
         history.push(`/lesson-plans/submitted`);
-    }
+    };
+
+    const handleReset = () => {
+        setLessonPlanScores({
+            ...initialValues,
+            notes: lessonPlanScores.notes
+        })
+    };
 
     return ( 
         <>
@@ -243,7 +281,7 @@ const LessonPlanEditPage = ({match, history, location, currentYear, setSubmissio
                             }}
                             variant="outlined"
                             onChange={handleNoteChange}
-                            value={lessonPlanScores && lessonPlanScores.notes || ''}
+                            value={(lessonPlanScores && lessonPlanScores.notes) || ''}
                             name={`notes`}
                             />
                         </TableCell>
@@ -264,6 +302,9 @@ const LessonPlanEditPage = ({match, history, location, currentYear, setSubmissio
             </div>
             <div style={{ marginTop: '15px'}}>
                 <Button onClick={handleSubmit} color="primary" variant="contained" >Submit</Button>
+                <span style={{marginLeft: '15px'}}>
+                    <Button onClick={handleReset} color="info" variant="outlined" >Reset</Button>
+                </span>
             </div>
             </>
         )

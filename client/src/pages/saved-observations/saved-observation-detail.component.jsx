@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { selectSingleSavedObservation } from '../../redux/saved-observations/saved-observations.selectors';
 import { setObservationForm } from '../../redux/observation-form/observation-form.actions';
 import { selectObservationForm } from '../../redux/observation-form/observation-form.selectors';
-import ObservationPage from '../../components/observation-form/observation-form.component';
+import ObservationPage from '../../components/observation-form/updated-observation-form.component';
 
 const SavedObservationDetail = ({ observation, observationForm, match, setObservationForm, ...otherProps}) => {
     

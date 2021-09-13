@@ -17,7 +17,8 @@ export const INITIAL_STATE = {
         department: '',
         block: '',
         course: '',
-        partOfTheClass: ''
+        partOfTheClass: '',
+        section: ''
     },
     domainOne: {
         a: 0,

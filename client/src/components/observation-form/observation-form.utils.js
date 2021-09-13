@@ -15,7 +15,7 @@ import { rubric } from '../observation-form-components/observationRubric';
 import CustomTextArea from '../text-area/text-area.component';
 
 export function getSteps() {
-    return ['Observation Details', 'Domain I', 'Domain II', 'Domain III', 'Domain IV', 'Observavtion Notes'];
+    return ['Observation Details', 'Domain I', 'Domain II', 'Domain III', 'Domain IV', 'Observation Notes'];
 }
 
 function ObservationStep(props) {

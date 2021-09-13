@@ -13,7 +13,7 @@ import { useStyles } from './evaluation-overview.styles';
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import TextField from '@material-ui/core/TextField';
+// import TextField from '@material-ui/core/TextField';
 import { observationTypeMap, applyStyles, 
     RenderRating, createRows } from './evaluation-overview.utils';
 
@@ -58,7 +58,7 @@ const EvaluationOverview = ({ match, currentYear }) => {
             headerClassName: 'teacher-list-header',
             renderCell: (params) => (
                     <Link
-                        to={`${match.path}/home/${params.value}`}
+                        to={`${match.path}/observations/${params.value}`}
                     >
                         <OpenInNewIcon fontSize="small" />
                     </Link>
