@@ -133,10 +133,10 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
                             )
                         }
                         </div>
-                        <div style={{ marginTop: '20px'}}>
+                        <div >
                             {
                             lessonPlans.length > 0 && (
-                                <TableContainer component={Paper}>
+                                <TableContainer style={{ marginTop: '20px', marginBottom: '50px'}} component={Paper}>
                                     <Table>
                                         <TableHead>
                                             <TableRow>

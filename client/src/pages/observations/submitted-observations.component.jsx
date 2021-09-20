@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
+import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
 import Button from '@material-ui/core/Button';
 import { DataGrid } from '@material-ui/data-grid';
 import { mapObservationData, observationColumns } from './observations.utils';
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     }
 })); 
 
-const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
+const SubmittedObservations = ({ currentUser, currentYear, teacherList, ...otherProps }) => {
     const classes = useStyles();
     const QUERY_LIMIT = 10;
     const [isLoading, setIsLoading] = useState(false);
@@ -107,7 +108,8 @@ const SubmittedObservations = ({ currentUser, currentYear, ...otherProps }) => {
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
-    currentYear: selectCurrentYear
+    currentYear: selectCurrentYear,
+    teacherList: selectTeacherList
 });
 
 export default connect(mapStateToProps)(SubmittedObservations);

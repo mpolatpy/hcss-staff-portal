@@ -18,7 +18,7 @@ import Divider from '@material-ui/core/Divider'
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { Typography } from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import { useStyles } from './observation-template.styles';
 import { INITIAL_STATE } from '../../redux/observation-form/observation-form.reducer';
 import { saveObservationForm } from '../../redux/observation-form/observation-form.actions';

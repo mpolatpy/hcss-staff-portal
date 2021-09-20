@@ -9,7 +9,7 @@ import Alert from '@material-ui/lab/Alert';
 
 import useStyles from "./sign-in.styles";
 
-import { auth } from '../../firebase/firebase.utils';
+import { auth, signInWithGoogle } from '../../firebase/firebase.utils';
 
 function SignInForm({ history })  {
 
@@ -102,6 +102,7 @@ function SignInForm({ history })  {
                         null
                     }
                     <Button fullWidth className={classes.sign_in_button} type="submit" variant="contained">Login</Button>
+                    {/* <Button fullWidth className={classes.sign_in_button} onClick={signInWithGoogle} variant="contained">Sign In With Google</Button> */}
                 </form>
                 </div>
             </Grid>

@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2)
     },
     textInput: {
-        margin: theme.spacing(),
+        // margin: theme.spacing(),
         minWidth: 270,
         width: '30vw',
     }

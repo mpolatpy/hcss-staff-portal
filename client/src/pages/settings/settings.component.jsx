@@ -1,10 +1,12 @@
 import { Link, withRouter } from 'react-router-dom';
-
+import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
+import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { List, ListItem, ListItemText } from '@material-ui/core';
+import { linkWithPopup } from './merge-accounts';
 
-const SettingsPageComponent = ({currentUser, match}) => {
+const SettingsPageComponent = ({currentUser, match, setSubmissionMessage}) => {
 
     return (
         <div>
@@ -17,6 +19,10 @@ const SettingsPageComponent = ({currentUser, match}) => {
                     </ListItem>
                 </Link>
                 <Divider/>
+                {/* <ListItem button onClick={() => linkWithPopup(setSubmissionMessage)}>
+                    <ListItemText primaryTypographyProps={{color:"primary"}} primary="Activate Google SignIn" />
+                </ListItem>
+                <Divider/> */}
                 {
                     currentUser.role === 'superadmin' ?
                     ( <>
@@ -59,4 +65,8 @@ const SettingsPageComponent = ({currentUser, match}) => {
     )
 };
 
-export default withRouter(SettingsPageComponent);
+const mapDispatchToProps = (dispatch) => ({
+    setSubmissionMessage: message => setSubmissionMessage(message)
+});
+
+export default connect(null, mapDispatchToProps)(withRouter(SettingsPageComponent));

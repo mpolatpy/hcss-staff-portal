@@ -1,3 +1,9 @@
+import { useState, useEffect } from 'react';
+
+import { firestore } from '../../firebase/firebase.utils';
+import axios from 'axios';
+import { createScheduleArray } from './observation-info.utils';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from "@material-ui/core/Typography";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -22,13 +28,65 @@ const useStyles = makeStyles((theme) =>  ({
     }
 }));
 
-const TeacherScheduleTable = ({schedule, teacher}) => {
+const TeacherScheduleTable = ({teacher, currentYear}) => {
     const days = [['A', 'Mon'], ['B','Tue'], ['C','Wed'], ['D','Thu'], ['E','Fri']];
     const blocks = ['B1', 'B2', 'B3', 'B4', 'B5', 'SH'];
     const classes = useStyles();
+    const [isLoading, setLoading] = useState(false);
+    const [schedule, setSchedule] = useState([]);
+
+    useEffect(() => {
+        const fetchSchoolYear = async () => {
+          const ref = firestore.collection('years');
+          const snapshot = await ref.get();
+          const years = {};
+          if (!snapshot.empty) {
+            snapshot.docs.forEach(doc => years[doc.id] = doc.data());
+          }
+    
+          return years[currentYear];
+        };
+    
+        const getTeacherSchedule = async () => {
+            setLoading(true);
+          const schoolYear = await fetchSchoolYear();
+          const activeTerms = schoolYear.activePsTerms;
+          const queryParam = `teachers.dcid==${teacher.powerSchoolId}`;
+      
+          try{
+              const response = await axios.post('/get-powerschool-data', {
+                      url: 'https://hcss.powerschool.com/ws/schema/query/com.hcss.admin.teacher_schedules',
+                      queryParam: queryParam,
+                  }
+              );
+              
+              if(response.data && response.data.status === 'success') {
+                const scheduleData = response.data.result.filter( 
+                  course => activeTerms.includes(course.termid)
+                );
+    
+                const schedule = createScheduleArray(scheduleData);
+                setSchedule(schedule);
+              }
+          } catch(e){
+              console.log(e);
+          } finally {
+            setLoading(false);
+          }
+        };
+    
+        if (teacher !== null) getTeacherSchedule();
+    
+      }, [teacher, currentYear]);
 
     return ( 
-        <div className={classes.root}>
+        
+            isLoading ? (
+                <CircularProgress />
+            ) : ( 
+                
+            Object.keys(schedule).length ? ( 
+            <div className={classes.root}>
             <Typography variant="h6">{`Weekly Schedule - ${teacher.firstName} ${teacher.lastName}`}</Typography>
             <TableContainer component={Paper}>
                 <Table stickyHeader >
@@ -64,6 +122,12 @@ const TeacherScheduleTable = ({schedule, teacher}) => {
                 </Table>
             </TableContainer>
         </div>
+                ): null
+                
+            )
+                
+        
+        
     )
 
 };

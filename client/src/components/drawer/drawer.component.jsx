@@ -43,6 +43,7 @@ import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ContactPhoneOutlinedIcon from '@material-ui/icons/ContactPhoneOutlined';
+import EventIcon from '@material-ui/icons/Event';
 import Tooltip from '@material-ui/core/Tooltip';
 import useStyles from "./drawer.styles";
 import { withStyles } from '@material-ui/core/styles';
@@ -235,6 +236,14 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                             <ListItem button key={"users"}>
                                 <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
                                 <ListItemText primary={"Users"} />
+                            </ListItem>
+                            </LightTooltip>
+                        </Link>
+                        <Link to="/calendar" className={classes.links}>
+                            <LightTooltip title="Calendar">
+                            <ListItem button key={"calendar"}>
+                                <ListItemIcon><EventIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Calendar"} />
                             </ListItem>
                             </LightTooltip>
                         </Link>

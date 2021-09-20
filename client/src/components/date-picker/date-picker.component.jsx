@@ -6,16 +6,17 @@ import {
     KeyboardDatePicker,
 } from '@material-ui/pickers'; 
 
-export default function DatePicker({ label, name, selectedDate, handleDateChange, required }) {
+export default function DatePicker({ label, name, selectedDate, handleDateChange, required, InputProps, margin }) {
 
     return (
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                 <KeyboardDatePicker
                     required={required}
+                    InputProps={InputProps}
                     disableToolbar
                     variant="inline"
                     format="MM/dd/yyyy"
-                    margin="normal"
+                    margin={margin? margin : "normal"}
                     id="date-picker-inline"
                     label={label}
                     name={name}

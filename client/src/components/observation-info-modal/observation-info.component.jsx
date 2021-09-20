@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
@@ -6,10 +6,8 @@ import Fade from '@material-ui/core/Fade';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { List, Link, ListItem, Typography } from '@material-ui/core';
-import { firestore } from '../../firebase/firebase.utils';
-import axios from 'axios';
-import { createScheduleArray } from './observation-info.utils';
-import CircularProgress from '@material-ui/core/CircularProgress';
+
+import CustomSelect from '../custom-select/custom-select.component';
 import TeacherScheduleTable from './teacher-schedule-table';
 import SavedObservationsTable from './saved-observations-table';
 import Paper from '@material-ui/core/Paper';
@@ -17,9 +15,6 @@ import Grid from '@material-ui/core/Grid';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     position:'absolute',
     top:'10%',
     left:'10%',
@@ -43,69 +38,6 @@ const useStyles = makeStyles((theme) => ({
 export default function ObservationInfoModal({ teacher, currentYear, courses }) {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-  const [observations, setObservations] = useState([]);
-  const [schedule, setSchedule] = useState([]);
-
-  useEffect(() => {
-    const fetchSchoolYear = async () => {
-      const ref = firestore.collection('years');
-      const snapshot = await ref.get();
-      const years = {};
-      if (!snapshot.empty) {
-        snapshot.docs.forEach(doc => years[doc.id] = doc.data());
-      }
-
-      return years[currentYear];
-    };
-
-    const getTeacherSchedule = async () => {
-      const schoolYear = await fetchSchoolYear();
-      const activeTerms = schoolYear.activePsTerms;
-      const queryParam = `teachers.dcid==${teacher.powerSchoolId}`;
-  
-      try{
-          const response = await axios.post('/get-powerschool-data', {
-                  url: 'https://hcss.powerschool.com/ws/schema/query/com.hcss.admin.teacher_schedules',
-                  queryParam: queryParam,
-              }
-          );
-          
-          if(response.data && response.data.status === 'success') {
-            const scheduleData = response.data.result.filter( 
-              course => activeTerms.includes(course.termid)
-            );
-
-            const schedule = createScheduleArray(scheduleData);
-            setSchedule(schedule);
-          }
-      } catch(e){
-          console.log(e);
-      } 
-    };
-
-    const fetchSavedObservations = async () => {
-      try {
-        const observationRef = firestore.collection('savedObservations')
-          .where('observationDetails.teacher.id', '==', teacher.id)
-          .where('observationDetails.schoolYear', '==', currentYear)
-          .orderBy('observationDate', 'desc')
-        const snapshot = await observationRef.get();
-        const fetchedObservations = snapshot.docs.map(doc => doc.data());
-        setObservations(fetchedObservations);
-      } catch (e) {
-        console.log(e.message)
-      }
-    }
-
-    if (teacher !== null) {
-      setLoading(true);
-      fetchSavedObservations();
-      getTeacherSchedule();
-      setLoading(false);
-    }
-
-  }, [teacher, currentYear]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -133,14 +65,16 @@ export default function ObservationInfoModal({ teacher, currentYear, courses }) 
         }}
       >
         <Fade in={open}>
-          {
-            isLoading ? (
-              <CircularProgress />
-            ) : ( 
           <div className={classes.paper}>
             <Paper variant="outlined">
-              <Typography variant="caption" style={{ marginBottom:'10px'}}>Use 'ESC' to exit the information screen.</Typography>
+              <Typography variant="caption" style={{ padding:'10px'}}>Use 'ESC' to exit the information screen.</Typography>
             </Paper>
+            
+            { teacher && (
+              <Typography variant="h5" style={{ marginTop:'10px', textAlign:"center" }}>
+                {`Observation Planning Information for ${teacher.firstName} ${teacher.lastName}`}
+              </Typography>
+            )}
             {
               !teacher && (
                 <Typography>No teacher selected. Please select a teacher to view information.</Typography>
@@ -150,76 +84,53 @@ export default function ObservationInfoModal({ teacher, currentYear, courses }) 
               <Grid item xs={12} md={5}>
                 {
                   teacher && (
-                  <>
-                  <SavedObservationsTable observations={observations} teacher={teacher}/>
-                  <div style={{ marginTop: '10px'}}>
-                    <Typography variant="h6">Canvas Links</Typography>
-                    <List>
-                      {
-                        (courses && courses.length > 0) ? (
-                          courses.map((course, index) => (
-                            <ListItem key={index}>
-                              <Link href={`https://hcss.instructure.com/courses/${course.id}`} target="_blank" rel="noopener">
-                                {course.name}
-                              </Link>
-                            </ListItem>
-                          ))
-                        ) : null
-                      }
-                    </List>
-                  </div>
-                  </>
+                    <SavedObservationsTable 
+                      currentYear={currentYear} 
+                      teacher={teacher}
+                    />
                   )
                 }
               </Grid>
               <Grid item xs={12} md={7}>
-                {
-                    Object.keys(schedule).length && ( 
                     <TeacherScheduleTable 
                       teacher={teacher}
-                      schedule={schedule}
+                      currentYear={currentYear}
                     />
-                    )
-                  }
+                  {
+                  teacher && (
+                  <Grid container direction="row" justifyContent="space-evenly" alignItems="flex-start" spacing={3}>
+                    <Grid item style={{ marginTop: '10px'}}>
+                      <Paper style={{ padding: '10px'}} >
+                      <Typography variant="h6">Canvas Links</Typography>
+                      <List>
+                        {
+                          (courses && courses.length > 0) ? (
+                            courses.map((course, index) => (
+                              <ListItem key={index}>
+                                <Link href={`https://hcss.instructure.com/courses/${course.id}`} target="_blank" rel="noopener">
+                                  {course.name}
+                                </Link>
+                              </ListItem>
+                            ))
+                          ) : null
+                        }
+                      </List>
+                      </Paper>
+                    </Grid>
+                    <Grid item style={{ marginTop: '10px'}}>
+                      <Paper style={{ padding: '10px'}} >
+                        <Typography variant="h6">Bell Schedule</Typography>
+                        <Link href="https://docs.google.com/spreadsheets/d/1_EumEoSGHBQVCEu5PMUKdMdp8AJxEoVy2CFlIXrkA2U/edit#gid=0" target="_blank" rel="noopener">
+                          Bell Schedules 21-22
+                        </Link>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                  )
+                }
               </Grid>
             </Grid>
-            
-            {/* {
-              !teacher ? (
-                <Typography>No teacher selected. Please select a teacher to view information.</Typography>
-              ) :(
-                <>
-                  <SavedObservationsTable observations={observations} teacher={teacher}/>
-                  <Paper variant="outlined">
-                    <Typography variant="h6">Canvas Links</Typography>
-                    <List>
-                      {
-                        (courses && courses.length > 0) ? (
-                          courses.map((course, index) => (
-                            <ListItem key={index}>
-                              <Link href={`https://hcss.instructure.com/courses/${course.id}`} target="_blank" rel="noopener">
-                                {course.name}
-                              </Link>
-                            </ListItem>
-                          ))
-                        ) : null
-                      }
-                    </List>
-                  </Paper>
-                  {
-                    Object.keys(schedule).length && ( 
-                    <TeacherScheduleTable 
-                      teacher={teacher}
-                      schedule={schedule}
-                    />
-                    )
-                  }
-                  </>
-                )
-            } */}
           </div>
-            )
-          }
         </Fade>
       </Modal>
     </div>

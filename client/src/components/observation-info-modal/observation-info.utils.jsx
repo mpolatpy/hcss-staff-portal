@@ -44,3 +44,16 @@ const getDaysFromExpression = (expression) => {
     }
     return scheduleDays;
 };
+
+export const getWeekRange = () => {
+    const today = new Date();
+    const date = today.getDate();
+    const day = today.getDay();
+    const numOfMonday = date - day + ( day === 0 ? -6 : 1);
+    today.setDate(numOfMonday);
+    today.setHours(0);
+    const friday = new Date(today);
+    friday.setDate(today.getDate() + 5);
+
+    return [today, friday];
+}

@@ -25,6 +25,7 @@ import ScrollToTop from './components/scroll-to-top/scroll-to-top.component';
 import ImportantLinks from './pages/important-links/important-links.component';
 import ParentCommunicationRoute from './pages/parent-communication/parent-communications.routes';
 import NotificationsPage from './pages/notifications/notifications.page';
+import Calendar from './pages/calendar/calendar.routes.page';
 
 function App(props) {
 
@@ -88,6 +89,7 @@ function App(props) {
               <Route path="/lesson-plans" component={LessonPlans} />
               <Route path="/important-links" component={ImportantLinks} />
               <Route path="/parent-communication" component={ParentCommunicationRoute} />
+              <Route path="/calendar" component={Calendar}/>
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}
               />
