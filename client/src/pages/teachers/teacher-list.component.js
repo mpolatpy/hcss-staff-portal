@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { selectCurrentUser } from '../../redux/user/user.selectors';
-import { selectTeacherList, selectTeachersIsLoading } from "../../redux/teachers/teachers.selectors";
+import { selectFilteredTeacherList, selectTeachersIsLoading } from "../../redux/teachers/teachers.selectors";
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles'
 import AddIcon from '@material-ui/icons/Add';
@@ -136,7 +136,7 @@ const Directory = ({ match, teacherList, currentUser, isLoading }) => {
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
-    teacherList: selectTeacherList,
+    teacherList: selectFilteredTeacherList,
     isLoading: selectTeachersIsLoading
 });
 

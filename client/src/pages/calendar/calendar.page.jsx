@@ -178,12 +178,12 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
                                 <SettingsIcon fontSize="small" />
                             </IconButton>
                         </Tooltip>
-                        <Tooltip title="More Actions">
+                        {/* <Tooltip title="More Actions"> */}
                             {/* <IconButton aria-label="more-actions">
                         <MoreVertIcon fontSize="small" />
                     </IconButton> */}
-                            <CalendarMoreMenu history={history} match={match} />
-                        </Tooltip>
+                        <CalendarMoreMenu history={history} match={match} />
+                        {/* </Tooltip> */}
                         <Button size="small" variant="outlined" onClick={() => fetchCalendar(currentYear, currentUser)}>This Week</Button>
                     </Grid>
                 </Grid>

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
-import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
+import { selectFilteredTeacherList } from '../../redux/teachers/teachers.selectors';
 import axios from 'axios';
 import { useStyles } from '../observations/observation-template.styles';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -143,7 +143,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 }
 
 const mapStateToProps = createStructuredSelector({
-    teachers: selectTeacherList,
+    teachers: selectFilteredTeacherList,
     currentUser: selectCurrentUser,
 });
 

@@ -35,6 +35,7 @@ const ObservationNotesTable = ({observations}) => {
             <TableRow>
                 <TableCell>Date</TableCell>
                 <TableCell>Course</TableCell>
+                <TableCell>Section</TableCell>
                 <TableCell>Observer</TableCell>
                 <TableCell>Notes</TableCell>
             </TableRow>
@@ -54,6 +55,7 @@ const ObservationNotesTable = ({observations}) => {
                             </Link>
                         </TableCell>
                         <TableCell>{observation.observationDetails.course}</TableCell>
+                        <TableCell>{observation.observationDetails.section || ''}</TableCell>
                         <TableCell>{`${observation.observationDetails.observer.firstName} ${observation.observationDetails.observer.lastName}`}</TableCell>
                         <TableCell className={classes.notes}>
                         { 

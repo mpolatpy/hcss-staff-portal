@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
 const HomePage = ({currentUser}) => {
 
     const classes = useStyles();
-    console.log(auth.currentUser);
     return (
         <div className={classes.cardContainer}>
             <div className={classes.card}>

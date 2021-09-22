@@ -1,6 +1,18 @@
 import { createSelector } from 'reselect';
 
-export const selectTeachersState = state => state.teachers;
+export const selectTeachersState = state => state.teachers; 
+
+const selectUser = state => state.user;
+
+export const selectSchoolPreference = createSelector(
+    [selectUser],
+    user => user.schoolPreference
+); 
+
+export const selectDepartmentPreference = createSelector(
+    [selectUser],
+    user => user.departmentPreference
+);
 
 export const selectTeachers = createSelector( 
     [selectTeachersState], teachersState => teachersState.teachers
@@ -24,6 +36,21 @@ export const selectTeacherList = createSelector(
     ) : []
 );
 
+export const selectFilteredTeacherList = createSelector(
+    [selectTeacherList, selectSchoolPreference, selectDepartmentPreference],
+    (teachers, school, department) => {
+        if(school && department){
+            return teachers.filter( teacher => teacher.school === school && teacher.department === department );
+        } else if(school){
+            return teachers.filter( teacher => teacher.school === school);
+        } else if(department){
+            return teachers.filter( teacher => teacher.department === department);
+        } else {
+            return teachers;
+        }
+    }
+)
+
 export const selectTeacher = teacherId => createSelector(
     [selectTeachers], teachers => teachers ? teachers[teacherId] : null
 );
@@ -37,7 +64,7 @@ export const selectIsTeachersLoaded = createSelector(
 );
 
 export const selectTeacherOptions = createSelector( 
-    [selectTeacherList], 
+    [selectFilteredTeacherList], 
     teacherList => teacherList.filter(teacher => teacher.firstName && teacher.role === 'teacher' && teacher.isActive )
                               .map( teacher => `${teacher.lastName}, ${teacher.firstName}` )
 )

@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
-import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
+import { selectFilteredTeacherList } from '../../redux/teachers/teachers.selectors';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
 
 import { useStyles } from './observation-template.styles';
@@ -121,7 +121,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 }
 
 const mapStateToProps = createStructuredSelector({
-    teachers: selectTeacherList,
+    teachers: selectFilteredTeacherList,
     currentUser: selectCurrentUser,
 });
 

@@ -4,9 +4,9 @@ import { createStructuredSelector } from 'reselect';
 import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
-import { selectTeacherList } from '../../redux/teachers/teachers.selectors';
+import { selectFilteredTeacherList } from '../../redux/teachers/teachers.selectors';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
-
+import { createMeetingNotificationEmail } from './calendar-utils';
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import TextField from '@material-ui/core/TextField';
 import DateFnsUtils from '@date-io/date-fns';
@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme) => ({
         border: "1px solid",
         borderColor: "#d3d3d3",
         borderRadius: "5px",
-        padding: theme.spacing(5),
+        marginTop: theme.spacing(3),
+        padding: theme.spacing(3),
     },
     textInput: {
         width: '25vw',
@@ -54,14 +55,17 @@ const useStyles = makeStyles((theme) => ({
     },
     meetingNotes: {
         width: '40vw',
+        minHeight: '200px',
         padding: '12px 20px',
         borderRadius: '4px',
         fontSize: '16px',
-        marginTop: theme.spacing(2)
+        marginTop: theme.spacing(2),
+        backgroundColor: "inherit"
     },
     autoComplete: {
         width: '40vw',
-        marginTop: theme.spacing(2)
+        marginTop: theme.spacing(2),
+        marginBottom: theme.spacing(2)
     },
     header: {
         textAlign: 'center'
@@ -69,15 +73,16 @@ const useStyles = makeStyles((theme) => ({
     buttonContainer: {
         marginLeft: theme.spacing(7),
         marginTop: theme.spacing(2),
-        width: '25vw'
-    }
+        // width: '100%'
+    },
 }));
 
-const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage, formData, ...otherParams }) => {
+const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage, history, match }) => {
     const classes = useStyles();
-    console.log(otherParams);
+    const ref = match.params.meetingId;
     const [editing, setEditing] = useState(false);
     const [loading, setLoading] = useState(false);
+
     const [form, setForm] = useState({
         title: '',
         block: '',
@@ -85,18 +90,32 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
         startDateTime: new Date(),
         duration: '',
         notes: '',
+        meetingLink: '',
         selectedTeachers: [],
         repeating: false,
         notifyGuests: false,
-        addToGoogleCalendar: false
+        addToGoogleCalendar: false,
+        hoursMinutes: 'minutes'
     });
 
     useEffect(() => {
-        if (formData) {
-            setEditing(true);
-            setForm(formData);
+
+        const fetchFormData = async (ref) => {
+            const snapshot = await firestore.doc(`meetings/${currentUser.id}/${currentYear}/${ref}`).get();
+            if (snapshot.exists) {
+                const formData = snapshot.data();
+                setForm({
+                    ...formData,
+                    startDateTime: new Date(formData.startDateTime.toDate())
+                });
+            }
         }
-    }, []);
+
+        if (ref) {
+            setEditing(true);
+            fetchFormData(ref);
+        }
+    }, [currentUser, currentYear]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -128,38 +147,76 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
         })
     };
 
+    const handleDelete = async () => {
+        if (!editing) return;
+
+        try {
+            await firestore.doc(`meetings/${currentUser.id}/${currentYear}/${ref}`).delete();
+            setSubmissionMessage({
+                content: 'Sucessfully deleted meeting',
+                status: 'success'
+            })
+            history.push('/calendar');
+        } catch (e) {
+            console.log(e.message);
+            setSubmissionMessage({
+                content: e.message,
+                status: 'error'
+            })
+        }
+
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
         try {
-            const ref = firestore.collection(`meetings/${currentUser.id}/${currentYear}`).doc();
+
+            const batch = firestore.batch();
             if (editing) {
-                const { submittedAt } = formData;
-                ref.update({
+                const { submittedAt } = form;
+                const updateRef = firestore.doc(`meetings/${currentUser.id}/${currentYear}/${ref}`)
+                updateRef.update({
                     ...form,
                     submittedAt,
                     updatedAt: new Date()
                 });
             } else {
+                const ref = firestore.collection(`meetings/${currentUser.id}/${currentYear}`).doc();
                 ref.set({
                     ...form,
                     submittedAt: new Date()
                 });
             }
 
+            if (form.notifyGuests && form.selectedTeachers.length > 0) {
+
+                const to = form.selectedTeachers.reduce((acc,teacher) => {
+                    acc += `, ${teacher.email}`;
+                    return acc;
+                }, currentUser.email);
+
+                const email = createMeetingNotificationEmail(to, currentUser, form);
+                const emailRef = firestore.collection("emails").doc();
+                emailRef.set(email);
+            }
+            await batch.commit();
+
             setSubmissionMessage({
                 content: editing ? 'Successfully updated meeting' : 'Successfully created meeting',
                 status: 'success'
             });
-            const {history} = otherParams;
+
             history.push('/calendar');
         } catch (e) {
             console.log(e.message)
             setSubmissionMessage({
                 content: e.message,
                 status: 'error'
-            })
-        } 
+            });
+            setLoading(false);
+        }
 
 
     };
@@ -168,7 +225,6 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
         <>
             <div className={classes.root}>
                 <Typography className={classes.header} variant="h4">{editing ? 'Edit Meeting' : 'New Meeting'}</Typography>
-                <Typography>Under Construction - Do not use this page yet.</Typography>
                 <Divider />
                 <form className={classes.form} onSubmit={handleSubmit}>
                     <div className={classes.formContainer}>
@@ -206,15 +262,32 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                                 options={['B1', 'B2', 'B3', 'B4', 'B5', 'SH']}
                                 variant="outlined"
                             />
-                            <TextField
-                                className={classes.textInput}
-                                onChange={handleChange}
-                                value={form.duration}
-                                type="text"
-                                name="duration"
-                                label="Duration"
-                                variant="outlined"
-                            />
+                            <div className={classes.formContainer}>
+                                <TextField
+                                    required
+                                    error={isNaN(form.duration) || form.duration.includes(' ')}
+                                    helperText="Enter numbers only"
+                                    style={{ width: '14vw', margin: '10px', }}
+                                    onChange={handleChange}
+                                    value={form.duration}
+                                    type="text"
+                                    name="duration"
+                                    label="Duration"
+                                    variant="outlined"
+                                />
+                                <span>
+                                    <CustomSelect
+                                        required
+                                        label="Hours/Minutes"
+                                        name="hoursMinutes"
+                                        style={{ width: '9vw', minWidth: '5vw' }}
+                                        value={form.hoursMinutes}
+                                        handleSelect={handleChange}
+                                        options={['minutes', 'hours']}
+                                        variant="outlined"
+                                    />
+                                </span>
+                            </div>
                             <TextField
                                 className={classes.textInput}
                                 onChange={handleChange}
@@ -224,15 +297,26 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                                 label="Location"
                                 variant="outlined"
                             />
+                            <TextField
+                                className={classes.textInput}
+                                onChange={handleChange}
+                                value={form.meetingLink}
+                                type="text"
+                                name="meetingLink"
+                                label="Meeting Link"
+                                variant="outlined"
+                            />
                         </div>
                         <div>
                             <Autocomplete
                                 multiple
                                 getOptionSelected={(option, value) => option.id === value.id}
                                 value={form.selectedTeachers}
-                                id="selected-observation-templates"
+                                id="meeting-guests"
                                 options={teachers}
                                 disableCloseOnSelect
+                                size="small"
+                                limitTags={3}
                                 onChange={handleTeachersSelect}
                                 className={classes.autoComplete}
                                 getOptionLabel={(option) => `${option.lastName}, ${option.firstName}`}
@@ -252,15 +336,7 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                                     <TextField {...params} label="Guests" placeholder="Guests" />
                                 )}
                             />
-                            <TextareaAutosize
-                                placeholder="Notes"
-                                aria-label="meeting-notes"
-                                minRows={8}
-                                value={form.notes}
-                                name="notes"
-                                className={classes.meetingNotes}
-                                onChange={handleChange}
-                            />
+
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -286,18 +362,47 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                             <FormControlLabel
                                 control={
                                     <Checkbox
+                                        disabled
                                         checked={form.addToGoogleCalendar}
                                         onChange={handlePreferences}
                                         name="addToGoogleCalendar"
                                         color="primary"
                                     />
                                 }
-                                label="Add To Google Calendar"
+                                label="Add to Google Calendar"
+                            />
+                            <TextareaAutosize
+                                placeholder="Notes"
+                                aria-label="meeting-notes"
+                                // minRows={8}
+                                value={form.notes}
+                                name="notes"
+                                className={classes.meetingNotes}
+                                onChange={handleChange}
                             />
                         </div>
                     </div>
                     <div className={classes.buttonContainer}>
-                        <Button fullWidth variant="contained" color="primary" type="submit">Save</Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            style={{ minWidth: '80px' }}
+                        >
+                            Save
+                        </Button>
+                        {
+                            editing && (
+                                <Button
+                                    onClick={handleDelete}
+                                    variant="outlined"
+                                    style={{ marginLeft: '20px' }}
+                                    color="secondary"
+                                >
+                                    Delete
+                                </Button>
+                            )
+                        }
                     </div>
                 </form>
             </div>
@@ -306,7 +411,7 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
 };
 
 const mapStateToProps = createStructuredSelector({
-    teachers: selectTeacherList,
+    teachers: selectFilteredTeacherList,
     currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,
 });

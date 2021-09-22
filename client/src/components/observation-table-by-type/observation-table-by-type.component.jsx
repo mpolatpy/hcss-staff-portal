@@ -34,6 +34,7 @@ const ObservationTableByType = ({observations}) => {
                 new Date(observation.submittedAt.seconds * 1000).toLocaleDateString("en-US"))
             },
             course: observation.observationDetails.course,
+            section: observation.observationDetails.section || '',
             observer: `${observation.observationDetails.observer.firstName} ${observation.observationDetails.observer.lastName}`,
             domainOne: observation.observationScore? observation.observationScore.domainOne : null,
             domainTwo: observation.observationScore? observation.observationScore.domainTwo : null,
@@ -43,7 +44,7 @@ const ObservationTableByType = ({observations}) => {
     }));
 
     const observationColumns = [
-        {field: 'date', headerName: 'Date', headerClassName: 'teacher-list-header', flex: 1,
+        {field: 'date', headerName: 'Date', headerClassName: 'teacher-list-header', flex: 0.8,
             renderCell: (params) => ( 
                 <Link to={`/observations/submitted/observation/${params.value.id}`} >
                     {params.value.date}
@@ -51,7 +52,8 @@ const ObservationTableByType = ({observations}) => {
             ),
         },
         {field: 'course', headerName: 'Course', headerClassName: 'teacher-list-header', flex: 1.5,},
-        {field: 'observer', headerName: 'Observer', headerClassName: 'teacher-list-header', flex: 1.2,},
+        {field: 'section', headerName: 'Section', headerClassName: 'teacher-list-header', flex: 0.8,},
+        {field: 'observer', headerName: 'Observer', headerClassName: 'teacher-list-header', flex: 1,},
         { field: 'domainOne', headerName: 'Domain I',headerClassName: 'teacher-list-header', flex: 1,
             cellClassName: params => applyStyles(params),
             renderCell: (params) => RenderRating(params, isShowingNumbers)
