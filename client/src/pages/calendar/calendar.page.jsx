@@ -82,8 +82,11 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        fetchCalendar(currentYear, currentUser);
-        fetchSavedObservations(currentUser, currentYear);
+        if (currentUser && currentUser.id) {
+            fetchCalendar(currentYear, currentUser);
+            fetchSavedObservations(currentUser, currentYear);
+        }
+        
     }, [currentYear, currentUser]);
 
     const fetchCalendar = async (currentYear, currentUser, selectedDate = null) => {
@@ -161,17 +164,17 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
                         <Typography variant="h5">{`${month}, ${year}`}</Typography>
                     </Grid>
                     <Grid xs={5} md={4} item className={classes.actionsContainer} >
-                        <span style={{ width: '180px', marginBottom: '15px'}}>
-                        <DatePicker
-                            handleDateChange={handleDateChange}
-                            selectedDate={monday}
-                            InputProps={{
-                                disableUnderline: true
-                            }}
-                            name="calendar_date"
-                            label="Week of Monday"
-                            margin="none"
-                        />
+                        <span style={{ width: '180px', marginBottom: '15px' }}>
+                            <DatePicker
+                                handleDateChange={handleDateChange}
+                                selectedDate={monday}
+                                InputProps={{
+                                    disableUnderline: true
+                                }}
+                                name="calendar_date"
+                                label="Week of Monday"
+                                margin="none"
+                            />
                         </span>
                         <Tooltip title="Settings">
                             <IconButton aria-label="calendar-settings" className={classes.margin}>
@@ -179,7 +182,7 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
                             </IconButton>
                         </Tooltip>
                         {/* <Tooltip title="More Actions"> */}
-                            {/* <IconButton aria-label="more-actions">
+                        {/* <IconButton aria-label="more-actions">
                         <MoreVertIcon fontSize="small" />
                     </IconButton> */}
                         <CalendarMoreMenu history={history} match={match} />

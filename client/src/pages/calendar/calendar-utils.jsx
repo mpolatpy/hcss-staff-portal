@@ -1,4 +1,5 @@
 import { firestore } from '../../firebase/firebase.utils';
+import axios from 'axios';
 import CustomPopper from '../../components/custom-popper/custom-popper.component';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
@@ -19,6 +20,9 @@ const useStyles = makeStyles({
     margin: {
         marginTop: 10,
         marginBottom: 5
+    },
+    link: {
+        textDecoration: 'none'
     }
 });
 
@@ -27,6 +31,7 @@ export const createWeeklyCalendar = async (selectedDate, currentYear, currentUse
     const savedObservations = await fetchObservations('savedObservations', range, currentYear, currentUser);
     const submittedObservations = await fetchObservations('observations', range, currentYear, currentUser);
     const meetings = await fetchMeetings(currentYear, currentUser, range);
+    const googleCalendarEvents = await fetchGoogleCalendar(currentUser, range);
 
     const blocks = [
         {
@@ -73,8 +78,121 @@ export const createWeeklyCalendar = async (selectedDate, currentYear, currentUse
     addObservationsToCalendar(calendar, submittedObservations, 'Observation');
     addMeetingsToCalendar(calendar, meetings);
 
+    if (googleCalendarEvents) {
+        addGoogleEventsToCalendar(calendar, googleCalendarEvents, blocks);
+    }
+
     return calendar;
 };
+
+const addGoogleEventsToCalendar = (calendar, googleCalendarEvents, blocks) => {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    googleCalendarEvents.forEach(event => {
+        if(!(event.start.dateTime)) return;
+
+        const startDateTime = new Date(event.start.dateTime);
+        const dayNumber = startDateTime.getDay();
+        const day = days[dayNumber];
+
+        const startTime = event.start.dateTime.split('T')[1].slice(0, 5);
+        let block = null;
+
+        for (let blck of blocks) {
+            if (startTime >= blck.startTime && startTime <= blck.endTime) {
+                block = blck.name;
+                break;
+            }
+        }
+
+        if (block) {
+            calendar[block][day].push(
+                <CustomPopper
+                    displayName={event.summary}
+                    backgroundColor="#87b9ed"
+                >
+                    <div>
+                        <GoogleCalendarEventCard
+                            event={event}
+                            startDateTime={startDateTime}
+                        />
+                    </div>
+                </CustomPopper>
+            )
+        }
+
+    })
+}
+
+const GoogleCalendarEventCard = ({ event, startDateTime }) => {
+    const classes = useStyles();
+
+    return (
+        <>
+            <Card className={classes.root} variant="outlined">
+                <CardContent>
+                    <Typography className={classes.title} color="textSecondary" gutterBottom>
+                        Google Calendar Event
+                    </Typography>
+                    <Typography variant="body2">
+                        {`Starts @ ${startDateTime.toLocaleTimeString('en-US', { timeStyle: 'short' })}`}
+                    </Typography>
+                    <Typography variant="body2">
+                        {`Ends @ ${(new Date(event.end.dateTime)).toLocaleTimeString('en-US', { timeStyle: 'short' })}`}
+                    </Typography>
+                    <Typography variant="body2">{`Organizer: ${event.organizer.email}`}</Typography>
+
+                    {
+                        event.attendees && (
+                            <>
+                                <Typography className={classes.margin} variant="subtitle2">Guests</Typography>
+                                <Divider />
+                                <ul>
+                                    {
+                                        event.attendees.map((teacher, i) => (
+                                            <li key={`teacher-${i}`}>
+                                                <Typography variant="body2">{`${teacher.email}`}</Typography>
+                                            </li>
+                                        ))
+                                    }
+                                </ul>
+                            </>
+                        )
+                    }
+                </CardContent>
+                <CardActions>
+                    <a href={event.htmlLink} className={classes.link} target="_blank" rel="noopener noreferrer">
+                        <Button
+                            color="primary"
+                            size="small"
+                        >
+                            View Event in Google Calendar
+                        </Button>
+                    </a>
+                </CardActions>
+            </Card>
+        </>
+    );
+}
+
+const fetchGoogleCalendar = async (currentUser, range) => {
+    const [start, end] = range;
+    const tokenRef = firestore.doc(`googleCalendar/${currentUser.id}`);
+    const tokenSnaphot = await tokenRef.get();
+
+    if (!tokenSnaphot.exists) {
+        return;
+    }
+    const token = tokenSnaphot.data();
+    const resp = await axios.post('/list-calendar-events', {
+        token,
+        timeMin: start,
+        timeMax: end
+    });
+    const { status, result } = resp.data;
+
+    return status === 'success' ? result : null;
+}
 
 const fetchObservations = async (collectionName, range, currentYear, currentUser) => {
     const [start, end] = range;
@@ -141,8 +259,8 @@ const MeetingCard = ({ meeting }) => {
                     </Typography>
                     <Typography variant="body2">{`Duration: ${meeting.duration} ${meeting.hoursMinutes}`}</Typography>
                     <Typography variant="body2">{`Location: ${meeting.location}`}</Typography>
-                    { meeting.meetingLink && meeting.meetingLink !== '' && (
-                        <Typography variant="body2">Click <a href={meeting.meetingLink} target="_blank" rel="noopener">here</a> to join online meeting</Typography>
+                    {meeting.meetingLink && meeting.meetingLink !== '' && (
+                        <Typography variant="body2">Click <a href={meeting.meetingLink} target="_blank" rel="noreferrer">here</a> to join online meeting</Typography>
                     )}
                     <Typography className={classes.margin} variant="subtitle2">Guests</Typography>
                     <Divider />
@@ -173,6 +291,7 @@ const MeetingCard = ({ meeting }) => {
 
 const ObservationCard = ({ type, observationType, teacherName, observation }) => {
     const classes = useStyles();
+    const { observationDetails } = observation;
 
     return (
         <>
@@ -181,11 +300,15 @@ const ObservationCard = ({ type, observationType, teacherName, observation }) =>
                     <Typography className={classes.title} color="textSecondary" gutterBottom>
                         {type}
                     </Typography>
-                    {/* <Typography variant="h6" component="h2">
-                {type}
-                </Typography> */}
                     <Typography variant="body2">{`Teacher: ${teacherName}`}</Typography>
                     <Typography variant="body2">{observationType}</Typography>
+                    <Typography variant="body2">{`Course: ${observationDetails.course}`}</Typography>
+                    <Typography variant="body2">{`Section: ${observationDetails.section}`}</Typography>
+                    {
+                        observationDetails.partOfTheClass !== '' && ( 
+                            <Typography variant="body2">{`Part of the class: ${observationDetails.partOfTheClass}`}</Typography>
+                        )
+                    }
                 </CardContent>
                 <CardActions>
                     {
@@ -217,9 +340,8 @@ const addObservationsToCalendar = (calendar, observations, type) => {
     for (let observation of observations) {
         const { block, observationDate, teacher, observationType } = observation.observationDetails;
         const teacherName = `${teacher.firstName} ${teacher.lastName}`;
-        let displayName = `Observation - ${teacherName}`;
         if (block === '') continue;
-        const backgroundColor = type === 'Saved Observation' ? '#87b9ed' : '#9bbab0';
+        const backgroundColor = type === 'Saved Observation' ? '#F8BFD7' : '#9bbab0';
         const selectedBlock = blocks[block];
         const day = days[observationDate.toDate().getDay()];
 
