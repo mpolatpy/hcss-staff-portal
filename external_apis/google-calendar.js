@@ -4,7 +4,7 @@ const calendarCredentials = require('./google-calendar-credentials.json');
 const { client_id, client_secret, redirect_uris } = calendarCredentials.web;
 
 const oauth2Client = new google.auth.OAuth2(
-    client_id, client_secret, redirect_uris[1]
+    client_id, client_secret, redirect_uris[0]
 );
 
 // generate a url that asks permissions for Blogger and Google Calendar scopes
