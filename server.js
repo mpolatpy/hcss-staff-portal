@@ -86,6 +86,7 @@ app.post('/get-tokens-for-calendar', (req, res) => {
 
 app.post('/list-calendar-events', (req, res) => {
     const {token, timeMin, timeMax } = req.body;
+    
     listEvents(token, timeMin, timeMax)
         .then((response) => res.send(response))
         .catch((e) => res.send({ error: e }));

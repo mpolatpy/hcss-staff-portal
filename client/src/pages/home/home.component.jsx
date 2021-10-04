@@ -76,7 +76,7 @@ const HomePage = ({currentUser}) => {
                     title='Student Achievement'
                     header="Student Achievement"
                     buttonText="View Student Achievement"
-                    to="#"
+                    to="/student-achievement"
                 >
                     {/* <Typography>View observations here</Typography> */}
                 </CustomCard>

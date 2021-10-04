@@ -48,16 +48,6 @@ async function listEvents(token, timeMin, timeMax) {
         });
         result = res.data.items;
         status = 'success';
-        // const events = res.data.items;
-        // if (events.length) {
-        //     console.log('Upcoming 10 events:');
-        //     events.map((event, i) => {
-        //         const start = event.start.dateTime || event.start.date;
-        //         console.log(`${start} - ${event.summary}`);
-        //     });
-        // } else {
-        //     console.log('No upcoming events found.');
-        // }
     } catch (e) {
         result = e;
         status = 'error';

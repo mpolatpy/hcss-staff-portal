@@ -3,18 +3,20 @@ const { google } = require("googleapis");
 async function getGoogleSheetsData (options){
 
     const auth = new google.auth.JWT({
-        keyFile: "./google-credentials.json",
+        keyFile: "./external_apis/google-credentials.json",
         scopes: ["https://www.googleapis.com/auth/spreadsheets"],
     });
     
     const readData = async (auth, options) => {
         const googleSheets = google.sheets( {version:"v4", auth});
         let result = [], status;
+
         try{
             const response = await googleSheets.spreadsheets.values.get(options);
             result = response.data.values;
             status = "success";
         } catch(e){
+            console.log(e)
             result = e;
             status = "error";
         }
