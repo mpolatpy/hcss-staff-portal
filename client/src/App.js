@@ -27,6 +27,7 @@ import ParentCommunicationRoute from './pages/parent-communication/parent-commun
 import NotificationsPage from './pages/notifications/notifications.page';
 import Calendar from './pages/calendar/calendar.routes.page';
 import StudentAchievementPage from './pages/student-achievement/student-achievement';
+import GradebookCheck from './pages/grade-policy/grade-policy.routes';
 
 function App(props) {
 
@@ -92,6 +93,7 @@ function App(props) {
               <Route path="/parent-communication" component={ParentCommunicationRoute} />
               <Route path="/calendar" component={Calendar}/>
               <Route path="/student-achievement" component={StudentAchievementPage}/>
+              <Route path="/grade-policy" component={GradebookCheck}/>
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}
               />

@@ -64,7 +64,7 @@ const HomePage = ({currentUser}) => {
                     title='Grade Policy'
                     header="Grade Policy"
                     buttonText="View Grade Policy"
-                    to="#"
+                    to="/grade-policy"
                 >
                     {/* <Typography>View observations here</Typography> */}
                 </CustomCard>

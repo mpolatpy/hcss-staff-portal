@@ -89,7 +89,7 @@ const addGoogleEventsToCalendar = (calendar, googleCalendarEvents, blocks) => {
     const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     googleCalendarEvents.forEach(event => {
-        if(!(event.start.dateTime)) return;
+        if (!(event.start.dateTime)) return;
 
         const startDateTime = new Date(event.start.dateTime);
         const dayNumber = startDateTime.getDay();
@@ -241,7 +241,7 @@ const fetchMeetings = async (currentYear, currentUser, range) => {
         console.log(e);
     }
 
-    return meetings;
+    return meetings.filter(meeting => !meeting.addToGoogleCalendar);
 };
 
 const MeetingCard = ({ meeting }) => {
@@ -305,7 +305,7 @@ const ObservationCard = ({ type, observationType, teacherName, observation }) =>
                     <Typography variant="body2">{`Course: ${observationDetails.course}`}</Typography>
                     <Typography variant="body2">{`Section: ${observationDetails.section}`}</Typography>
                     {
-                        observationDetails.partOfTheClass !== '' && ( 
+                        observationDetails.partOfTheClass !== '' && (
                             <Typography variant="body2">{`Part of the class: ${observationDetails.partOfTheClass}`}</Typography>
                         )
                     }
@@ -418,3 +418,65 @@ ${form.notes === '' ? '' : `Notes: ${form.notes}`}
 `,
     },
 })
+
+export const createGoogleCalendarEvent = async (currentUser, form) => {
+    const event = createEvent(form);
+    const tokenRef = firestore.doc(`googleCalendar/${currentUser.id}`);
+    const tokenSnaphot = await tokenRef.get();
+
+    if (!tokenSnaphot.exists) {
+        return;
+    }
+    const token = tokenSnaphot.data();
+
+    const resp = await axios.post('/create-calendar-event', {
+        token,
+        event,
+        sendUpdates: form.notifyGuests
+    });
+    const status = resp.data;
+    console.log(status);
+    return status;
+}
+
+const createEvent = (form) => {
+    const description = (form.notes + '\n' + form.meetingLink).trim();
+    const endTime = new Date(form.startDateTime);
+    if (form.hoursMinutes === 'minutes') {
+        endTime.setMinutes(endTime.getMinutes() + parseInt(form.duration))
+    } else {
+        endTime.setHours(endTime.getHours() + parseInt(form.duration));
+    }
+
+    var event = {
+        'summary': form.title,
+        'location': form.location,
+        'description': description,
+        'start': {
+            'dateTime': form.startDateTime.toISOString(),
+            'timeZone': 'America/New_York',
+        },
+        'end': {
+            'dateTime': endTime.toISOString(),
+            'timeZone': 'America/New_York',
+        },
+    };
+
+    if (form.repeating) {
+        event['recurrence'] = ['RRULE:FREQ=WEEKLY']
+    }
+
+    if (form.selectedTeachers.length) {
+        event['attendees'] = form.selectedTeachers.map(
+            teacher => ({ email: teacher.email })
+        );
+
+        if (form.notifyGuests) {
+            event['reminders'] = {
+                useDefault: true
+            }
+        }
+    }
+
+    return event;
+}

@@ -7,7 +7,7 @@ const oauth2Client = new google.auth.OAuth2(
     client_id, client_secret, redirect_uris[0]
 );
 
-// generate a url that asks permissions for Blogger and Google Calendar scopes
+// generate a url that asks permissions Google Calendar scope
 const scopes = [
     'https://www.googleapis.com/auth/calendar'
 ];
@@ -53,12 +53,34 @@ async function listEvents(token, timeMin, timeMax) {
         status = 'error';
         console.log('The API returned an error: ' + e);
     }
-    return {status, result};
+    return { status, result };
+}
+
+async function insertEvent(token, event, sendUpdates) {
+    oauth2Client.setCredentials(token);
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+    let status;
+    const sendNotifications = sendUpdates ? 'all' : 'none';
+    try {
+        await calendar.events.insert({
+            auth: oauth2Client,
+            calendarId: 'primary',
+            resource: event,
+            sendUpdates: sendNotifications
+        });
+        status = 'success';
+    } catch (e) {
+        console.log('There was an error contacting the Calendar service: ' + e);
+        status = 'error';
+    }
+
+    return status;
 }
 
 module.exports = {
     getTokens,
     generateAuthUrl,
-    listEvents
+    listEvents,
+    insertEvent
 };
 

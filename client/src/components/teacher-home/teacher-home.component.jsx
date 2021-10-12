@@ -52,7 +52,7 @@ const TeacherHomeComponent = ({teacher}) => {
                     title='Grade Policy'
                     header="Grade Policy"
                     buttonText="View Grade Policy"
-                    to="#"
+                    to={`/staff/grading-feedback/${teacher.id}`}
                 >
                     {/* <Typography>View observations here</Typography> */}
                 </CustomCard>

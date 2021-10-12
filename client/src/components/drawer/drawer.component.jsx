@@ -44,6 +44,7 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ContactPhoneOutlinedIcon from '@material-ui/icons/ContactPhoneOutlined';
 import EventIcon from '@material-ui/icons/Event';
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import Tooltip from '@material-ui/core/Tooltip';
 import useStyles from "./drawer.styles";
 import { withStyles } from '@material-ui/core/styles';
@@ -213,9 +214,17 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                     </Link>
                     <Link to="/lesson-plans" className={classes.links}>
                     <LightTooltip title="Lesson Plans">
-                        <ListItem button key={"observations"}>
+                        <ListItem button key={"lesson-plans"}>
                             <ListItemIcon><DoneAllIcon className={classes.menuIcon}/></ListItemIcon>
                             <ListItemText primary={"Lesson Plans"} />
+                        </ListItem>
+                    </LightTooltip>
+                    </Link>
+                    <Link to="/grade-policy" className={classes.links}>
+                    <LightTooltip title="Grades/Grade Policy">
+                        <ListItem button key={"grades"}>
+                            <ListItemIcon><PlaylistAddCheckIcon className={classes.menuIcon}/></ListItemIcon>
+                            <ListItemText primary={"Grades/Grade Policy"} />
                         </ListItem>
                     </LightTooltip>
                     </Link>

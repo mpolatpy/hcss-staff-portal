@@ -6,7 +6,7 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import { selectFilteredTeacherList } from '../../redux/teachers/teachers.selectors';
 import { setSubmissionMessage } from '../../redux/observation-form/observation-form.actions';
-import { createMeetingNotificationEmail } from './calendar-utils';
+import { createMeetingNotificationEmail, createGoogleCalendarEvent } from './calendar-utils';
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import TextField from '@material-ui/core/TextField';
 import DateFnsUtils from '@date-io/date-fns';
@@ -172,7 +172,9 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
         setLoading(true);
 
         try {
-
+            if (form.addToGoogleCalendar) {
+                await createGoogleCalendarEvent(currentUser, form)
+            }
             const batch = firestore.batch();
             if (editing) {
                 const { submittedAt } = form;
@@ -190,9 +192,9 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                 });
             }
 
-            if (form.notifyGuests && form.selectedTeachers.length > 0) {
+            if (form.notifyGuests && form.selectedTeachers.length > 0 && !form.addToGoogleCalendar) {
 
-                const to = form.selectedTeachers.reduce((acc,teacher) => {
+                const to = form.selectedTeachers.reduce((acc, teacher) => {
                     acc += `, ${teacher.email}`;
                     return acc;
                 }, currentUser.email);
@@ -202,6 +204,7 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                 emailRef.set(email);
             }
             await batch.commit();
+
 
             setSubmissionMessage({
                 content: editing ? 'Successfully updated meeting' : 'Successfully created meeting',
@@ -217,8 +220,6 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
             });
             setLoading(false);
         }
-
-
     };
 
     return (
@@ -362,7 +363,7 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                             <FormControlLabel
                                 control={
                                     <Checkbox
-                                        disabled
+                                        // disabled
                                         checked={form.addToGoogleCalendar}
                                         onChange={handlePreferences}
                                         name="addToGoogleCalendar"

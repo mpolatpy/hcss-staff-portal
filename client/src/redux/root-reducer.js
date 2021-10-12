@@ -8,6 +8,7 @@ import observationFormReducer from './observation-form/observation-form.reducer'
 import yearReducer from './school-year/school-year.reducer';
 import savedObservationsReducer from './saved-observations/saved-observations.reducer';
 import lessonPlanChecksReducer from './lesson-plans/lesson-plan.reducer';
+import gradePolicyChecksReducer from './grade-policy/grade-policy.reducer';
 
 const persistConfig = {
     key: 'root',
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     schoolYear: yearReducer,
     savedObservations: savedObservationsReducer,
     lessonPlans: lessonPlanChecksReducer,
+    gradePolicy: gradePolicyChecksReducer,
 });
 
 export default persistReducer(persistConfig, rootReducer);

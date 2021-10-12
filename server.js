@@ -3,7 +3,7 @@ const path = require('path');
 const axios = require('axios');
 const { PowerSchoolClient } = require('./external_apis/powerschool');
 const { getGoogleSheetsData } = require('./external_apis/google-sheets');
-const { getTokens, generateAuthUrl, listEvents } = require('./external_apis/google-calendar');
+const { getTokens, generateAuthUrl, listEvents, insertEvent } = require('./external_apis/google-calendar');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
@@ -88,6 +88,14 @@ app.post('/list-calendar-events', (req, res) => {
     const {token, timeMin, timeMax } = req.body;
     
     listEvents(token, timeMin, timeMax)
+        .then((response) => res.send(response))
+        .catch((e) => res.send({ error: e }));
+});
+
+app.post('/create-calendar-event', (req, res) => {
+    const {token, event, sendUpdates } = req.body;
+    
+    insertEvent(token, event, sendUpdates)
         .then((response) => res.send(response))
         .catch((e) => res.send({ error: e }));
 });

@@ -65,7 +65,7 @@ export const selectIsTeachersLoaded = createSelector(
 
 export const selectTeacherOptions = createSelector( 
     [selectFilteredTeacherList], 
-    teacherList => teacherList.filter(teacher => teacher.firstName && teacher.role === 'teacher' && teacher.isActive )
+    teacherList => teacherList.filter(teacher => teacher.firstName && teacher.role !== 'superadmin' && teacher.isActive )
                               .map( teacher => `${teacher.lastName}, ${teacher.firstName}` )
 )
 
