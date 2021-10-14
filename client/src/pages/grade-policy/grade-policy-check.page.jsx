@@ -35,7 +35,9 @@ const GradePolicyCheckPage = ({ currentUser, currentYear, selectedTeachers, isLo
                 />
             )
         )
-        : []
+        : [];
+
+    console.log(gradeChecks);
 
     return (
         <div>

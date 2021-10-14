@@ -1,23 +1,20 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { getTargetAndSlgData } from './student-achievement-utils';
 
-const DoughnutChart = ({ records, header }) => {
+const DoughnutChart = ({ data }) => {
     const labels = ['E', 'M', 'PM', 'NM'];
-    const { targetData, slgData } = getTargetAndSlgData(records, header)
-    let targetCount = labels.reduce((acc, curr) => acc + (parseInt(targetData[curr]) || 0), 0);
 
-    // let slgCount = labels.reduce((acc, curr) => acc + (slgData[curr] || 0));
+    let targetCount = data.valueCounts;
+    const meetingOrExcceding = ((data['E'] + data['M']) * 100 / targetCount ).toFixed(1);
+
     const targetDataToDisplay = labels.map(label => {
-        const val = (targetData[label] / targetCount * 100).toFixed(1);
-        if(isNaN(val)){
+        const val = (data[label] * 100 / targetCount).toFixed(1);
+        if(isNaN(val) || data[label] === 0){
             return '';
         }
         return val;
     });
-    // const slgDataToDisplay = labels.map(label => (slgData[label] / slgCount * 100).toFixed(1));
-    const meetingOrExcceding = (parseFloat(targetDataToDisplay[0]) || 0) + (parseFloat(targetDataToDisplay[1]) || 0);
 
     const dataForTarget = {
         labels: labels,
@@ -29,7 +26,7 @@ const DoughnutChart = ({ records, header }) => {
                     color: '#36A2EB',
                     formatter: function (value, context){
                         // const index = context.dataIndex;
-                        if(value === ''){
+                        if(value === '' || value === 0){
                             return '';
                         }
                         return `${value} %`;
@@ -53,9 +50,9 @@ const DoughnutChart = ({ records, header }) => {
     };
 
     return (
-        <div style={{ width: '25vw', marginTop: '20px' }}>
+        <div style={{ width: '23vw', marginTop: '20px' }}>
             <Doughnut data={dataForTarget} plugins={[ChartDataLabels]} />
-            <h4>{`Meeting or Exceeding: ${meetingOrExcceding.toFixed(1)} %`}</h4>
+            <h4>{`Meeting or Exceeding: ${meetingOrExcceding} %`}</h4>
         </div>
     );
 }

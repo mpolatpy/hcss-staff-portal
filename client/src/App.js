@@ -26,7 +26,7 @@ import ImportantLinks from './pages/important-links/important-links.component';
 import ParentCommunicationRoute from './pages/parent-communication/parent-communications.routes';
 import NotificationsPage from './pages/notifications/notifications.page';
 import Calendar from './pages/calendar/calendar.routes.page';
-import StudentAchievementPage from './pages/student-achievement/student-achievement';
+import StudentAchievement from './pages/student-achievement/student-achievement.routes';
 import GradebookCheck from './pages/grade-policy/grade-policy.routes';
 
 function App(props) {
@@ -92,7 +92,7 @@ function App(props) {
               <Route path="/important-links" component={ImportantLinks} />
               <Route path="/parent-communication" component={ParentCommunicationRoute} />
               <Route path="/calendar" component={Calendar}/>
-              <Route path="/student-achievement" component={StudentAchievementPage}/>
+              <Route path="/student-achievement" component={StudentAchievement}/>
               <Route path="/grade-policy" component={GradebookCheck}/>
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}

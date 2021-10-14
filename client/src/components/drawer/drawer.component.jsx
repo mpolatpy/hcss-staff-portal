@@ -45,6 +45,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ContactPhoneOutlinedIcon from '@material-ui/icons/ContactPhoneOutlined';
 import EventIcon from '@material-ui/icons/Event';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import Tooltip from '@material-ui/core/Tooltip';
 import useStyles from "./drawer.styles";
 import { withStyles } from '@material-ui/core/styles';
@@ -233,6 +234,14 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                         <ListItem button key={"parent-communication"}>
                             <ListItemIcon><ContactPhoneOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
                             <ListItemText primary={"Parent Communication"} />
+                        </ListItem>
+                        </LightTooltip>
+                    </Link>
+                    <Link to="/student-achievement" className={classes.links}>
+                        <LightTooltip title="Student Achievement">
+                        <ListItem button key={"student-achievement"}>
+                            <ListItemIcon><TrendingUpIcon className={classes.menuIcon}/></ListItemIcon>
+                            <ListItemText primary={"Student Achievement"} />
                         </ListItem>
                         </LightTooltip>
                     </Link>

@@ -21,8 +21,8 @@ export const getTeacherSchedules = async (selectedTeachers) => {
     const schoolYear = await fetchCurrentYear();
     const activeTerms = schoolYear.activePsTerms;
     const queryParam = `sections.termid=ge=${activeTerms[0]}`;
-    const teachersSet = new Set(selectedTeachers.map( teacher => teacher.lastFirst))
-
+    const teachersSet = new Set(selectedTeachers.map( teacher => (teacher.lastFirst || `${teacher.lastName}, ${teacher.firstName}`)));
+    
     try {
         const response = await axios.post('/get-powerschool-data', {
             url: 'https://hcss.powerschool.com/ws/schema/query/com.hcss.admin.teacher_schedules',
@@ -37,7 +37,6 @@ export const getTeacherSchedules = async (selectedTeachers) => {
             const initialData = {};
             for( let course of scheduleData){
                 const { section_id, lastfirst } = course;
-
                 if(!teachersSet.has(lastfirst)) continue;
 
                 if(lastfirst in initialData){

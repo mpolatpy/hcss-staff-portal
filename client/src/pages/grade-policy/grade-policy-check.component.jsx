@@ -36,7 +36,7 @@ const useStyles = makeStyles({
 
 const GradePolicyCheckContent = ({ teacher, isLoading, gradePolicyScores, submitGradePolicyCheck, observer,
     updateGradePolicyCheck, currentYear, teachers, setSubmissionMessage }) => {
-
+    console.log(teacher)
     const classes = useStyles();
     const teacherName = teacher.lastFirst;
 
