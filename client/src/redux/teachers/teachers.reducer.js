@@ -25,6 +25,11 @@ const teachersReducer = (state=INITIAL_STATE, action) => {
                 isLoading: false,
                 errorMessage: action.payload
             };
+        case TeacherActionTypes.RESET_TEACHERS:
+            return {
+                ...state,
+                teachers: null
+            };
         default:
             return state;
     }

@@ -9,11 +9,12 @@ import yearReducer from './school-year/school-year.reducer';
 import savedObservationsReducer from './saved-observations/saved-observations.reducer';
 import lessonPlanChecksReducer from './lesson-plans/lesson-plan.reducer';
 import gradePolicyChecksReducer from './grade-policy/grade-policy.reducer';
+import calendarReducer from './calendar/calendar-reducer';
 
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: [teachersReducer]
+    blacklist: ['teachers']
 };
 
 const rootReducer = combineReducers({
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
     savedObservations: savedObservationsReducer,
     lessonPlans: lessonPlanChecksReducer,
     gradePolicy: gradePolicyChecksReducer,
+    calendar: calendarReducer
 });
 
 export default persistReducer(persistConfig, rootReducer);

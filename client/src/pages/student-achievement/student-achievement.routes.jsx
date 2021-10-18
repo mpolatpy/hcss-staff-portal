@@ -49,6 +49,7 @@ const StudentAchievement = ({ match, currentYear, currentUser }) => {
                     ) : (
                         <StudentAchievementReports
                             currentUser={currentUser}
+                            isLoading={isLoading}
                             data={rawData}
                             match={match}
                         />

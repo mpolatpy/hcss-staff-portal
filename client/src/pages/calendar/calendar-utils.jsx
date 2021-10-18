@@ -1,5 +1,6 @@
 import { firestore } from '../../firebase/firebase.utils';
 import axios from 'axios';
+import { differenceInCalendarWeeks } from 'date-fns';
 import CustomPopper from '../../components/custom-popper/custom-popper.component';
 import Typography from '@material-ui/core/Typography';
 import { Link } from 'react-router-dom';
@@ -10,7 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
-const useStyles = makeStyles({
+export const useStyles = makeStyles({
     root: {
         minWidth: 275,
     },
@@ -26,11 +27,11 @@ const useStyles = makeStyles({
     }
 });
 
-export const createWeeklyCalendar = async (selectedDate, currentYear, currentUser) => {
+export const createWeeklyCalendar = async (selectedDate, currentYear, currentUser, showGoogleCalendarEvents) => {
     const range = getWeekRange(selectedDate);
     const savedObservations = await fetchObservations('savedObservations', range, currentYear, currentUser);
     const submittedObservations = await fetchObservations('observations', range, currentYear, currentUser);
-    const meetings = await fetchMeetings(currentYear, currentUser, range);
+    const meetings = await fetchMeetings(currentYear, currentUser, range, showGoogleCalendarEvents);
     const googleCalendarEvents = await fetchGoogleCalendar(currentUser, range);
 
     const blocks = [
@@ -63,6 +64,11 @@ export const createWeeklyCalendar = async (selectedDate, currentYear, currentUse
             name: 'SH',
             startTime: '14:11',
             endTime: '14:55'
+        },
+        {
+            name: 'After School',
+            startTime: '14:56',
+            endTime: '23:59'
         },
     ];
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
@@ -212,7 +218,7 @@ const fetchObservations = async (collectionName, range, currentYear, currentUser
     return fetchedObservations;
 };
 
-const fetchMeetings = async (currentYear, currentUser, range) => {
+const fetchMeetings = async (currentYear, currentUser, range, showGoogleCalendarEvents) => {
     const [start, end] = range;
     let meetings = [];
     try {
@@ -221,24 +227,37 @@ const fetchMeetings = async (currentYear, currentUser, range) => {
             .where('startDateTime', '<=', end);
 
         const snapshot = await ref.get();
+
         if (!snapshot.empty) {
             snapshot.docs.forEach(doc => meetings = [...meetings, { id: doc.id, ...doc.data() }]);
         }
+
         const meetingSet = new Set(meetings.map(meeting => meeting.id));
         const repeatingMeetingsRef = firestore.collection(`meetings/${currentUser.id}/${currentYear}`)
             .where('repeating', '==', true);
         const repeatingMeetingsSnapshot = await repeatingMeetingsRef.get();
+
         if (!repeatingMeetingsSnapshot.empty) {
             repeatingMeetingsSnapshot.docs.forEach(
                 doc => {
                     if (!meetingSet.has(doc.id)) {
-                        meetings = [...meetings, { id: doc.id, ...doc.data() }]
+                        const {startDateTime, repeatFrequency, endDate} = doc.data();
+                        const numOfWeeks = differenceInCalendarWeeks(start, startDateTime.toDate());
+                        const isInRange = endDate ? endDate.toDate() >= start : true;
+
+                        if( start > startDateTime.toDate() && numOfWeeks % repeatFrequency === 0 && isInRange){
+                            meetings = [...meetings, { id: doc.id, ...doc.data() }]
+                        }  
                     }
                 }
             );
         }
     } catch (e) {
         console.log(e);
+    }
+
+    if(showGoogleCalendarEvents){
+        return meetings;
     }
 
     return meetings.filter(meeting => !meeting.addToGoogleCalendar);
@@ -434,9 +453,9 @@ export const createGoogleCalendarEvent = async (currentUser, form) => {
         event,
         sendUpdates: form.notifyGuests
     });
-    const status = resp.data;
-    console.log(status);
-    return status;
+    const { res, status } = resp.data;
+    
+    return { res, status };
 }
 
 const createEvent = (form) => {
@@ -463,7 +482,20 @@ const createEvent = (form) => {
     };
 
     if (form.repeating) {
-        event['recurrence'] = ['RRULE:FREQ=WEEKLY']
+        const { startDateTime, repeatFrequency, endDate } = form;
+        let rule = `RRULE:FREQ=WEEKLY;INTERVAL=${repeatFrequency}`
+
+        if (endDate) {
+            const days = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+            const endDateRule = endDate.toISOString()
+                .split('T')[0]
+                .split('-')
+                .join('');
+
+            rule = `RRULE:FREQ=WEEKLY;BYDAY=${days[startDateTime.getDay()]};INTERVAL=${repeatFrequency};UNTIL=${endDateRule}`
+        }
+
+        event['recurrence'] = [rule]
     }
 
     if (form.selectedTeachers.length) {
@@ -480,3 +512,5 @@ const createEvent = (form) => {
 
     return event;
 }
+
+

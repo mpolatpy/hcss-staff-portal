@@ -48,7 +48,6 @@ const GradePolicyEditPage = ({ match, history, location, currentYear, setSubmiss
 
     const [isFetching, setIsFetching] = useState(false);
     const [gradePolicyScores, setGradePolicyScores] = useState(null);
-    const [observer, setObserver] = useState(null);
     const [date, setDate] = useState(null);
     const [editDate, setEditDate] = useState(null);
 
@@ -57,10 +56,9 @@ const GradePolicyEditPage = ({ match, history, location, currentYear, setSubmiss
             setIsFetching(true);
             const snapshot = await firestore.doc(`gradebookChecks/${currentYear}/${teacherId}/${gradeCheckId}`).get();
             if (!snapshot.exists) return;
-            const { scores, teacher, observer, date, editDate } = snapshot.data();
+            const { scores, teacher, date, editDate } = snapshot.data();
 
             setGradePolicyScores(scores);
-            setObserver(observer);
             setDate(date.toDate());
             setIsFetching(false);
             if (editDate) setEditDate(editDate.toDate());
@@ -166,7 +164,7 @@ const GradePolicyEditPage = ({ match, history, location, currentYear, setSubmiss
                                             {
                                                 gradePolicyScores && Object.keys(gradePolicyScores).length > 0 ?
                                                     Object.keys(gradePolicyScores).map(section_id => {
-                                                        const { course_name, dcid, no_of_students, termid, section_number } = gradePolicyScores[section_id].course;
+                                                        const { course_name, dcid, section_number } = gradePolicyScores[section_id].course;
 
                                                         return (
                                                             <TableRow hover key={section_id}>
@@ -179,9 +177,6 @@ const GradePolicyEditPage = ({ match, history, location, currentYear, setSubmiss
                                                                         {`${course_name} - ${section_number}`}
                                                                     </a>
                                                                 </TableCell>
-                                                                {/* <TableCell align="center">{termid}</TableCell> */}
-                                                                {/* <TableCell align="center" className={classes.numStudents}>{no_of_students}</TableCell> */}
-
                                                                 <TableCell align="center">
                                                                     <TextField
                                                                         select

@@ -20,6 +20,7 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
         border: "1px solid",
         borderColor: "#d3d3d3",
         borderRadius: "5px",
+        backgroundColor: theme.palette.background.paper,
         marginTop: theme.spacing(3),
         padding: theme.spacing(3),
     },
@@ -73,7 +75,6 @@ const useStyles = makeStyles((theme) => ({
     buttonContainer: {
         marginLeft: theme.spacing(7),
         marginTop: theme.spacing(2),
-        // width: '100%'
     },
 }));
 
@@ -82,7 +83,7 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
     const ref = match.params.meetingId;
     const [editing, setEditing] = useState(false);
     const [loading, setLoading] = useState(false);
-
+    const [customFrequency, setCustomFrequency] = useState(false);
     const [form, setForm] = useState({
         title: '',
         block: '',
@@ -95,7 +96,9 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
         repeating: false,
         notifyGuests: false,
         addToGoogleCalendar: false,
-        hoursMinutes: 'minutes'
+        hoursMinutes: 'minutes',
+        repeatFrequency: 1,
+        endDate: null
     });
 
     useEffect(() => {
@@ -104,9 +107,15 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
             const snapshot = await firestore.doc(`meetings/${currentUser.id}/${currentYear}/${ref}`).get();
             if (snapshot.exists) {
                 const formData = snapshot.data();
+                const { startDateTime, endDate, repeatFrequency} = formData;
+
+                if(endDate) formData.endDate = new Date(endDate.toDate());
+                if(repeatFrequency > 1) setCustomFrequency(true);
+
                 setForm({
                     ...formData,
-                    startDateTime: new Date(formData.startDateTime.toDate())
+                    startDateTime: new Date(startDateTime.toDate()),
+                    repeatFrequency: repeatFrequency
                 });
             }
         }
@@ -119,13 +128,15 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
         setForm({
             ...form,
-            [name]: value
+            [name]: value,
         });
     };
 
     const handleDateChange = (name, date) => {
+        console.log(new Date(date).toISOString());
         setForm({
             ...form,
             [name]: new Date(date)
@@ -172,9 +183,16 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
         setLoading(true);
 
         try {
-            if (form.addToGoogleCalendar) {
-                await createGoogleCalendarEvent(currentUser, form)
+            let googleCalendarEventId;
+
+            if (form.addToGoogleCalendar && !editing) {
+                const { res, status } = await createGoogleCalendarEvent(currentUser, form);
+                
+                if (status === 'success') {
+                    googleCalendarEventId = res.data.id;
+                }
             }
+
             const batch = firestore.batch();
             if (editing) {
                 const { submittedAt } = form;
@@ -186,10 +204,16 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                 });
             } else {
                 const ref = firestore.collection(`meetings/${currentUser.id}/${currentYear}`).doc();
-                ref.set({
+                const meeting = {
                     ...form,
                     submittedAt: new Date()
-                });
+                };
+                console.log(googleCalendarEventId);
+                if(googleCalendarEventId){
+                    meeting['googleCalendarEventId'] = googleCalendarEventId;
+                }
+
+                ref.set(meeting);
             }
 
             if (form.notifyGuests && form.selectedTeachers.length > 0 && !form.addToGoogleCalendar) {
@@ -223,191 +247,277 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
     };
 
     return (
-        <>
-            <div className={classes.root}>
-                <Typography className={classes.header} variant="h4">{editing ? 'Edit Meeting' : 'New Meeting'}</Typography>
-                <Divider />
-                <form className={classes.form} onSubmit={handleSubmit}>
-                    <div className={classes.formContainer}>
-                        <div style={{ marginLeft: '50px' }}>
-                            <TextField
-                                required
-                                className={classes.textInput}
-                                onChange={handleChange}
-                                value={form.title}
-                                type="text"
-                                name="title"
-                                label="Title"
-                                variant="outlined"
-                            />
-                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                <KeyboardDateTimePicker
-                                    value={form.startDateTime}
-                                    name="startDateTime"
-                                    className={classes.dateField}
-                                    onChange={(date) => handleDateChange('startDateTime', date)}
-                                    label="Start Date and Time"
-                                    onError={console.log}
-                                    minDate={new Date("2018-01-01T00:00")}
-                                    format="MM/dd/yyyy hh:mm a"
-                                    inputVariant="outlined"
-                                />
-                            </MuiPickersUtilsProvider>
-                            <CustomSelect
-                                required
-                                label="Block"
-                                name="block"
-                                className={classes.select}
-                                value={form.block}
-                                handleSelect={handleChange}
-                                options={['B1', 'B2', 'B3', 'B4', 'B5', 'SH']}
-                                variant="outlined"
-                            />
-                            <div className={classes.formContainer}>
+        loading ? (
+            <CircularProgress />
+        ) : (
+            <>
+                <div className={classes.root}>
+                    <Typography className={classes.header} variant="h4">{editing ? 'Edit Meeting' : 'New Meeting'}</Typography>
+                    <Divider />
+                    <form className={classes.form} onSubmit={handleSubmit}>
+                        <div className={classes.formContainer}>
+                            <div style={{ marginLeft: '50px', width: '35vw' }}>
                                 <TextField
                                     required
-                                    error={isNaN(form.duration) || form.duration.includes(' ')}
-                                    helperText="Enter numbers only"
-                                    style={{ width: '14vw', margin: '10px', }}
+                                    className={classes.textInput}
                                     onChange={handleChange}
-                                    value={form.duration}
+                                    value={form.title}
                                     type="text"
-                                    name="duration"
-                                    label="Duration"
+                                    name="title"
+                                    label="Title"
                                     variant="outlined"
                                 />
-                                <span>
-                                    <CustomSelect
+                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                    <KeyboardDateTimePicker
+                                        value={form.startDateTime}
+                                        name="startDateTime"
+                                        className={classes.dateField}
+                                        onChange={(date) => handleDateChange('startDateTime', date)}
+                                        label="Start Date and Time"
+                                        onError={console.log}
+                                        minDate={new Date("2018-01-01T00:00")}
+                                        format="MM/dd/yyyy hh:mm a"
+                                        inputVariant="outlined"
+                                    />
+                                </MuiPickersUtilsProvider>
+                                <CustomSelect
+                                    required
+                                    label="Block"
+                                    name="block"
+                                    className={classes.select}
+                                    value={form.block}
+                                    handleSelect={handleChange}
+                                    options={['B1', 'B2', 'B3', 'B4', 'B5', 'SH', 'After School']}
+                                    variant="outlined"
+                                />
+                                <div className={classes.formContainer}>
+                                    <TextField
                                         required
-                                        label="Hours/Minutes"
-                                        name="hoursMinutes"
-                                        style={{ width: '9vw', minWidth: '5vw' }}
-                                        value={form.hoursMinutes}
-                                        handleSelect={handleChange}
-                                        options={['minutes', 'hours']}
+                                        error={isNaN(form.duration) || form.duration.includes(' ')}
+                                        helperText="Enter numbers only"
+                                        style={{ width: '14vw', margin: '10px', }}
+                                        onChange={handleChange}
+                                        value={form.duration}
+                                        type="text"
+                                        name="duration"
+                                        label="Duration"
                                         variant="outlined"
                                     />
-                                </span>
-                            </div>
-                            <TextField
-                                className={classes.textInput}
-                                onChange={handleChange}
-                                value={form.location}
-                                type="text"
-                                name="location"
-                                label="Location"
-                                variant="outlined"
-                            />
-                            <TextField
-                                className={classes.textInput}
-                                onChange={handleChange}
-                                value={form.meetingLink}
-                                type="text"
-                                name="meetingLink"
-                                label="Meeting Link"
-                                variant="outlined"
-                            />
-                        </div>
-                        <div>
-                            <Autocomplete
-                                multiple
-                                getOptionSelected={(option, value) => option.id === value.id}
-                                value={form.selectedTeachers}
-                                id="meeting-guests"
-                                options={teachers}
-                                disableCloseOnSelect
-                                size="small"
-                                limitTags={3}
-                                onChange={handleTeachersSelect}
-                                className={classes.autoComplete}
-                                getOptionLabel={(option) => `${option.lastName}, ${option.firstName}`}
-                                renderOption={(option, { selected }) => (
-                                    <React.Fragment>
-                                        <Checkbox
-                                            icon={icon}
-                                            name={option.id}
-                                            checkedIcon={checkedIcon}
-                                            style={{ marginRight: 8 }}
-                                            checked={selected}
+                                    <span>
+                                        <CustomSelect
+                                            required
+                                            label="Hours/Minutes"
+                                            name="hoursMinutes"
+                                            style={{ width: '9vw', minWidth: '5vw' }}
+                                            value={form.hoursMinutes}
+                                            handleSelect={handleChange}
+                                            options={['minutes', 'hours']}
+                                            variant="outlined"
                                         />
-                                        {`${option.lastName}, ${option.firstName}`}
-                                    </React.Fragment>
-                                )}
-                                renderInput={(params) => (
-                                    <TextField {...params} label="Guests" placeholder="Guests" />
-                                )}
-                            />
-
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={form.repeating}
-                                        onChange={handlePreferences}
-                                        name="repeating"
-                                        color="primary"
-                                    />
-                                }
-                                label="Weekly Meeting"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={form.notifyGuests}
-                                        onChange={handlePreferences}
-                                        name="notifyGuests"
-                                        color="primary"
-                                    />
-                                }
-                                label="Notify Guests"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        // disabled
-                                        checked={form.addToGoogleCalendar}
-                                        onChange={handlePreferences}
-                                        name="addToGoogleCalendar"
-                                        color="primary"
-                                    />
-                                }
-                                label="Add to Google Calendar"
-                            />
-                            <TextareaAutosize
-                                placeholder="Notes"
-                                aria-label="meeting-notes"
-                                // minRows={8}
-                                value={form.notes}
-                                name="notes"
-                                className={classes.meetingNotes}
-                                onChange={handleChange}
-                            />
-                        </div>
-                    </div>
-                    <div className={classes.buttonContainer}>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            type="submit"
-                            style={{ minWidth: '80px' }}
-                        >
-                            Save
-                        </Button>
-                        {
-                            editing && (
-                                <Button
-                                    onClick={handleDelete}
+                                    </span>
+                                </div>
+                                <TextField
+                                    className={classes.textInput}
+                                    onChange={handleChange}
+                                    value={form.location}
+                                    type="text"
+                                    name="location"
+                                    label="Location"
                                     variant="outlined"
-                                    style={{ marginLeft: '20px' }}
-                                    color="secondary"
-                                >
-                                    Delete
-                                </Button>
-                            )
-                        }
-                    </div>
-                </form>
-            </div>
-        </>
+                                />
+                                <TextField
+                                    className={classes.textInput}
+                                    onChange={handleChange}
+                                    value={form.meetingLink}
+                                    type="text"
+                                    name="meetingLink"
+                                    label="Meeting Link"
+                                    variant="outlined"
+                                />
+                            </div>
+                            <div>
+                                <Autocomplete
+                                    multiple
+                                    getOptionSelected={(option, value) => option.id === value.id}
+                                    value={form.selectedTeachers}
+                                    id="meeting-guests"
+                                    options={teachers}
+                                    disableCloseOnSelect
+                                    size="small"
+                                    limitTags={3}
+                                    onChange={handleTeachersSelect}
+                                    className={classes.autoComplete}
+                                    getOptionLabel={(option) => `${option.lastName}, ${option.firstName}`}
+                                    renderOption={(option, { selected }) => (
+                                        <React.Fragment>
+                                            <Checkbox
+                                                icon={icon}
+                                                name={option.id}
+                                                checkedIcon={checkedIcon}
+                                                style={{ marginRight: 8 }}
+                                                checked={selected}
+                                            />
+                                            {`${option.lastName}, ${option.firstName}`}
+                                        </React.Fragment>
+                                    )}
+                                    renderInput={(params) => (
+                                        <TextField {...params} label="Guests" placeholder="Guests" />
+                                    )}
+                                />
+                                <div className={classes.formContainer}>
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={form.notifyGuests}
+                                                onChange={handlePreferences}
+                                                name="notifyGuests"
+                                                color="primary"
+                                            />
+                                        }
+                                        label="Notify Guests"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={form.addToGoogleCalendar}
+                                                onChange={handlePreferences}
+                                                name="addToGoogleCalendar"
+                                                color="primary"
+                                            />
+                                        }
+                                        label="Add to Google Calendar"
+                                    />
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={form.repeating}
+                                                onChange={handlePreferences}
+                                                name="repeating"
+                                                color="primary"
+                                            />
+                                        }
+                                        label="Recurring"
+                                    />
+                                </div>
+                                {
+                                    form.repeating && (
+                                        <>
+                                            <Typography><strong>Repeat Frequency:</strong></Typography>
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={form.repeatFrequency === 1}
+                                                        onChange={() => setForm({
+                                                            ...form,
+                                                            repeatFrequency: 1
+                                                        })}
+                                                        name="repeating"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="Weekly"
+                                            />
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={customFrequency}
+                                                        onChange={() => {
+                                                            setCustomFrequency(!customFrequency);
+                                                            setForm({
+                                                                ...form,
+                                                                repeatFrequency: form.repeatFrequency === 1 ? 2 : 1
+                                                            })
+                                                        }}
+                                                        name="repeating"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label="Custom"
+                                            />
+                                            {
+
+                                                customFrequency && (
+                                                    <Typography>
+                                                        Every
+                                                        <span style={{
+                                                            margin: '0 20px 0 20px',
+                                                            display: 'inline-block',
+                                                            verticalAlign: 'middle',
+                                                            lineHeight: 'normal'
+                                                        }}>
+                                                            <TextField
+                                                                size="small"
+                                                                required={form.repeating}
+                                                                style={{ width: '60px' }}
+                                                                onChange={handleChange}
+                                                                value={form.repeatFrequency}
+                                                                type="text"
+                                                                name="repeatFrequency"
+                                                                label=""
+                                                                variant="outlined"
+                                                            />
+                                                        </span>
+                                                        weeks until
+                                                        <span>
+                                                            <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                                                <KeyboardDateTimePicker
+                                                                    value={form.endDate}
+                                                                    name="endDate"
+                                                                    style={{
+                                                                        marginLeft: '20px',
+                                                                        width: '13vw'
+                                                                    }}
+                                                                    onChange={(date) => handleDateChange('endDate', date)}
+                                                                    label="End Date"
+                                                                    onError={console.log}
+                                                                    minDate={new Date("2018-01-01T00:00")}
+                                                                    format="MM/dd/yyyy"
+                                                                    size="small"
+                                                                    inputVariant="outlined"
+                                                                />
+                                                            </MuiPickersUtilsProvider>
+                                                        </span>
+                                                    </Typography>
+                                                )}
+                                        </>
+                                    )
+                                }
+                                <TextareaAutosize
+                                    placeholder="Notes"
+                                    aria-label="meeting-notes"
+                                    value={form.notes}
+                                    name="notes"
+                                    className={classes.meetingNotes}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                        <div className={classes.buttonContainer}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                type="submit"
+                                style={{ minWidth: '80px' }}
+                            >
+                                Save
+                            </Button>
+                            {
+                                editing && (
+                                    <Button
+                                        onClick={handleDelete}
+                                        variant="outlined"
+                                        style={{ marginLeft: '20px' }}
+                                        color="secondary"
+                                    >
+                                        Delete
+                                    </Button>
+                                )
+                            }
+                        </div>
+                    </form>
+                </div>
+            </>
+        )
     )
 };
 

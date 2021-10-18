@@ -95,10 +95,7 @@ const GradePolicyCheckContent = ({ teacher, isLoading, gradePolicyScores, submit
                                     <Table size="small" className={classes.table} aria-label="grade-policy-check table">
                                         <TableHead>
                                             <TableRow>
-                                                {/* <TableCell>Course</TableCell> */}
                                                 <TableCell>Section</TableCell>
-                                                {/* <TableCell align="center">Term</TableCell> */}
-                                                {/* <TableCell align="center" className={classes.numStudents}># of Students</TableCell> */}
                                                 <TableCell align="center">Grade Policy</TableCell>
                                                 <TableCell align="center">Assignments</TableCell>
                                                 <TableCell align="center">Scoresheet</TableCell>
@@ -109,7 +106,7 @@ const GradePolicyCheckContent = ({ teacher, isLoading, gradePolicyScores, submit
                                             {
                                                 gradePolicyScores && Object.keys(gradePolicyScores).length > 0 ?
                                                     Object.keys(gradePolicyScores).map(section_id => {
-                                                        const { course_name, dcid, no_of_students, termid, section_number } = gradePolicyScores[section_id].course;
+                                                        const { course_name, dcid, section_number } = gradePolicyScores[section_id].course;
 
                                                         return (
                                                             <TableRow hover key={section_id}>
@@ -122,9 +119,6 @@ const GradePolicyCheckContent = ({ teacher, isLoading, gradePolicyScores, submit
                                                                         {`${course_name} - ${section_number}`}
                                                                     </a>
                                                                 </TableCell>
-                                                                {/* <TableCell align="center">{termid}</TableCell> */}
-                                                                {/* <TableCell align="center" className={classes.numStudents}>{no_of_students}</TableCell> */}
-
                                                                 <TableCell align="center">
                                                                     <TextField
                                                                         select

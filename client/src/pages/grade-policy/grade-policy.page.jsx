@@ -2,7 +2,6 @@ import {Link} from 'react-router-dom';
 
 import EditIcon from '@material-ui/icons/Edit';
 import TelegramIcon from '@material-ui/icons/Telegram';
-import AssessmentIcon from '@material-ui/icons/Assessment';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,7 +18,6 @@ const useStyles = makeStyles((theme) => ({
         border: "1px solid",
         borderColor: "#d3d3d3",
         borderRadius: "5px",
-        // boxShadow: "0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%)",
         padding: theme.spacing(4)
     },
     links: {

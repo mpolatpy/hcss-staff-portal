@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import { List, ListItem, ListItemText } from '@material-ui/core';
-import { linkWithPopup } from './merge-accounts';
+// import { linkWithPopup } from './merge-accounts';
 import SitePreferences from './site-preference';
 
 const SettingsPageComponent = ({ currentUser, match, setSubmissionMessage }) => {

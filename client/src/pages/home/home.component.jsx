@@ -1,5 +1,5 @@
 import React from 'react';
-import firebase, { auth } from '../../firebase/firebase.utils';
+// import firebase, { auth } from '../../firebase/firebase.utils';
 import CustomCard from '../../components/custom-card/custom-card.component';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -30,7 +30,6 @@ const HomePage = ({currentUser}) => {
                     buttonText="View Observations"
                     to="/observations"
                 >
-                    {/* <Typography>View observations here</Typography> */}
                 </CustomCard>
             </div>
             <div className={classes.card}>
@@ -42,7 +41,6 @@ const HomePage = ({currentUser}) => {
                     buttonText="View Lesson Plans"
                     to="/lesson-plans"
                 >
-                    {/* <p>View observations here</p> */}
                 </CustomCard>
             </div>
             <div className={classes.card}>
@@ -54,7 +52,6 @@ const HomePage = ({currentUser}) => {
                     buttonText="View Parent Communications"
                     to="/parent-communication"
                 >
-                    {/* <p>View observations here</p> */}
                 </CustomCard>
             </div>
             <div className={classes.card}>
@@ -66,7 +63,6 @@ const HomePage = ({currentUser}) => {
                     buttonText="View Grade Policy"
                     to="/grade-policy"
                 >
-                    {/* <Typography>View observations here</Typography> */}
                 </CustomCard>
             </div>
             <div className={classes.card}>
@@ -90,7 +86,6 @@ const HomePage = ({currentUser}) => {
                     buttonText="View Attendance Records"
                     to={`/staff/attendance/${currentUser.id}`}
                 >
-                    {/* <Typography>View observations here</Typography> */}
                 </CustomCard>
             </div>
             

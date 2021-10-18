@@ -59,10 +59,10 @@ async function listEvents(token, timeMin, timeMax) {
 async function insertEvent(token, event, sendUpdates) {
     oauth2Client.setCredentials(token);
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
-    let status;
+    let status, res;
     const sendNotifications = sendUpdates ? 'all' : 'none';
     try {
-        await calendar.events.insert({
+        res = await calendar.events.insert({
             auth: oauth2Client,
             calendarId: 'primary',
             resource: event,
@@ -74,7 +74,7 @@ async function insertEvent(token, event, sendUpdates) {
         status = 'error';
     }
 
-    return status;
+    return {res, status};
 }
 
 module.exports = {

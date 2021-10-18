@@ -4,9 +4,10 @@ import { createStructuredSelector } from 'reselect';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import { fetchSavedObservationsAsync } from '../../redux/saved-observations/saved-observations.actions';
+import { selectShowGoogleCalendarEvents } from '../../redux/calendar/calendar-selectors';
 import { createWeeklyCalendar } from './calendar-utils';
 import CalendarMoreMenu from './calendar-more.component';
-
+import SettingsCard from './calendar-settings';
 import DatePicker from '../../components/date-picker/date-picker.component';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Table from '@material-ui/core/Table';
@@ -19,7 +20,6 @@ import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import SettingsIcon from '@material-ui/icons/Settings';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObservations }) => {
+const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObservations, showGoogleCalendarEvents }) => {
     const monthNames = [
         "January", "Februay", "March",
         "April", "May", "June",
@@ -75,7 +75,7 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
         "October", "November", "December"
     ];
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-    const blocks = ['B1', 'B2', 'B3', 'B4', 'B5', 'SH'];
+    const blocks = ['B1', 'B2', 'B3', 'B4', 'B5', 'SH', 'After School'];
     const classes = useStyles();
     const [monday, setMonday] = useState(null);
     const [calendar, setCalendar] = useState(null);
@@ -83,17 +83,17 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
 
     useEffect(() => {
         if (currentUser && currentUser.id) {
-            fetchCalendar(currentYear, currentUser);
+            fetchCalendar(currentYear, currentUser, showGoogleCalendarEvents);
             fetchSavedObservations(currentUser, currentYear);
         }
-        
+
     }, [currentYear, currentUser]);
 
-    const fetchCalendar = async (currentYear, currentUser, selectedDate = null) => {
+    const fetchCalendar = async (currentYear, currentUser, showGoogleCalendarEvents, selectedDate = null) => {
         setLoading(true);
         if (!selectedDate) selectedDate = getMonday();
         setMonday(selectedDate);
-        const calendar = await createWeeklyCalendar(selectedDate, currentYear, currentUser);
+        const calendar = await createWeeklyCalendar(selectedDate, currentYear, currentUser, showGoogleCalendarEvents);
         setCalendar(calendar);
         setLoading(false);
     }
@@ -128,7 +128,7 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
     const handleNext = (val) => {
         const selectedDate = new Date(monday);
         selectedDate.setDate(selectedDate.getDate() + val);
-        fetchCalendar(currentYear, currentUser, selectedDate);
+        fetchCalendar(currentYear, currentUser, showGoogleCalendarEvents, selectedDate);
     }
 
     const handleDateChange = (d) => {
@@ -144,8 +144,8 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
             <CircularProgress />
         ) : (
             <div className={classes.root}>
-                <Grid container direction="row" justifyContent="center" alignItems="flex-end">
-                    <Grid item container justifyContent="flex-start" alignItems="center" xs={4} md={4} direction="row" style={{ padding: '5px' }}>
+                <Grid container direction="row" alignItems="flex-end">
+                    <Grid item container alignItems="center" xs={4} md={4} direction="row" style={{ padding: '5px' }}>
                         <Typography variant="h5">Calendar</Typography>
                         <span>
                             <Tooltip title="Previous Week">
@@ -177,17 +177,13 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
                             />
                         </span>
                         <Tooltip title="Settings">
-                            <IconButton aria-label="calendar-settings" className={classes.margin}>
-                                <SettingsIcon fontSize="small" />
-                            </IconButton>
+                            <SettingsCard 
+                                fetchCalendar={fetchCalendar}
+                                currentYear={currentYear} currentUser={currentUser}
+                            />
                         </Tooltip>
-                        {/* <Tooltip title="More Actions"> */}
-                        {/* <IconButton aria-label="more-actions">
-                        <MoreVertIcon fontSize="small" />
-                    </IconButton> */}
                         <CalendarMoreMenu history={history} match={match} />
-                        {/* </Tooltip> */}
-                        <Button size="small" variant="outlined" onClick={() => fetchCalendar(currentYear, currentUser)}>This Week</Button>
+                        <Button size="small" variant="outlined" onClick={() => fetchCalendar(currentYear, currentUser, showGoogleCalendarEvents)}>This Week</Button>
                     </Grid>
                 </Grid>
                 <Divider />
@@ -222,11 +218,8 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
                                                                 <div key={`${block}_${day}_${k}`}>
                                                                     {item}
                                                                 </div>
-                                                                // <Typography key={`${block}_${day}_${k}`}>Observation</Typography>
                                                             ))
                                                         }
-                                                        {/* <Typography variant="body2">{block}</Typography>
-                                                    <Typography variant="body2">{d}</Typography> */}
                                                     </>
                                                 </TableCell>
                                             ))
@@ -244,7 +237,8 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
 
 const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
-    currentYear: selectCurrentYear
+    currentYear: selectCurrentYear,
+    showGoogleCalendarEvents: selectShowGoogleCalendarEvents
 });
 
 const mapDispatchToProps = dispatch => ({

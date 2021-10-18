@@ -4,8 +4,8 @@ export function linkWithPopup(setSubmissionMessage) {
     const provider = new firebase.auth.GoogleAuthProvider();
 
     auth.currentUser.linkWithPopup(provider).then((result) => {
-        const credential = result.credential;
-        const user = result.user;
+        // const credential = result.credential;
+        // const user = result.user;
 
         setSubmissionMessage({
             content: 'Succesfully Actived Google SignIn!',

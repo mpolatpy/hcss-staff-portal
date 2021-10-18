@@ -11,6 +11,7 @@ import { resetSubmissionMessage } from '../../redux/observation-form/observation
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import { setCurrentYear } from '../../redux/school-year/school-year.actions';
+import { resetTeachers } from '../../redux/teachers/teachers.actions';
 import NotificationModal from './notification-modal.component';
 import DrawerSelect from './select.component';
 
@@ -52,32 +53,32 @@ import { withStyles } from '@material-ui/core/styles';
 
 const LightTooltip = withStyles((theme) => ({
     tooltip: {
-      backgroundColor: theme.palette.common.white,
-      color: 'rgba(0, 0, 0, 0.87)',
-      boxShadow: theme.shadows[1],
-      fontSize: 11,
+        backgroundColor: theme.palette.common.white,
+        color: 'rgba(0, 0, 0, 0.87)',
+        boxShadow: theme.shadows[1],
+        fontSize: 11,
     },
-  }))(Tooltip);
+}))(Tooltip);
 
-const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, resetSubmissionMessage, handleChange, year}) => {
+const MiniDrawer = ({ children, currentUser, currentYear, submissionMessage, resetSubmissionMessage, resetTeachers, handleChange, year }) => {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [years, setYears] = useState([]);
 
-    useEffect( () =>{
+    useEffect(() => {
         const fetchNotifications = async () => {
             const notificationsRef = firestore.collection(`notifications/${currentYear}/${currentUser.id}`);
             const query = notificationsRef.where('display', '==', true);
             const snapshot = await query.get();
-            if(snapshot.empty){
+            if (snapshot.empty) {
                 return;
             }
 
             let fetchedNotifications = [];
             snapshot.forEach(doc => {
-                fetchedNotifications = [...fetchedNotifications, {...doc.data(), ref: doc.id}]
+                fetchedNotifications = [...fetchedNotifications, { ...doc.data(), ref: doc.id }]
             });
             setNotifications(fetchedNotifications);
         };
@@ -87,8 +88,8 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
             const snapshot = await ref.get();
             let years = [];
 
-            if(!snapshot.empty) {
-                snapshot.docs.forEach( doc => years = [...years, doc.data().schoolYear])
+            if (!snapshot.empty) {
+                snapshot.docs.forEach(doc => years = [...years, doc.data().schoolYear])
             }
             setYears(years);
         }
@@ -97,7 +98,7 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
         fetchYears();
 
         return () => setYears([]);
-    },[currentUser.id, currentYear]);
+    }, [currentUser.id, currentYear]);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -137,35 +138,40 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                     <div className={classes.upperMenu}>
                         <Link className={classes.links} to="/home">
                             <LightTooltip title="Staff Portal Home Page">
-                            <Typography variant="h6" noWrap>
-                                HCSS STAFF PORTAL
-                            </Typography>
+                                <Typography variant="h6" noWrap>
+                                    HCSS STAFF PORTAL
+                                </Typography>
                             </LightTooltip>
                         </Link>
-                        <div className={classes.upperMenuIcons}> 
-                            <DrawerSelect years={years} handleChange={handleChange} year={year}/>
+                        <div className={classes.upperMenuIcons}>
+                            <DrawerSelect years={years} handleChange={handleChange} year={year} />
                             <CustomModal
-                            color="inherit"
-                            modalIcon={( 
-                                
-                                <Badge badgeContent={notifications.length} color="secondary">
-                                    <LightTooltip title="Notifications"><NotificationsSharpIcon /></LightTooltip>
-                                </Badge>
-                            )}
-                            modalBody={
-                                <NotificationModal 
-                                notifications={notifications}
-                                currentUser={currentUser}
-                                currentYear={currentYear}
-                                setNotifications={setNotifications}
-                                />}
+                                color="inherit"
+                                modalIcon={(
+
+                                    <Badge badgeContent={notifications.length} color="secondary">
+                                        <LightTooltip title="Notifications"><NotificationsSharpIcon /></LightTooltip>
+                                    </Badge>
+                                )}
+                                modalBody={
+                                    <NotificationModal
+                                        notifications={notifications}
+                                        currentUser={currentUser}
+                                        currentYear={currentYear}
+                                        setNotifications={setNotifications}
+                                    />}
                             />
                             <Link to="/profile" className={classes.links}>
                                 <LightTooltip title="Account">
-                                <IconButton color="inherit"><AccountCircleIcon /></IconButton>
+                                    <IconButton color="inherit"><AccountCircleIcon /></IconButton>
                                 </LightTooltip>
                             </Link>
-                            <IconButton color="inherit" onClick={() => auth.signOut()}>
+                            <IconButton color="inherit"
+                                onClick={() => {
+                                    resetTeachers();
+                                    auth.signOut();
+                                }}
+                            >
                                 <LightTooltip title="Signout">
                                     <ExitToAppIcon />
                                 </LightTooltip>
@@ -196,102 +202,102 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                     </IconButton>
                 </div>
                 <Divider />
-                <List> 
+                <List>
                     <Link to="/home" className={classes.links}>
-                    <LightTooltip title="Home Page">
-                        <ListItem button key={"home"}>
-                            <ListItemIcon><HomeIcon className={classes.menuIcon} /></ListItemIcon>
-                            <ListItemText primary={"Home"} />
-                        </ListItem>
-                    </LightTooltip>
+                        <LightTooltip title="Home Page">
+                            <ListItem button key={"home"}>
+                                <ListItemIcon><HomeIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Home"} />
+                            </ListItem>
+                        </LightTooltip>
                     </Link>
                     <Link to="/observations" className={classes.links}>
-                    <LightTooltip title="Observations">
-                        <ListItem button key={"observations"}>
-                            <ListItemIcon><EventNoteIcon className={classes.menuIcon}/></ListItemIcon>
-                            <ListItemText primary={"Observation"} />
-                        </ListItem>
-                    </LightTooltip>
+                        <LightTooltip title="Observations">
+                            <ListItem button key={"observations"}>
+                                <ListItemIcon><EventNoteIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Observation"} />
+                            </ListItem>
+                        </LightTooltip>
                     </Link>
                     <Link to="/lesson-plans" className={classes.links}>
-                    <LightTooltip title="Lesson Plans">
-                        <ListItem button key={"lesson-plans"}>
-                            <ListItemIcon><DoneAllIcon className={classes.menuIcon}/></ListItemIcon>
-                            <ListItemText primary={"Lesson Plans"} />
-                        </ListItem>
-                    </LightTooltip>
+                        <LightTooltip title="Lesson Plans">
+                            <ListItem button key={"lesson-plans"}>
+                                <ListItemIcon><DoneAllIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Lesson Plans"} />
+                            </ListItem>
+                        </LightTooltip>
                     </Link>
                     <Link to="/grade-policy" className={classes.links}>
-                    <LightTooltip title="Grades/Grade Policy">
-                        <ListItem button key={"grades"}>
-                            <ListItemIcon><PlaylistAddCheckIcon className={classes.menuIcon}/></ListItemIcon>
-                            <ListItemText primary={"Grades/Grade Policy"} />
-                        </ListItem>
-                    </LightTooltip>
+                        <LightTooltip title="Grades/Grade Policy">
+                            <ListItem button key={"grades"}>
+                                <ListItemIcon><PlaylistAddCheckIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Grades/Grade Policy"} />
+                            </ListItem>
+                        </LightTooltip>
                     </Link>
                     <Link to="/parent-communication" className={classes.links}>
                         <LightTooltip title="Parent Communication">
-                        <ListItem button key={"parent-communication"}>
-                            <ListItemIcon><ContactPhoneOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
-                            <ListItemText primary={"Parent Communication"} />
-                        </ListItem>
+                            <ListItem button key={"parent-communication"}>
+                                <ListItemIcon><ContactPhoneOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Parent Communication"} />
+                            </ListItem>
                         </LightTooltip>
                     </Link>
                     <Link to="/student-achievement" className={classes.links}>
                         <LightTooltip title="Student Achievement">
-                        <ListItem button key={"student-achievement"}>
-                            <ListItemIcon><TrendingUpIcon className={classes.menuIcon}/></ListItemIcon>
-                            <ListItemText primary={"Student Achievement"} />
-                        </ListItem>
+                            <ListItem button key={"student-achievement"}>
+                                <ListItemIcon><TrendingUpIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Student Achievement"} />
+                            </ListItem>
                         </LightTooltip>
                     </Link>
                     <Divider />
                     {
                         currentUser.role !== 'teacher' ? (
-                        <>
-                        <Link to="/directory" className={classes.links}>
-                            <LightTooltip title="Directory">
-                            <ListItem button key={"users"}>
-                                <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
-                                <ListItemText primary={"Users"} />
-                            </ListItem>
-                            </LightTooltip>
-                        </Link>
-                        <Link to="/calendar" className={classes.links}>
-                            <LightTooltip title="Calendar">
-                            <ListItem button key={"calendar"}>
-                                <ListItemIcon><EventIcon className={classes.menuIcon} /></ListItemIcon>
-                                <ListItemText primary={"Calendar"} />
-                            </ListItem>
-                            </LightTooltip>
-                        </Link>
-                        <Link to="/staff" className={classes.links}>
-                            <LightTooltip title="Evaluation">
-                            <ListItem button key={"teachers"}>
-                                <ListItemIcon><EqualizerOutlinedIcon className={classes.menuIcon}/></ListItemIcon>
-                                <ListItemText primary={"Evaluation"} />
-                            </ListItem>
-                            </LightTooltip>
-                        </Link>
-                        </>
-                        ): null
-                    
+                            <>
+                                <Link to="/directory" className={classes.links}>
+                                    <LightTooltip title="Directory">
+                                        <ListItem button key={"users"}>
+                                            <ListItemIcon><GroupOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
+                                            <ListItemText primary={"Users"} />
+                                        </ListItem>
+                                    </LightTooltip>
+                                </Link>
+                                <Link to="/calendar" className={classes.links}>
+                                    <LightTooltip title="Calendar">
+                                        <ListItem button key={"calendar"}>
+                                            <ListItemIcon><EventIcon className={classes.menuIcon} /></ListItemIcon>
+                                            <ListItemText primary={"Calendar"} />
+                                        </ListItem>
+                                    </LightTooltip>
+                                </Link>
+                                <Link to="/staff" className={classes.links}>
+                                    <LightTooltip title="Evaluation">
+                                        <ListItem button key={"teachers"}>
+                                            <ListItemIcon><EqualizerOutlinedIcon className={classes.menuIcon} /></ListItemIcon>
+                                            <ListItemText primary={"Evaluation"} />
+                                        </ListItem>
+                                    </LightTooltip>
+                                </Link>
+                            </>
+                        ) : null
+
                     }
 
                     <Link to="/important-links" className={classes.links}>
                         <LightTooltip title="Important Links">
-                        <ListItem button key={"links"}>
-                            <ListItemIcon><LinkIcon className={classes.menuIcon} /></ListItemIcon>
-                            <ListItemText primary={"Important Links"} />
-                        </ListItem>
+                            <ListItem button key={"links"}>
+                                <ListItemIcon><LinkIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Important Links"} />
+                            </ListItem>
                         </LightTooltip>
                     </Link>
                     <Link to="/settings" className={classes.links}>
                         <LightTooltip title="Settings">
-                        <ListItem button key={"settings"}>
-                            <ListItemIcon><SettingsIcon className={classes.menuIcon} /></ListItemIcon>
-                            <ListItemText primary={"Settings"} />
-                        </ListItem>
+                            <ListItem button key={"settings"}>
+                                <ListItemIcon><SettingsIcon className={classes.menuIcon} /></ListItemIcon>
+                                <ListItemText primary={"Settings"} />
+                            </ListItem>
                         </LightTooltip>
                     </Link>
                 </List>
@@ -313,7 +319,7 @@ const MiniDrawer = ({children, currentUser, currentYear, submissionMessage, rese
                         : null
 
                 }
-            </main>    
+            </main>
         </div>
     );
 };
@@ -326,7 +332,8 @@ const mapStateToProps = createStructuredSelector({
 
 const mapDispatchToProps = dispatch => ({
     resetSubmissionMessage: () => dispatch(resetSubmissionMessage()),
-    setCurrentYear: (year) => dispatch(setCurrentYear(year))
+    setCurrentYear: (year) => dispatch(setCurrentYear(year)),
+    resetTeachers: () => dispatch(resetTeachers())
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(MiniDrawer);

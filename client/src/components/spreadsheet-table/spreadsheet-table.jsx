@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchSpreadSheetData } from './spreadsheet-table.utils';
 import CustomSpreadSheetTable from './custom-spreadsheet-table';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const SpreadSheetTable = ({ spreadSheetInfoRef, currentUser }) => {
 
@@ -20,14 +21,20 @@ const SpreadSheetTable = ({ spreadSheetInfoRef, currentUser }) => {
 
 
     return (
-        records.length ? (
-            <CustomSpreadSheetTable
-                records={records}
-                header={header}
-                isLoading={isLoading}
-            />
-        ) : null
-    )
+        isLoading ? (
+            <CircularProgress />
+        ) : (
+            records.length ? (
+                <CustomSpreadSheetTable
+                    records={records}
+                    header={header}
+                    isLoading={isLoading}
+                />
+            ) : (
+                null
+            )
+        )
+    );
 };
 
 export default SpreadSheetTable;

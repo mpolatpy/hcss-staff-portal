@@ -43,12 +43,6 @@ const CalendarMoreMenu = ({match, history}) => {
                 keepMounted
                 open={open}
                 onClose={handleClose}
-                // PaperProps={{
-                //     style: {
-                //         maxHeight: ITEM_HEIGHT * 4.5,
-                //         width: '20ch',
-                //     },
-                // }}
             >  
             <MenuItem onClick={() => history.push(`${match.path}/create-meeting`)}>
                 New Meeting

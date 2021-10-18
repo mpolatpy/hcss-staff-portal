@@ -15,19 +15,32 @@ const fetchTeachersFailure = (errorMessage) => ({
     payload: errorMessage
 });
 
-export const fetchTeachersAsync = () => {
-    return dispatch => {
-        const collectionRef = firestore.collection('users');
+export const fetchTeachersAsync = (uid) => {
+
+    return async dispatch => {
+
         dispatch(fetchTeachersStart());
 
-        collectionRef
-            .get()
-            .then( snapshot => {
-                const teachersMap = convertCollectionSnapshotDataToMap(snapshot);
-                dispatch(fetchTeachersSuccess(teachersMap))
-            }) 
-            .catch(err => dispatch(fetchTeachersFailure(err.message)))
+        try {
+            const collectionRef = firestore.collection('users');
+            const snapshot = await collectionRef.get();
+            let teachersMap = convertCollectionSnapshotDataToMap(snapshot);
+            const staff = teachersMap[uid];
+            console.log(uid, staff);
+
+            if( staff && staff.role === 'teacher'){
+                teachersMap = { [uid]: staff }
+            }
+
+            dispatch(fetchTeachersSuccess(teachersMap));
+        } catch (e) {
+            dispatch(fetchTeachersFailure(e.message))
+        }
     }
 };
+
+export const resetTeachers = () => ({
+    type: TeacherActionTypes.RESET_TEACHERS,
+});
 
 

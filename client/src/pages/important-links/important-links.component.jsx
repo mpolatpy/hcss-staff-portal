@@ -210,7 +210,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
                             <List>
                             {
                                 links[item].map((link, i) => ( 
-                                    <ListItem key={i}>
+                                    <ListItem key={`link-${i}`}>
                                         <Link href={link.url} variant="subtitle1" target="_blank" rel="noopener">
                                             {link.label}
                                         </Link>
