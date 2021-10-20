@@ -26,7 +26,6 @@ export const fetchTeachersAsync = (uid) => {
             const snapshot = await collectionRef.get();
             let teachersMap = convertCollectionSnapshotDataToMap(snapshot);
             const staff = teachersMap[uid];
-            console.log(uid, staff);
 
             if( staff && staff.role === 'teacher'){
                 teachersMap = { [uid]: staff }

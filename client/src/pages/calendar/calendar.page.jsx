@@ -179,7 +179,8 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
                         <Tooltip title="Settings">
                             <SettingsCard 
                                 fetchCalendar={fetchCalendar}
-                                currentYear={currentYear} currentUser={currentUser}
+                                currentYear={currentYear} 
+                                currentUser={currentUser}
                             />
                         </Tooltip>
                         <CalendarMoreMenu history={history} match={match} />

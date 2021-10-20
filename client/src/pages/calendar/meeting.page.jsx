@@ -208,7 +208,7 @@ const MeetingForm = ({ teachers, currentUser, currentYear, setSubmissionMessage,
                     ...form,
                     submittedAt: new Date()
                 };
-                console.log(googleCalendarEventId);
+
                 if(googleCalendarEventId){
                     meeting['googleCalendarEventId'] = googleCalendarEventId;
                 }

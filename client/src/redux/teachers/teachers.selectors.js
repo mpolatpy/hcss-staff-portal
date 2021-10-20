@@ -71,7 +71,7 @@ export const selectTeacherOptions = createSelector(
 
 export const selectTeachersObjWithNameKeys = createSelector(
     [selectTeachers], teachers => {
-        const ids = Object.keys(teachers);
+        const ids = teachers ? Object.keys(teachers) : [];
         const teachersObjWithNameKeys = {};
 
         ids.forEach( id => { 
