@@ -13,6 +13,8 @@ import ParentCommunicationDetailPage from "./parent-communication-detail.page";
 const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}) => {
     const [communications, setCommunications ] = useState([]);
     const [students, setStudents ] = useState([]);
+    const [total, setTotal ] = useState(0);
+    const [allStudents, setAllStudents ] = useState({});
     const [isLoading, setLoading] = useState(false);
     const [teacher, setTeacher ] = useState(`${currentUser.lastName}, ${currentUser.firstName}`);
 
@@ -30,10 +32,69 @@ const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}
 
         return years[currentYear];
     };
+
+    const fetchStudents = async (schoolYear) => {
+        const activeTerms = schoolYear.termsParentCommunication;
+        if(!activeTerms || activeTerms.length === 0) return null;
+
+        const termsSet = new Set(activeTerms);
+        const students = {};
+
+        const response = await axios({
+            url: '/get-powerschool-data',
+            method: 'post',
+            data: {
+                url: 'https://hcss.powerschool.com/ws/schema/query/com.hcss.admin.students_in_sections',
+                queryParam: `teachers.teacher==${teacher.replace(',', '%2C')};sections.termid=ge=${activeTerms[0]}`,
+            }
+        });
+        
+        if(response.data && response.data.status === 'success' ){
+            for(let record of response.data.result){
+                if(termsSet.has(record.termid) && !record.course_name.startsWith('Study')){
+                    let { student_number } = record;
+
+                    if(student_number in students){
+                        students[student_number] = {
+                            ...students[student_number],
+                            courses: [
+                                ...students[student_number]['courses'],
+                                {
+                                    courseName: record.course_name,
+                                    section: record.section_number,
+                                    termid: record.termid,
+                                }
+                            ]
+                        }
+                    } else {
+                        students[student_number] = {
+                            student_number,
+                            name: record.student_name,
+                            grade: record.grade_level,
+                            homeRoom: record.home_room,
+                            courses: [
+                                {
+                                    courseName: record.course_name,
+                                    section: record.section_number,
+                                    termid: record.termid,
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+        return students;
+    }
     
     const fetchCommunications = async () => {
         setLoading(true);
         const schoolYear = await fetchSchoolYear(); 
+        const allStudents = await fetchStudents(schoolYear);
+        if(!allStudents) {
+            setLoading(false);
+            return;
+        }
         const queryParam = `LOG.entry_author==${teacher.replace(',', '%2C')};Log.entry_date=ge=${schoolYear.start_date}`;
 
         try{
@@ -47,10 +108,11 @@ const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}
             });
 
             if(response.data && response.data.status === 'success') {
-                let communications = {}, students = {};
-
-                for(let communication of response.data.result){
-                    let student_number = communication.student_number;
+                let communications = {}, students = {}, missingStudents={};
+                const allCommunications = response.data.result;
+                 
+                for(let communication of allCommunications){
+                    let {student_number} = communication;
                     if(student_number in communications){
                         communications[student_number] = [...communications[student_number], communication];
                     } else {
@@ -64,10 +126,17 @@ const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}
                             grade: communication.grade_level,
                         }
                     }
-        
                 }
 
+                for(let student_number of Object.keys(allStudents)){
+                    if(!students[student_number]){
+                        missingStudents[student_number] = allStudents[student_number];
+                    }
+                }
+                
+                setAllStudents(allStudents);
                 setCommunications(communications);
+                setTotal(allCommunications.length);
                 setStudents(students);
             }
         } catch(e){
@@ -85,9 +154,11 @@ const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}
                 isLoading={isLoading} 
                 match={match}
                 communications={communications}
+                allStudents={allStudents}
                 teacherList={teacherList} 
                 setTeacher = {setTeacher}
                 teacher={teacher}
+                total={total}
                 />
             }
             />
@@ -96,7 +167,7 @@ const ParentCommunicationRoute = ({currentUser, currentYear, teacherList, match}
                 <ParentCommunicationDetailPage 
                 isLoading={isLoading} 
                 communications={communications}
-                students={students} 
+                students={allStudents} 
                 />
             }
             />

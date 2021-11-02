@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import CustomSpreadSheetTable from '../../components/spreadsheet-table/custom-spreadsheet-table';
 import { selectTeacherOptions, selectTeachersObjWithNameKeys } from "../../redux/teachers/teachers.selectors";
 import CustomSelect from '../../components/custom-select/custom-select.component';
+import SimpleTabs from '../../components/tab-panels/tabs.component';
 import Typography from "@material-ui/core/Typography";
 import Box from '@material-ui/core/Box';
 import StudentAchievementBar from './achievement-chart';

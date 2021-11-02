@@ -55,9 +55,11 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
     ];
 
     useEffect(() => {
-        const teacherId = teacher.id;
+        const teacherId = teacher ? teacher.id : null;
         
         const getObservtionScores = async () => {
+            if(!teacher) return;
+            setIsLoading(true);
             const fetchedObservationScores = {};
             
             observationTypes.forEach( async function(scoreType){
@@ -83,17 +85,15 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
                 observationScores: fetchedObservationScores,
                 lessonPlanScore: lpScore
             });
+            setIsLoading(false);
         }; 
         
-        setIsLoading(true);
         getObservtionScores();
-        setIsLoading(false);
-        
     }, [teacher, currentYear]);
 
     return ( 
         <>
-            <Typography variant="h6">{`Observations - ${teacher.firstName} ${teacher.lastName}`}</Typography>
+            <Typography variant="h6">Observation Feedback</Typography>
             <Divider />
             {
                 isLoading ?
@@ -106,7 +106,7 @@ const TeacherObservationsComponent = ({teacher, currentYear}) => {
                     <div>
                         <div className={classes.root}>
                         {
-                        observationTypes.map((observationType, index) =>(
+                        teacher && observationTypes.map((observationType, index) =>(
                             state.observationScores[observationType] && (
                                 <Accordion defaultExpanded={index === 0} key={index}>
                                     <AccordionSummary

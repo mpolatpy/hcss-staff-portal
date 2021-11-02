@@ -14,7 +14,7 @@ import calendarReducer from './calendar/calendar-reducer';
 const persistConfig = {
     key: 'root',
     storage,
-    blacklist: ['teachers']
+    // blacklist: ['teachers']
 };
 
 const rootReducer = combineReducers({

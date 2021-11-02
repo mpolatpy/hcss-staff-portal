@@ -11,12 +11,14 @@ import CustomSelect from '../../components/custom-select/custom-select.component
 
 const TeacherObservationsDetailPage = ({observationType, teacher, currentUser, currentYear, history, match, teachersOptions, teachersMap}) => {
 
-    const teacherId = teacher.id;
+    const teacherId = teacher ? teacher.id : null;
     const [observations, setObservations] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const fetchInitialObservationData = async () => {  
+            if(!teacher) return;
+            setIsLoading(true);
             try{
                 const observationsRef = firestore.collection('observations')
                     .where('teacherid', '==', teacherId)
@@ -32,10 +34,11 @@ const TeacherObservationsDetailPage = ({observationType, teacher, currentUser, c
             } catch(e){
                 console.log(e.message);
             }
+            setIsLoading(false);
         }
-        setIsLoading(true);
+        
         fetchInitialObservationData();
-        setIsLoading(false);
+        
     },[teacherId, currentYear, observationType]);
 
     const handleSelect = (e) => {
@@ -52,7 +55,7 @@ const TeacherObservationsDetailPage = ({observationType, teacher, currentUser, c
                 <Box
                 style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}
                 >
-                    <Typography variant="h5"> {`${observationType}s - ${teacher.firstName} ${teacher.lastName}`}</Typography>
+                    <Typography variant="h5"> {`${observationType}s`}</Typography>
                     {
                         currentUser && currentUser.role !== 'teacher' && (
                             <CustomSelect
@@ -60,7 +63,7 @@ const TeacherObservationsDetailPage = ({observationType, teacher, currentUser, c
                                 style={{ width: 100, height: 40 }}
                                 options={teachersOptions}
                                 name="selectTeacher"
-                                value={`${teacher.lastName}, ${teacher.firstName}`}
+                                value={teacher ? `${teacher.lastName}, ${teacher.firstName}` : ''}
                                 handleSelect={handleSelect}
                             />
                         )

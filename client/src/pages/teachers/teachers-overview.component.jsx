@@ -13,6 +13,7 @@ import TeacherObservationsDetailPage from './teacher-observations.component';
 import TeacherLessonPlansComponent from '../../components/teacher-home/teacher-lesson-plans.component';
 import TeacherGradePolicyComponent from '../../components/teacher-home/teacher-grade-policy.component';
 import AttendancePage from '../attendance/attendance.page';
+import TutoringPage from '../tutoring/tutoring.page';
 
 const TeacherDetailsWithSpinner = WithSpinner(TeacherDetails);
 
@@ -40,6 +41,9 @@ const TeacherListOverview = (props) => {
         />
         <Route exact path={`${match.path}/attendance/:teacherId`} 
             component={AttendancePage} 
+        />
+        <Route exact path={`${match.path}/tutoring`} 
+            component={TutoringPage} 
         />
         <Route exact path={`${match.path}/observations/weekly/:teacherId`} 
             render={(props) => 

@@ -12,13 +12,13 @@ export const fetchSpreadSheetData = async (spreadSheetInfoRef, currentUser, setL
     }
     const { data, spreadSheetInfo } = spreadsheetData;
     const { columns, filterColumn, filterProperty } = spreadSheetInfo;
-
-    setHeader(mapRow(data[0], columns));
-    setRecords(filterCurrentUserData(
-        data, currentUser, columns, filterColumn, filterProperty
-    ));
+    const header = mapRow(data[0], columns);
+    setHeader(header);
+    const records = filterCurrentUserData(data, currentUser, columns, filterColumn, filterProperty);
+    setRecords(records);
 
     setLoading(false);
+    return {records, header};
 };
 
 export const getSpreadSheetData = async (spreadSheetInfoRef) => {

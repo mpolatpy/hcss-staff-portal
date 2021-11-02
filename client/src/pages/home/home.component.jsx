@@ -82,9 +82,31 @@ const HomePage = ({currentUser}) => {
                     className={classes.card}
                     imageUrl="https://hampdencharter.org/wp-content/uploads/2019/11/music1.jpg"
                     title='Attendance Records'
-                    header="Attendance Records"
+                    header="Attendance"
                     buttonText="View Attendance Records"
                     to={`/staff/attendance/${currentUser.id}`}
+                >
+                </CustomCard>
+            </div>
+            <div className={classes.card}>
+                <CustomCard
+                    className={classes.card}
+                    imageUrl="https://west.hampdencharter.org/wp-content/uploads/2018/03/LAB1-895x430-copy-895x430.jpg"
+                    title='Tutoring'
+                    header="Tutoring"
+                    buttonText="View Tutoring Records"
+                    to={`/staff/tutoring`}
+                >
+                </CustomCard>
+            </div>
+            <div className={classes.card}>
+                <CustomCard
+                    className={classes.card}
+                    imageUrl="https://west.hampdencharter.org/wp-content/uploads/2018/03/ROBOT1-895x430.jpg"
+                    title='Test Results'
+                    header="Test Results"
+                    buttonText="View Test Results"
+                    to={`/test-results`}
                 >
                 </CustomCard>
             </div>
@@ -92,8 +114,7 @@ const HomePage = ({currentUser}) => {
             {/* https://hampdencharter.org/wp-content/uploads/2019/11/music1.jpg
             https://west.hampdencharter.org/wp-content/uploads/2018/03/ART1-895x430.jpg
             https://west.hampdencharter.org/wp-content/uploads/2018/03/ROBOT1-895x430.jpg
-            https://west.hampdencharter.org/wp-content/uploads/2018/03/LAB1-895x430-copy-895x430.jpg
-            https://east.hampdencharter.org/wp-content/uploads/2018/03/robotics-420x420.jpg */}
+            https://west.hampdencharter.org/wp-content/uploads/2018/03/LAB1-895x430-copy-895x430.jpg */}
         </div>
     )
 }

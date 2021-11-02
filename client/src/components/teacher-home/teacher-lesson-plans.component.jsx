@@ -41,9 +41,12 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const teacherId = teacher.id;
+        const teacherId = teacher ? teacher.id : null;
         
         const getLPScores = async () => {
+            if(!teacher){
+                return;
+            }
             const lessonPlanScoreRef = firestore.doc(`lessonPlanScores/${currentYear}/summary/${teacherId}`);
             const lessonPlanData = await lessonPlanScoreRef.get();
             let lpScore = null;
@@ -55,6 +58,9 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
         }; 
         
         const getLessonPlans = async () => {
+            if(!teacher){
+                return;
+            }
             const ref = firestore.collection(`lessonPlanScores/${currentYear}/${teacherId}`);
             const snapshot = await ref.get();
             let fetchedLessonPlans = [];
@@ -82,7 +88,7 @@ const TeacherLessonPlansComponent = ({teacher, currentUser, currentYear, teacher
             <Box
             style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}
             >
-                <Typography variant="h6">{`Lesson Plans - ${teacher.firstName} ${teacher.lastName}`}</Typography>
+                <Typography variant="h6">Lesson Plans</Typography>
                 {
                     currentUser && currentUser.role !== 'teacher' && ( 
                         <CustomSelect

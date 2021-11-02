@@ -91,7 +91,7 @@ const ParentCommunicationDetailPage = ({communications, students, isLoading, his
                     </div>
                     ) : ( 
                         <div className={classes.dataTable}>
-                            <Typography >No parent communication details found.</Typography>
+                            <Typography>No data. Please make sure you entered the data in PowerSchool.</Typography>
                         </div>
                     )
                 )

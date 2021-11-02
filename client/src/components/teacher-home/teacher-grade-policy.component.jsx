@@ -53,13 +53,16 @@ const TeacherGradePolicyComponent = ({ teacher, currentUser, currentYear, teache
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        const teacherId = teacher.id;
-
         const getGradePolicyScores = async () => {
             setIsLoading(true);
+            let fetchedScores = [];
+            if(!teacher) {
+                setGradePolicyScores(fetchedScores);
+                return;
+            }
+            const teacherId = teacher.id;
             const ref = firestore.collection(`gradebookChecks/${currentYear}/${teacherId}`);
             const snapshot = await ref.get();
-            let fetchedScores = [];
 
             if (!snapshot.empty) {
                 snapshot.docs.forEach(doc => fetchedScores = [...fetchedScores, { id: doc.id, ...doc.data() }]);
@@ -83,7 +86,7 @@ const TeacherGradePolicyComponent = ({ teacher, currentUser, currentYear, teache
             <Box
                 style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
             >
-                <Typography variant="h6">{`Grades/Grade Policy Feedback - ${teacher.firstName} ${teacher.lastName}`}</Typography>
+                <Typography variant="h6">Grades/Grade Policy Feedback</Typography>
                 {
                     currentUser && currentUser.role !== 'teacher' && (
                         <CustomSelect

@@ -27,6 +27,8 @@ import NotificationsPage from './pages/notifications/notifications.page';
 import Calendar from './pages/calendar/calendar.routes.page';
 import StudentAchievement from './pages/student-achievement/student-achievement.routes';
 import GradebookCheck from './pages/grade-policy/grade-policy.routes';
+import AdminReports from './pages/admin-reports/admin-reports';
+import TestResultsPage from './pages/test-results/test-results.page';
 
 function App(props) {
 
@@ -83,6 +85,7 @@ function App(props) {
               <Route exact path="/directory" component={Directory}/>
               <Route exact path="/register" component={UserRegistrationPage}/>
               <Route path="/staff" component={TeacherListOverview} />
+              <Route path="/admin-reports" component={AdminReports} />
               <Route path="/home" render={() => <HomePage currentUser={currentUser}/>}  /> 
               <Route path="/observations" component={Observations} />
               <Route path="/notifications" component={NotificationsPage} />
@@ -91,6 +94,7 @@ function App(props) {
               <Route path="/parent-communication" component={ParentCommunicationRoute} />
               <Route path="/calendar" component={Calendar}/>
               <Route path="/student-achievement" component={StudentAchievement}/>
+              <Route path="/test-results" component={TestResultsPage}/>
               <Route path="/grade-policy" component={GradebookCheck}/>
               <Route path="/profile" 
                 render={() => ( <ProfilePage currentUser={currentUser} /> )}

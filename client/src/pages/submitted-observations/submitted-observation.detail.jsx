@@ -13,14 +13,14 @@ import Typography from "@material-ui/core/Typography";
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const SubmittedObservationDetails = (props) => {
-    const {match, observationType, currentYear, teachers} = props;
-    const [ state, setState ] = useState({
+    const { match, observationType, currentYear, teachers } = props;
+    const [state, setState] = useState({
         observations: [],
         score: null,
     });
     const [isLoading, setIsLoading] = useState(false);
-    const teacherId = match.params.teacherId; 
-    const teacher = teachers[teacherId];
+    const teacherId = match.params.teacherId;
+    const teacher = teachers ? teachers[teacherId] : null;
 
     useEffect(() => {
         const observationTypeMap = {
@@ -33,15 +33,15 @@ const SubmittedObservationDetails = (props) => {
 
         const scoreType = observationTypeMap[observationType]
 
-        const fetchInitialObservationData = async () => {  
-            try{
+        const fetchInitialObservationData = async () => {
+            try {
                 setIsLoading(true);
 
                 const scoreRef = firestore.doc(`observationScores/${currentYear}/${scoreType}/${teacherId}`);
                 const observationsRef = firestore.collection('observations')
                     .where('teacherid', '==', teacherId)
                     .where('observationDetails.schoolYear', '==', currentYear)
-                    .where('observationType', '==', observationType )
+                    .where('observationType', '==', observationType)
                     .orderBy('observationDate', 'desc')
 
                 const snapshot = await observationsRef.get();
@@ -55,24 +55,26 @@ const SubmittedObservationDetails = (props) => {
                 });
                 setIsLoading(false);
 
-            } catch(e){
+            } catch (e) {
                 console.log(e.message);
             }
         }
-        
+
         fetchInitialObservationData();
-    },[teacherId, currentYear, observationType]);
-    
-    return ( 
+    }, [teacherId, currentYear, observationType]);
+
+    return (
         <div>
             {
-            isLoading ? (<CircularProgress />) : (
-                <>
-                <Typography variant="h5"> {`${observationType}s - ${teacher.firstName} ${teacher.lastName}`}</Typography>
-                <ObservationChartByType score={state.score} />
-                <ObservationTableByType observations={state.observations} />
-                </>
-            )
+                isLoading ? (<CircularProgress />) : (
+                    teacher && (
+                        <>
+                            <Typography variant="h5"> {`${observationType}s - ${teacher.firstName} ${teacher.lastName}`}</Typography>
+                            <ObservationChartByType score={state.score} />
+                            <ObservationTableByType observations={state.observations} />
+                        </>
+                    )
+                )
             }
         </div>
     );
@@ -84,4 +86,4 @@ const mapStateToProps = createStructuredSelector({
     teachers: selectTeachers
 });
 
-export default connect(mapStateToProps)( withRouter (SubmittedObservationDetails));
+export default connect(mapStateToProps)(withRouter(SubmittedObservationDetails));
