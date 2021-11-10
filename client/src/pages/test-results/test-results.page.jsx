@@ -11,6 +11,7 @@ import SimpleTabs from '../../components/tab-panels/tabs.component';
 import CustomSpreadSheetTable from '../../components/spreadsheet-table/custom-spreadsheet-table';
 import { selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../redux/teachers/teachers.selectors';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import TestResultCounts from './test-results-counts';
 
 const TestResultsPage = ({ currentUser, currentYear, teachers, teachersMap }) => {
     // const school = currentUser.school === 'HCSS West' ? 'west' : 'east';
@@ -44,7 +45,7 @@ const TestResultsPage = ({ currentUser, currentYear, teachers, teachersMap }) =>
                     resultsMap[section] = [record];
                 }
             }
-
+            console.log(resultsMap)
             setResultsMap(resultsMap);
         }
 
@@ -56,7 +57,7 @@ const TestResultsPage = ({ currentUser, currentYear, teachers, teachersMap }) =>
         setTeacher(teachersMap[value]);
     };
 
-    if(isLoading){
+    if (isLoading) {
         return (
             <CircularProgress />
         );
@@ -96,12 +97,17 @@ const TestResultsPage = ({ currentUser, currentYear, teachers, teachersMap }) =>
                                 .sort()
                                 .map(
                                     section => (
-                                        <CustomSpreadSheetTable
-                                            key={section}
-                                            records={resultsMap[section]}
-                                            header={header}
-                                            isLoading={isLoading}
-                                        />
+                                        <div key={section}>
+                                            <TestResultCounts
+                                                 results={resultsMap[section]}
+                                                 ratingIndex={header.length ? header.indexOf('Proficiency Rating') : null}
+                                            />
+                                            <CustomSpreadSheetTable
+                                                records={resultsMap[section]}
+                                                header={header}
+                                                isLoading={isLoading}
+                                            />
+                                        </div>
                                     )
                                 )
                         }
