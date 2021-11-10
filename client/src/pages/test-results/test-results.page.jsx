@@ -12,6 +12,7 @@ import CustomSpreadSheetTable from '../../components/spreadsheet-table/custom-sp
 import { selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../redux/teachers/teachers.selectors';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import TestResultCounts from './test-results-counts';
+import SectionTestResults from './section-test-results';
 
 const TestResultsPage = ({ currentUser, currentYear, teachers, teachersMap }) => {
     // const school = currentUser.school === 'HCSS West' ? 'west' : 'east';
@@ -97,17 +98,23 @@ const TestResultsPage = ({ currentUser, currentYear, teachers, teachersMap }) =>
                                 .sort()
                                 .map(
                                     section => (
-                                        <div key={section}>
-                                            <TestResultCounts
-                                                 results={resultsMap[section]}
-                                                 ratingIndex={header.length ? header.indexOf('Proficiency Rating') : null}
-                                            />
-                                            <CustomSpreadSheetTable
-                                                records={resultsMap[section]}
-                                                header={header}
-                                                isLoading={isLoading}
-                                            />
-                                        </div>
+                                        <SectionTestResults
+                                            key={section}
+                                            isLoading={isLoading}
+                                            results={resultsMap[section]}
+                                            header={header}
+                                        />
+                                        // <div key={section}>
+                                        //     <TestResultCounts
+                                        //          results={resultsMap[section]}
+                                        //          ratingIndex={header.length ? header.indexOf('Proficiency Rating') : null}
+                                        //     />
+                                        //     <CustomSpreadSheetTable
+                                        //         records={resultsMap[section]}
+                                        //         header={header}
+                                        //         isLoading={isLoading}
+                                        //     />
+                                        // </div>
                                     )
                                 )
                         }

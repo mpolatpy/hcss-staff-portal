@@ -5,10 +5,10 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 const TestResultCounts = ({ results, ratingIndex }) => {
     const ratings = {
-        'E': 'Exceeding Expectaions',
-        'M': 'Meeting Expectaions',
-        'PM': 'Partially Meeting Expectaions',
-        'NM': 'Not Meeting Expectaions'
+        'E': 'Exceeding Expectations',
+        'M': 'Meeting Expectations',
+        'PM': 'Partially Meeting Expectations',
+        'NM': 'Not Meeting Expectations'
     };
 
     const labels = ['E', 'M', 'PM', 'NM'];
@@ -48,6 +48,7 @@ const TestResultCounts = ({ results, ratingIndex }) => {
     };
 
     const options = {
+        indexAxis: 'y',
         scales: {
             yAxes: [
                 {
@@ -72,7 +73,7 @@ const TestResultCounts = ({ results, ratingIndex }) => {
         // </div>
         <div style={{
             width: '55vw',
-            margin: '10px 0 20px'
+            margin: '10px 0 30px'
         }}>
             <Bar data={data} plugins={[ChartDataLabels]} options={options} />
         </div>
