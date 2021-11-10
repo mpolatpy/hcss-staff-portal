@@ -1,19 +1,12 @@
-import Typography from "@material-ui/core/Typography";
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const TestResultCounts = ({ results, ratingIndex }) => {
-    const ratings = {
-        'E': 'Exceeding Expectations',
-        'M': 'Meeting Expectations',
-        'PM': 'Partially Meeting Expectations',
-        'NM': 'Not Meeting Expectations'
-    };
+const TestResultCounts = ({ results, ratingIndex, isAP }) => {
 
-    const labels = ['E', 'M', 'PM', 'NM'];
+    const labels = isAP ? ['5', '4', '3', '2', '1'] : ['E', 'M', 'PM', 'NM'];
 
-    const counts = { 'E': 0, 'M': 0, 'PM': 0, 'NM': 0 };
+    const counts = isAP ? {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0} : { 'E': 0, 'M': 0, 'PM': 0, 'NM': 0 };
 
     if (!results || results.length === 0) return null;
 
@@ -25,7 +18,7 @@ const TestResultCounts = ({ results, ratingIndex }) => {
     }
 
     const data = {
-        labels: [
+        labels: isAP ? labels : [
             'Exceeding Expectations',
             'Meeting Expectations',
             'Partially Meeting Expectations',
@@ -62,15 +55,6 @@ const TestResultCounts = ({ results, ratingIndex }) => {
 
 
     return (
-        // <div>
-        //     {
-        //         ['E', 'M', 'PM', 'NM'].map(rating => (
-        //             <div>
-        //                 <Typography variant="caption"><strong>{ratings[rating]}</strong> : {counts[rating]}</Typography>
-        //             </div>
-        //         ))
-        //     }
-        // </div>
         <div style={{
             width: '55vw',
             margin: '10px 0 30px'

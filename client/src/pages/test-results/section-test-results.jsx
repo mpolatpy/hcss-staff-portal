@@ -3,10 +3,11 @@ import TestResultCounts from "./test-results-counts";
 import CustomSpreadSheetTable from '../../components/spreadsheet-table/custom-spreadsheet-table';
 import CustomSelect from '../../components/custom-select/custom-select.component';
 
-const SectionTestResults = ({ results, isLoading, header }) => {
+const SectionTestResults = ({ results, isLoading, header, isAP }) => {
     const [selection, setSelection] = useState('All');
     const [display, setDisplay] = useState(results);
     const ratingIndex= header.length ? header.indexOf('Proficiency Rating') : null;
+
     const ratings = {
         'Exceeding Expectations': 'E',
         'Meeting Expectations': 'M',
@@ -21,7 +22,7 @@ const SectionTestResults = ({ results, isLoading, header }) => {
         if (value === 'All') {
             setDisplay(results);
         } else {
-            const rating = ratings[value];
+            const rating = isAP ? value : ratings[value];
             const displayResults = results.filter(row => row[ratingIndex] === rating);
             setDisplay(displayResults);
         }
@@ -30,6 +31,7 @@ const SectionTestResults = ({ results, isLoading, header }) => {
     return (
         <div>
             <TestResultCounts
+                isAP={isAP}
                 results={results}
                 ratingIndex={ratingIndex}
             />
@@ -40,7 +42,11 @@ const SectionTestResults = ({ results, isLoading, header }) => {
                 name="observationType"
                 handleSelect={handleChange}
                 value={selection}
-                options={['All', 'Exceeding Expectations', 'Meeting Expectations', 'Partially Meeting Expectations', 'Not Meeting Expectations']}
+                options={
+                    isAP ? 
+                    ['All', '1', '2', '3', '4', '5'] :
+                    ['All', 'Exceeding Expectations', 'Meeting Expectations', 'Partially Meeting Expectations', 'Not Meeting Expectations']
+                }
             />
             <CustomSpreadSheetTable
                 records={display}
