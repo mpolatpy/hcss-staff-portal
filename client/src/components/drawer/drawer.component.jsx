@@ -43,6 +43,7 @@ import EventNoteIcon from '@material-ui/icons/EventNote';
 import LinkIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import ContactPhoneOutlinedIcon from '@material-ui/icons/ContactPhoneOutlined';
 import EventIcon from '@material-ui/icons/Event';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
@@ -300,6 +301,21 @@ const MiniDrawer = ({ children, currentUser, currentYear, submissionMessage, res
                             </ListItem>
                         </LightTooltip>
                     </Link>
+                    {
+                        currentUser.role === 'superadmin' && (
+                            <>
+                            <Divider />
+                            <Link to="/admin-reports" className={classes.links}>
+                                <LightTooltip title="Admin Reports">
+                                    <ListItem button key={"admin-reports"}>
+                                        <ListItemIcon><AssessmentIcon className={classes.menuIcon} /></ListItemIcon>
+                                        <ListItemText primary={"Admin Reports"} />
+                                    </ListItem>
+                                </LightTooltip>
+                            </Link>
+                            </>
+                        )
+                    }
                 </List>
                 <Divider />
             </Drawer>

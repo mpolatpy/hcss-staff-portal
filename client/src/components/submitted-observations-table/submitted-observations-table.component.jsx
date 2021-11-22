@@ -18,7 +18,19 @@ const useStyles = makeStyles((theme) => ({
 
 const SubmittedObservationsTable = ({observations, baseUrl}) => {
     const classes = useStyles();
-    const rows = observations.length? observations.map( observation => mapObservationData(observation) ) : [];
+    const rows = observations.length? observations
+        .sort(
+            (a, b) => {
+                const teacherA = `${a.teacher.lastName} ${a.teacher.firstName}`;
+                const teacherB = `${b.teacher.lastName} ${b.teacher.firstName}`;
+
+                if(teacherA < teacherB) {
+                    return -1;
+                }
+                return 1;
+            }
+        )
+        .map( observation => mapObservationData(observation) ) : [];
     const observationColumns = [
         {field: 'teacher', headerName: 'Teacher', headerClassName: 'teacher-list-header', flex: 1.5,
             renderCell: (params) => ( 
@@ -77,8 +89,8 @@ const SubmittedObservationsTable = ({observations, baseUrl}) => {
 
     return ( 
         <div className={classes.root}>
-            <div style={{ height: 450, width: '100%', margin: '10px 0 10px 0' }}>
-                <DataGrid rows={rows} columns={observationColumns} />
+            <div style={{ height: 650, width: '100%', margin: '10px 0 10px 0' }}>
+                <DataGrid rows={rows} columns={observationColumns} pageSize={10}/>
             </div>
         </div>
     );

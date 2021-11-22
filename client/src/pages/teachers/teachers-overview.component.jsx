@@ -63,33 +63,6 @@ const TeacherListOverview = (props) => {
                 />
             } 
         />
-        <Route exact path={`${match.path}/observations/quarterly/:teacherId`} 
-            render={(props) => 
-            <TeacherObservationsDetailPage 
-                observationType="Quarter Evaluation"
-                currentYear={currentYear}
-                {...props}
-                />
-            } 
-        />
-        <Route exact path={`${match.path}/observations/midyear/:teacherId`} 
-            render={(props) => 
-            <TeacherObservationsDetailPage 
-                observationType="Midyear Evaluation"
-                currentYear={currentYear}
-                {...props}
-                />
-            } 
-        />
-        <Route exact path={`${match.path}/observations/end-of-year/:teacherId`} 
-            render={(props) => 
-            <TeacherObservationsDetailPage 
-                observationType="End of Year Evaluation"
-                currentYear={currentYear}
-                {...props}
-                />
-            } 
-        />
     </div>
 )}
 

@@ -23,57 +23,101 @@ class SubmittedObservationsPage extends React.Component {
             observer: this.props.currentUser,
             observersMap: {},
             observations: [],
-            showTable: false
+            showTable: false,
+            observationsByMonth: null
         };
     }
 
     componentDidMount() {
         const { currentUser, currentYear, teacherList } = this.props;
         this.fetchObservationCounts(currentUser, currentYear);
+        this.fetchObservations(currentUser, currentYear);
 
-        const observers = teacherList.filter( staff => staff.role === 'dci' || staff.role === 'admin')
-                                    .reduce((acc, current) => {
-                                        const name = `${current.lastName}, ${current.firstName}`
-                                        acc[name] = current;
-                                        return acc;
-                                    }, {});
+        const observers = teacherList.filter(staff => staff.role === 'dci' || staff.role === 'admin')
+            .reduce((acc, current) => {
+                const name = `${current.lastName}, ${current.firstName}`
+                acc[name] = current;
+                return acc;
+            }, {});
         observers[`${currentUser.lastName}, ${currentUser.firstName}`] = currentUser;
-        this.setState({observersMap: observers});
+        this.setState({ observersMap: observers });
     }
 
     fetchObservationCounts = (observer, currentYear) => {
         let observationData = [];
         firestore.collection(`observationCounts/${currentYear}/${observer.id}`)
-                .get()
-                .then( snapshot => { 
-                    snapshot.forEach( doc => observationData = [...observationData, doc.data()] )
+            .get()
+            .then(snapshot => {
+                snapshot.forEach(doc => observationData = [...observationData, doc.data()])
+            })
+            .then(() => this.setState({ observations: observationData }))
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
+    }
+
+    fetchObservations = (observer, currentYear) => {
+        let observations = { total: 0};
+
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const ref = firestore.collection(`observations`)
+            .where('observationDetails.schoolYear', '==', currentYear)
+            .where('observerId', '==', observer.id);
+
+        ref.get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    observations.total++;
+                    const observation = doc.data();
+                    const { observationDetails } = observation;
+                    const observationDate = observationDetails.observationDate.toDate();
+                    const { teacher } = observationDetails;
+                    const teacherName = `${teacher.lastName}, ${teacher.firstName}`;
+                    const month = months[observationDate.getMonth()];
+                    
+                    if (month in observations) {
+                        observations[month]['count']++;
+                        observations[month]['observationCountByTeacher'][teacherName] = (observations[month]['observationCountByTeacher'][teacherName] || 0) + 1;
+                    } else {
+                        observations = {
+                            ...observations,
+                            [month]: {
+                                count: 1,
+                                observationCountByTeacher: {
+                                    [teacherName]: 1
+                                }
+                            }
+                        };
+                    }
                 })
-                .then( () => this.setState({observations: observationData}))
-                .catch((error) => {
-                    console.log("Error getting documents: ", error);
-                });
+            })
+            .then(() => this.setState({ observationsByMonth: observations }))
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+            });
     }
 
     handleToggle = () => {
-        this.setState({showTable: !this.state.showTable})
+        this.setState({ showTable: !this.state.showTable })
     }
 
     handleSelect = (e) => {
         const { currentYear } = this.props;
         const { value } = e.target;
-        if(!(value in this.state.observersMap)) return;
+        if (!(value in this.state.observersMap)) return;
 
         const observer = this.state.observersMap[value];
         this.fetchObservationCounts(observer, currentYear);
-        this.setState({observer: observer});
+        this.fetchObservations(observer, currentYear);
+        this.setState({ observer: observer });
     }
 
     render() {
         const { match, currentUser } = this.props;
-        return ( 
+        return (
             <div>
                 <Box
-                    style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}
+                    style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
                 >
                     <Typography variant="h5">Submitted Observations</Typography>
                     <div style={{ display: "flex", justifyContent: 'flex-end' }}>
@@ -82,7 +126,7 @@ class SubmittedObservationsPage extends React.Component {
                             label={this.state.showTable ? 'Switch to Graph View' : 'Switch to Table View'}
                         />
                         {
-                            currentUser && currentUser.role === 'superadmin' && ( 
+                            currentUser && currentUser.role === 'superadmin' && (
                                 <CustomSelect
                                     label="Observer"
                                     style={{ width: 30, height: 40 }}
@@ -96,17 +140,20 @@ class SubmittedObservationsPage extends React.Component {
                     </div>
                 </Box>
                 {/* <Typography variant="h5">Submitted Observations</Typography> */}
-                
+
                 {
-                    this.state.showTable ? 
-                    (
-                        <SubmittedObservationsTable 
-                            observations={this.state.observations}
-                            baseUrl={match.path}
-                        />
-                    ):( 
-                        <SubmittedObservationsChart observations={this.state.observations} />
-                    )
+                    this.state.showTable ?
+                        (
+                            <SubmittedObservationsTable
+                                observations={this.state.observations}
+                                baseUrl={match.path}
+                            />
+                        ) : (
+                            <SubmittedObservationsChart
+                                observations={this.state.observations}
+                                observationsByMonth={this.state.observationsByMonth}
+                            />
+                        )
                 }
             </div>
         );

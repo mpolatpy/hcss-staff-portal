@@ -7,7 +7,7 @@ export const mapObservationData = (observationCount) => {
         id: id,
         teacher: {
             id: id,
-            name: `${teacher.firstName} ${teacher.lastName}`
+            name: `${teacher.lastName}, ${teacher.firstName}`
         },
         weeklyObservations: {
             count: observationCount['Weekly Observation'],

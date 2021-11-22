@@ -30,7 +30,7 @@ function SignInForm({ fetchTeachersAsync }) {
         const { email, password } = state;
 
         try {
-            await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+            await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
             const userCredentials = await auth.signInWithEmailAndPassword(email, password);
             const { uid } = userCredentials.user;
             fetchTeachersAsync(uid);

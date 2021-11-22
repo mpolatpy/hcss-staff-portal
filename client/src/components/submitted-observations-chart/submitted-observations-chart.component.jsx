@@ -1,9 +1,12 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import Typography from '@material-ui/core/Typography';
+import SimpleTabs from '../tab-panels/tabs.component';
+import MonthlyObservationsChart from './monthly-observations';
 
-const SubmittedObservationsChart = ({ observations }) => {
-
+const SubmittedObservationsChart = ({ observations, observationsByMonth }) => {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    console.log(observationsByMonth, observations);
     const observationTypes = [
         {
             type: 'Weekly Observation',
@@ -92,13 +95,38 @@ const SubmittedObservationsChart = ({ observations }) => {
 
     return (
         <div style={{ marginTop: '20px' }}>
-            <Bar
-                data={data}
-                options={options}
+            <SimpleTabs
+                labels={['Overall', 'Monthly']}
+                contents={[
+                    (<>
+                        <Bar
+                            data={data}
+                            options={options}
+                        />
+                        <Typography variant="caption">{`Average: ${average}`}</Typography>
+                        <br />
+                        <Typography variant="caption">{`Total: ${total}`}</Typography>
+                        <br />
+                    </>), (
+                        <MonthlyObservationsChart
+                            observationsByMonth={observationsByMonth}
+                            options={options}
+                        />
+                    )
+                ]
+                }
             />
-            <Typography variant="caption">{`Average: ${average}`}</Typography>
-            <br />
-            <Typography variant="caption">{`Total: ${total}`}</Typography>
+
+            {/* {
+                observationsByMonth && months.map(month => (
+                    observationsByMonth[month] ? (
+                        <>
+                            <Typography variant="caption" key={month}>{`${month}: ${observationsByMonth[month].length}`}</Typography>
+                            <br />
+                        </>
+                    ) : null)
+                )
+            } */}
         </div>
     );
 };

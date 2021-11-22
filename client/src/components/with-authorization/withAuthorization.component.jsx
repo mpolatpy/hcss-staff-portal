@@ -9,7 +9,7 @@ const withAuthorization = (allowedRoles) => (WrappedComponent) => {
             <WrappedComponent currentUser={currentUser} {...otherProps}/>
         ) : ( 
             <div>
-                <h1>You do not have access to this page.</h1>
+                <h3>You do not have access to this page.</h3>
             </div>
         )
     };
