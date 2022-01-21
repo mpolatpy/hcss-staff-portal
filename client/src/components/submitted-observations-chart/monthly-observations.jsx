@@ -1,7 +1,6 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import Typography from '@material-ui/core/Typography';
-import SimpleTabs from '../tab-panels/tabs.component';
 import VerticalTabs from '../vertical-tabs/vertical-tabs-component';
 
 const MonthlyObservationsChart = ({ observationsByMonth }) => {

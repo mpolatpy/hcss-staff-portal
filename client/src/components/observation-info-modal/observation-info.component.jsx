@@ -7,7 +7,6 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import IconButton from '@material-ui/core/IconButton';
 import { List, Link, ListItem, Typography } from '@material-ui/core';
 
-import CustomSelect from '../custom-select/custom-select.component';
 import TeacherScheduleTable from './teacher-schedule-table';
 import SavedObservationsTable from './saved-observations-table';
 import Paper from '@material-ui/core/Paper';

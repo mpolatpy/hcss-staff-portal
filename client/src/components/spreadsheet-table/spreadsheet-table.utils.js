@@ -6,6 +6,7 @@ export const fetchSpreadSheetData = async (spreadSheetInfoRef, currentUser, setL
     setLoading(true);
 
     const spreadsheetData = await getSpreadSheetData(spreadSheetInfoRef);
+    console.log(spreadsheetData);
     if (!spreadsheetData) {
         setLoading(false);
         return;
@@ -15,6 +16,7 @@ export const fetchSpreadSheetData = async (spreadSheetInfoRef, currentUser, setL
     const header = mapRow(data[0], columns);
     setHeader(header);
     const records = filterCurrentUserData(data, currentUser, columns, filterColumn, filterProperty);
+    
     setRecords(records);
 
     setLoading(false);

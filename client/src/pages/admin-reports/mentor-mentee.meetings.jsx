@@ -81,7 +81,7 @@ const MentorMeetings = ({ currentYear }) => {
         };
 
         getAllMentorMeetings();
-    }, []);
+    }, [currentYear]);
 
     const tableHeader = ['Date', 'Teacher', 'Title'];
 

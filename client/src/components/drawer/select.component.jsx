@@ -4,27 +4,28 @@ import FormControl from '@material-ui/core/FormControl';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useStyles } from './drawer-select.styles';
 
-const DrawerSelect = ({years, currentYear, handleChange, year}) => {
+const DrawerSelect = ({ years, currentYear, handleChange, year }) => {
   const classes = useStyles();
 
   const iconComponent = () => {
     return (
-      <ExpandMoreIcon className={classes.icon}/>
-    )};
+      <ExpandMoreIcon className={classes.icon} />
+    )
+  };
 
   // moves the menu below the select input
   const menuProps = {
     classes: {
-        paper: classes.paper,
-        list: classes.list
-      },  
+      paper: classes.paper,
+      list: classes.list
+    },
     anchorOrigin: {
       vertical: "bottom",
-        horizontal: "left"
+      horizontal: "left"
     },
     transformOrigin: {
-        vertical: "top",
-        horizontal: "left"
+      vertical: "top",
+      horizontal: "left"
     },
     getContentAnchorEl: null
   };
@@ -39,13 +40,13 @@ const DrawerSelect = ({years, currentYear, handleChange, year}) => {
         value={year}
         onChange={handleChange}
       >
-          {
-              years.length ? years.map((year, idx) => ( 
-                <MenuItem key={idx} value={year}>{year}</MenuItem>
-              )) : ( 
-                <MenuItem value={currentYear}>{currentYear}</MenuItem>
-              )
-          }
+        {
+          years.length ? years.map((year, idx) => (
+            <MenuItem key={idx} value={year}>{year}</MenuItem>
+          )) : (
+            <MenuItem value={currentYear}>{currentYear}</MenuItem>
+          )
+        }
       </Select>
     </FormControl>
   );

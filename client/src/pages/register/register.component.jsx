@@ -64,6 +64,7 @@ const UserRegistrationPage = () => {
     const handleSubmit = async event => {
         event.preventDefault(); 
         const { firstName, lastName, email, password, ...otherDetails} = staff;
+        const lastFirst = `${lastName}, ${firstName}`;
         let status;
         try {
             setIsLoading(true);
@@ -72,7 +73,7 @@ const UserRegistrationPage = () => {
                 password
             );
             await createUserProfileDocument(user, 
-                { firstName, lastName, ...otherDetails });
+                { firstName, lastName, lastFirst, ...otherDetails });
             
             await sendRegistrationEmail(email, password, firstName, lastName);
             // setIsLoading(false);

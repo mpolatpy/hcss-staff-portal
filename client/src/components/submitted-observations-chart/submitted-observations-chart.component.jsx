@@ -5,7 +5,7 @@ import SimpleTabs from '../tab-panels/tabs.component';
 import MonthlyObservationsChart from './monthly-observations';
 
 const SubmittedObservationsChart = ({ observations, observationsByMonth }) => {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    // const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     console.log(observationsByMonth, observations);
     const observationTypes = [
         {
@@ -61,7 +61,7 @@ const SubmittedObservationsChart = ({ observations, observationsByMonth }) => {
         };
 
         for (let observation of observations) {
-            observationTypes.forEach(item => total += observation[item.type] || 0)
+            observationTypes.forEach(item => total += (observation[item.type] || 0));
         }
 
         const average = (total / numberOfTeachers).toFixed(2);

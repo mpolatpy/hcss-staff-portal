@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { firestore } from '../../firebase/firebase.utils';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import { selectTeacher } from '../../redux/teachers/teachers.selectors';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Divider from '@material-ui/core/Divider';
 import ObservationAccordion from './observation-accordion';
 
@@ -18,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TeacherObservationsComponent = ({ teacher, currentYear }) => {
     const classes = useStyles();
-    const [evaluations, setEvaluations] = useState(null);
+    // const [evaluations, setEvaluations] = useState(null);
 
     const observationTypes = [
         "weeklyObservationScores",

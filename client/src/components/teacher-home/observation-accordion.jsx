@@ -50,7 +50,7 @@ const ObservationAccordion = ({ index, teacher, observationType, currentYear }) 
     }
 
     return (
-                observationScores ? (
+                observationScores && teacherId ? (
                     <Accordion defaultExpanded={index === 0}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon />}
@@ -63,7 +63,7 @@ const ObservationAccordion = ({ index, teacher, observationType, currentYear }) 
                             <div style={{ width: '80%', display: 'flex', flexDirection: 'column', alignItems: "flex-start" }}>
                                 <ObservationChartByType score={observationScores} />
                                 <div style={{ marginTop: '5px', display: 'flex', alignItems: "flex-end", }}>
-                                    <Button color="primary" component={Link} to={`/staff/observations/${observationMap[observationType].slug}/${teacher.id}`}>View Details</Button>
+                                    <Button color="primary" component={Link} to={`/staff/observations/${observationMap[observationType].slug}/${teacherId}`}>View Details</Button>
                                 </div>
                             </div>
                         </AccordionDetails>

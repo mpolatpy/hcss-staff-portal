@@ -5,7 +5,7 @@ import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import MentorMeetings from './mentor-mentee.meetings';
 import AdminReportsPage from './admin-reports-page';
-import withAuthorization from '../../components/with-authorization/withAuthorization.component';
+// import withAuthorization from '../../components/with-authorization/withAuthorization.component';
 
 const AdminReports = ({ match, currentUser, currentYear }) => {
 

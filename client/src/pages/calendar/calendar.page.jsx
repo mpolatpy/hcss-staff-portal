@@ -136,7 +136,8 @@ const CalendarPage = ({ currentYear, currentUser, history, match, fetchSavedObse
         const day = d.getDay();
         const numOfMonday = date - day + (day === 0 ? -6 : 1);
         d.setDate(numOfMonday);
-        fetchCalendar(currentYear, currentUser, d);
+        console.log(d);
+        fetchCalendar(currentYear, currentUser, showGoogleCalendarEvents, d);
     }
 
     return (
