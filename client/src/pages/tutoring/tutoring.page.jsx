@@ -149,7 +149,7 @@ const TutoringPage = ({ currentUser, currentYear, teachers, teachersMap }) => {
                                 <div style={{ width: '30vw', marginTop: '20px 20px 20px' }}>
                                     <CustomSpreadSheetTable
                                         records={
-                                            Object.keys(tutoringCounts)
+                                            tutoringCounts && Object.keys(tutoringCounts)
                                                 .sort()
                                                 .map(student => ([student, tutoringCounts[student]]))
                                         }
