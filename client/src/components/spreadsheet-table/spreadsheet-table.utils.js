@@ -6,7 +6,7 @@ export const fetchSpreadSheetData = async (spreadSheetInfoRef, currentUser, setL
     setLoading(true);
 
     const spreadsheetData = await getSpreadSheetData(spreadSheetInfoRef);
-    console.log(spreadsheetData);
+
     if (!spreadsheetData) {
         setLoading(false);
         return;
