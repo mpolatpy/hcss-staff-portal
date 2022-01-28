@@ -193,7 +193,7 @@ const ImportantLinks = ({currentUser, setSubmissionMessage}) => {
             <div>
             {
                 links && Object.keys(links).sort().map((item) => (
-                    <div className={classes.root}>
+                    <div key={item} className={classes.root}>
                         <Accordion className={classes.accordion}>
                             <AccordionSummary
                                 className={classes.accordionSummary}

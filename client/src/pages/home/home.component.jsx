@@ -18,8 +18,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const HomePage = ({currentUser}) => {
-
     const classes = useStyles();
+    
     return (
         <div className={classes.cardContainer}>
             <div className={classes.card}>

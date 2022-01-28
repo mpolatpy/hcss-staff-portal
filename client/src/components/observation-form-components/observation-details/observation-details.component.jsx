@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { getObservationOptions, sectionOptions } from './observation-details.utils';
+import { getObservationOptions, sectionOptions, fetchPreviousObservations } from './observation-details.utils';
 import CustomSelect from '../../custom-select/custom-select.component';
 import DatePicker from '../../date-picker/date-picker.component';
-import {selectIsSavedObservation, selectObservationFormDetails} from '../../../redux/observation-form/observation-form.selectors';
+import { selectIsSavedObservation, selectObservationFormDetails } from '../../../redux/observation-form/observation-form.selectors';
 import { selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../../redux/teachers/teachers.selectors';
 import { selectCurrentYear } from '../../../redux/school-year/school-year.selectors';
 import ObservationInfoModal from '../../observation-info-modal/observation-info.component';
@@ -12,20 +12,23 @@ import { useStyles } from './observation-details.styles';
 
 const ObservationFormDetails = (props) => {
     const classes = useStyles();
-    const { 
+    const {
         observationDetails,
-        currentUser, 
-        setObservationFormDetails, 
+        currentUser,
+        setObservationFormDetails,
+        setPreviousObservations,
         teachers,
         teacherOptions,
         currentYear,
-        readOnly      
-     } = props;
+        readOnly
+    } = props;
 
     const observationOptions = getObservationOptions(currentUser);
     let teacher = observationDetails.teacher;
     let courses = teacher ? teacher.courses : [];
     let options = courses.map(course => course.name);
+
+    
 
     const handleChange = async e => {
         const { name, value } = e.target;
@@ -37,7 +40,12 @@ const ObservationFormDetails = (props) => {
                 teacher: selectedTeacher,
                 department: (selectedTeacher && selectedTeacher.department) || '',
                 school: (selectedTeacher && selectedTeacher.school) || ''
-            }); 
+            });
+            
+            if(!!currentUser && (currentUser.role === 'dci' || currentUser.role === 'superadmin') ){
+                await fetchPreviousObservations(selectedTeacher, setPreviousObservations, currentYear);
+            }
+
         } else {
             setObservationFormDetails({
                 ...observationDetails,
@@ -54,7 +62,7 @@ const ObservationFormDetails = (props) => {
     };
 
 
-    return ( 
+    return (
         <div className={classes.root}>
             <div className={classes.newDivMain} >
                 <div className={classes.newDiv}>
@@ -65,18 +73,18 @@ const ObservationFormDetails = (props) => {
                             handleDateChange={handleDateChange}
                             selectedDate={
                                 observationDetails.observationDate ?
-                                observationDetails.observationDate :
-                                null
+                                    observationDetails.observationDate :
+                                    null
                             }
                             name="observationDate"
                             label="Observation Date"
                         />
                         {
                             !readOnly &&
-                            <ObservationInfoModal 
-                            teacher={observationDetails.teacher}
-                            currentYear={currentYear}
-                            courses={courses}
+                            <ObservationInfoModal
+                                teacher={observationDetails.teacher}
+                                currentYear={currentYear}
+                                courses={courses}
                             />
                         }
                     </div>
@@ -100,8 +108,8 @@ const ObservationFormDetails = (props) => {
                             handleSelect={handleChange}
                             value={
                                 observationDetails.teacher ?
-                                `${observationDetails.teacher.lastName}, ${observationDetails.teacher.firstName}`
-                                : ''
+                                    `${observationDetails.teacher.lastName}, ${observationDetails.teacher.firstName}`
+                                    : ''
                             }
                             options={teacherOptions}
                         />
@@ -146,11 +154,11 @@ const ObservationFormDetails = (props) => {
                             name="observer"
                             label="Observer"
                             // handleSelect={handleChange}
-                            value={ observationDetails.observer ?
-                                `${observationDetails.observer.lastName}, ${observationDetails.observer.firstName}`:
+                            value={observationDetails.observer ?
+                                `${observationDetails.observer.lastName}, ${observationDetails.observer.firstName}` :
                                 `${currentUser.lastName}, ${currentUser.firstName}`}
                             options={[(observationDetails.observer ?
-                                `${observationDetails.observer.lastName}, ${observationDetails.observer.firstName}`:
+                                `${observationDetails.observer.lastName}, ${observationDetails.observer.firstName}` :
                                 `${currentUser.lastName}, ${currentUser.firstName}`)]}
                         />
                     </div>
@@ -159,8 +167,8 @@ const ObservationFormDetails = (props) => {
                             readOnly={readOnly}
                             disabled={
                                 ['Quarter Evaluation',
-                                'Midyear Evaluation',
-                                'End of Year Evaluation'
+                                    'Midyear Evaluation',
+                                    'End of Year Evaluation'
                                 ].includes(observationDetails.observationType)}
                             name="block"
                             label="Block"
@@ -175,13 +183,13 @@ const ObservationFormDetails = (props) => {
                             readOnly={readOnly}
                             disabled={
                                 ['Quarter Evaluation',
-                                'Midyear Evaluation',
-                                'End of Year Evaluation'
+                                    'Midyear Evaluation',
+                                    'End of Year Evaluation'
                                 ].includes(observationDetails.observationType)}
                             name="course"
                             label="Course"
                             handleSelect={handleChange}
-                            options={ options }
+                            options={options}
                             value={observationDetails.course}
                         />
                     </div>
@@ -190,8 +198,8 @@ const ObservationFormDetails = (props) => {
                             readOnly={readOnly}
                             disabled={
                                 ['Quarter Evaluation',
-                                'Midyear Evaluation',
-                                'End of Year Evaluation'
+                                    'Midyear Evaluation',
+                                    'End of Year Evaluation'
                                 ].includes(observationDetails.observationType)}
                             name="section"
                             label="Section"
@@ -205,8 +213,8 @@ const ObservationFormDetails = (props) => {
                             readOnly={readOnly}
                             disabled={
                                 ['Quarter Evaluation',
-                                'Midyear Evaluation',
-                                'End of Year Evaluation'
+                                    'Midyear Evaluation',
+                                    'End of Year Evaluation'
                                 ].includes(observationDetails.observationType)}
                             name="partOfTheClass"
                             label="Part of the Class"
@@ -218,8 +226,8 @@ const ObservationFormDetails = (props) => {
                 </div>
             </div>
         </div>
-                    
-                         
+
+
     );
 }
 
@@ -228,7 +236,7 @@ const mapStateToProps = createStructuredSelector({
     teachers: selectTeachersObjWithNameKeys,
     isSavedObservation: selectIsSavedObservation,
     currentYear: selectCurrentYear,
-    observationDetails: selectObservationFormDetails, 
+    observationDetails: selectObservationFormDetails,
 });
 
 export default connect(mapStateToProps)(ObservationFormDetails);

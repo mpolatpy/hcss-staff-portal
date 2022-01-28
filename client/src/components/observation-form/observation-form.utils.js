@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { connect } from 'react-redux';
 
 import { 
@@ -19,14 +19,20 @@ export function getSteps() {
 }
 
 function ObservationStep(props) {
+    
+
     const { 
         step, 
+        currentUser,
+        currentYear,
         observationForm,
         setObservationFormDetails,
         setStandardOne,
         setStandardTwo,
         setStandardThree,
         setStandardFour,
+        previousObservations, 
+        setPreviousObservations,
         readOnly,
         ...otherProps
      } = props;
@@ -36,9 +42,11 @@ function ObservationStep(props) {
             return (
                 <div>
                     <ObservationFormDetails
+                        currentUser={currentUser}
+                        setPreviousObservations={setPreviousObservations}
                         readOnly={readOnly}
-                    setObservationFormDetails={setObservationFormDetails}
-                    {...otherProps} 
+                        setObservationFormDetails={setObservationFormDetails}
+                        {...otherProps} 
                     />
                 </div>
             );
@@ -46,7 +54,10 @@ function ObservationStep(props) {
             return (
                 <div>
                     <ObservationStandardComponent 
+                        previousObservations={previousObservations}
                         readOnly={readOnly}
+                        currentUser={currentUser}
+                        domainName="domainOne"
                         domain={rubric.domainOne}
                         domainRdx={observationForm.domainOne}
                         setDomainRdx={setStandardOne}
@@ -58,7 +69,10 @@ function ObservationStep(props) {
             return (
                 <div>
                     <ObservationStandardComponent
+                        previousObservations={previousObservations}
                         readOnly={readOnly}
+                        currentUser={currentUser}
+                        domainName="domainTwo"
                         domain={rubric.domainTwo}
                         domainRdx={observationForm.domainTwo}
                         setDomainRdx={setStandardTwo}
@@ -70,7 +84,10 @@ function ObservationStep(props) {
             return (
                 <div>
                     <ObservationStandardComponent
+                        previousObservations={previousObservations}
                         readOnly={readOnly}
+                        currentUser={currentUser}
+                        domainName="domainThree"
                         domain={rubric.domainThree}
                         domainRdx={observationForm.domainThree}
                         setDomainRdx={setStandardThree}
@@ -83,6 +100,9 @@ function ObservationStep(props) {
                 <div>
                     <ObservationStandardComponent
                         readOnly={readOnly}
+                        currentUser={currentUser}
+                        previousObservations={previousObservations}
+                        domainName="domainFour"
                         domain={rubric.domainFour}
                         domainRdx={observationForm.domainFour}
                         setDomainRdx={setStandardFour}
@@ -93,7 +113,12 @@ function ObservationStep(props) {
         case 5: 
             return ( 
                 <div>
-                    <CustomTextArea readOnly={readOnly} {...otherProps} />
+                    <CustomTextArea 
+                        readOnly={readOnly} 
+                        currentUser={currentUser}
+                        previousObservations={previousObservations}
+                        {...otherProps} 
+                    />
                 </div>
             );
         default:
@@ -106,7 +131,7 @@ const mapDispatchToProps = dispatch => ({
     setStandardOne: observationItems => dispatch(setStandardOne(observationItems)),
     setStandardTwo: observationItems => dispatch(setStandardTwo(observationItems)),
     setStandardThree: observationItems => dispatch(setStandardThree(observationItems)),
-    setStandardFour: observationItems => dispatch(setStandardFour(observationItems))
+    setStandardFour: observationItems => dispatch(setStandardFour(observationItems)),
 });
 
 

@@ -56,7 +56,7 @@ const WithMouseOverPopover = (WrappedComponent) => {
                 onClose={handlePopoverClose}
                 disableRestoreFocus
             >
-                <Typography>I use Popover.</Typography>
+                {/* <Typography>I use Popover.</Typography> */}
                 {/* {popoverContent} */}
             </Popover>
             </div>

@@ -11,12 +11,14 @@ import WithSpinner from '../with-spinner/with-spinner.component';
 import CustomModal from '../modal/modal.component';
 import CustomTextArea from '../text-area/text-area.component';
 import CustomSpeedDial from '../speed-dial/speed-dial.component';
+import { fetchPreviousObservations } from '../observation-form-components/observation-details/observation-details.utils';
 
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
 import NotesIcon from '@material-ui/icons/Notes';
 import CachedIcon from '@material-ui/icons/Cached';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepButton from '@material-ui/core/StepButton';
@@ -46,6 +48,7 @@ const ObservationPage = (props) => {
     } = props;
 
     const [submitting, setSubmitting] = useState(false);
+    const [previousObservations, setPreviousObservations] = useState([]);
     const [editing, setEditing] = useState(false);
     const [isReadOnly, setReadOnly] = useState(readOnly);
     const { teacher, observationDate, observationType } = observationForm.observationDetails;
@@ -195,6 +198,8 @@ const ObservationPage = (props) => {
                         }>
                             <ObservationStep
                                 readOnly={isReadOnly}
+                                previousObservations={previousObservations}
+                                setPreviousObservations={setPreviousObservations}
                                 step={activeStep}
                                 currentUser={currentUser}
                                 currentYear={currentYear}
@@ -261,6 +266,16 @@ const ObservationPage = (props) => {
                                                 >
                                                     <SaveIcon />
                                                 </IconButton>), name: 'Save'
+                                            },
+                                            {
+                                                icon: (<IconButton
+                                                    aria-label="saved-observations"
+                                                    disabled={!teacher || !observationDate || !observationType || editing}
+                                                    type="button"
+                                                    onClick={() => fetchPreviousObservations(teacher, setPreviousObservations, currentYear)}
+                                                >
+                                                    <VisibilityIcon />
+                                                </IconButton>), name: 'Show Previous Observations'
                                             },
                                             {
                                                 icon: (

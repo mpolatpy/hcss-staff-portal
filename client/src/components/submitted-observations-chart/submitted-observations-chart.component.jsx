@@ -6,7 +6,7 @@ import MonthlyObservationsChart from './monthly-observations';
 
 const SubmittedObservationsChart = ({ observations, observationsByMonth }) => {
     // const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    console.log(observationsByMonth, observations);
+
     const observationTypes = [
         {
             type: 'Weekly Observation',

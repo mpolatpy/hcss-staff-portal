@@ -4,7 +4,8 @@ import { Typography } from '@material-ui/core';
 import CustomAccordion from '../../accordion/accordion.component';
 import { useStyles } from './observation-standard.styles';
 
-const ObservationStandardComponent = ({ domain, domainRdx, setDomainRdx, readOnly }) => {
+const ObservationStandardComponent = ({ currentUser, domain, domainName, domainRdx, 
+    setDomainRdx, readOnly, previousObservations }) => {
 
     const classes = useStyles();
     const components = domain.components;
@@ -35,8 +36,14 @@ const ObservationStandardComponent = ({ domain, domainRdx, setDomainRdx, readOnl
                         <CustomAccordion
                             key={key}
                             readOnly={readOnly}
+                            currentUser={currentUser}
+                            previousObservations={
+                                (!readOnly && (currentUser.role === 'dci' || currentUser.role === 'superadmin')) 
+                                ? previousObservations: null
+                            }
                             observationItem={components[key]}
                             name={key}
+                            domainName={domainName}
                             label={components[key].componentName}
                             value={parseInt(domainRdx[key])}
                             handleStarChange={handleStarChange}

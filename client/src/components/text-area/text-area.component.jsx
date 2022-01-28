@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const CustomTextArea = ({ observationNotes, setObservationNotes,readOnly }) => {
+const CustomTextArea = ({ observationNotes, setObservationNotes, readOnly }) => {
     const classes = useStyles();
 
     const handleChange = (e) => {
@@ -27,16 +27,16 @@ const CustomTextArea = ({ observationNotes, setObservationNotes,readOnly }) => {
         setObservationNotes(value)
     }
 
-    return ( 
-        <TextareaAutosize 
-        value={observationNotes}
-        onChange={handleChange}
-        className={classes.observationNotes} 
-        aria-label="observation notes" 
-        rowsMin={8}
-        readOnly={readOnly}
-        placeholder="Observation Notes" 
-         />
+    return (
+        <TextareaAutosize
+            value={observationNotes}
+            onChange={handleChange}
+            className={classes.observationNotes}
+            aria-label="observation notes"
+            rowsMin={8}
+            readOnly={readOnly}
+            placeholder="Observation Notes"
+        />
     )
 }
 

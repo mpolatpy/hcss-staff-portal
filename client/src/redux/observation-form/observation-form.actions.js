@@ -32,6 +32,11 @@ export const setStandardFour = standardFour => ({
     payload: standardFour
 });
 
+export const setStudentAchievement = studentAchievement => ({
+    type: ObservationFormActionTypes.SET_STUDENT_ACHIEVEMENT,
+    payload: studentAchievement
+});
+
 export const setObservationNotes = notes => ({
     type: ObservationFormActionTypes.SET_OBSERVATION_NOTES,
     payload: notes
