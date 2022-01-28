@@ -58,8 +58,3 @@ class PowerSchoolClient {
 }
 
 module.exports = {PowerSchoolClient};
-// const ps = new PowerSchoolClient('e3121d4a-f710-45df-a4c3-d03e7bffa48d', '8f39bb82-cb0a-4bb6-93c2-b276d640cf2e');
-// const url = 'https://hcss.powerschool.com/ws/schema/query/com.hcss.admin.parent_communication';
-// ps.fetchData(url, "LOG.entry_author==Ackilli, Robert;Log.entry_date=ge=2020-01-01;STUDENTS.student_number==2506")
-//     .then((result) =>
-// console.log(result));
