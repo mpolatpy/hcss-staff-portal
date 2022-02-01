@@ -7,15 +7,20 @@ import { setObservationNotes } from '../../redux/observation-form/observation-fo
 
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     observationNotes: {
         width: '100%',
         padding: '12px 20px',
+        marginTop: theme.spacing(1),
         // boxSizing: 'border-box',
         // border: '2px solid #ccc',
         borderRadius: '4px',
         fontSize: '16px',
+    }, 
+    observationNotesContainer: {
+        marginTop: theme.spacing(1)
     }
 }));
 
@@ -28,15 +33,18 @@ const CustomTextArea = ({ observationNotes, setObservationNotes, readOnly }) => 
     }
 
     return (
-        <TextareaAutosize
-            value={observationNotes}
-            onChange={handleChange}
-            className={classes.observationNotes}
-            aria-label="observation notes"
-            rowsMin={8}
-            readOnly={readOnly}
-            placeholder="Observation Notes"
-        />
+        <div className={classes.observationNotesContainer}>
+            <Typography variant="subtitle1">Observation Notes</Typography>
+            <TextareaAutosize
+                value={observationNotes}
+                onChange={handleChange}
+                className={classes.observationNotes}
+                aria-label="observation notes"
+                rowsMin={8}
+                readOnly={readOnly}
+                placeholder="Observation Notes"
+            />
+        </div>
     )
 }
 

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
 import { submitObservationFormAsync, deleteObservationForm, saveObservationForm} from '../../redux/observation-form/observation-form.actions'; 
-import { selectIsObservationFormSubmitting,selectIsSavedObservation} from '../../redux/observation-form/observation-form.selectors';
+import { selectObservationType, selectIsObservationFormSubmitting,selectIsSavedObservation} from '../../redux/observation-form/observation-form.selectors';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import WithSpinner from '../../components/with-spinner/with-spinner.component';
@@ -32,6 +32,7 @@ import Typography from '@material-ui/core/Typography';
 const ObservationPage = (props) => {
     const { 
         isSavedObservation,
+        observationType,
         observationForm,
         currentUser,
         currentYear,
@@ -50,7 +51,8 @@ const ObservationPage = (props) => {
     const [submitting, setSubmitting] = useState(false);
     const [editing, setEditing] = useState(false);
     const [isReadOnly, setReadOnly] = useState(readOnly);
-    const steps = getSteps();
+    console.log(observationType);
+    const steps = getSteps(observationType);
     const {teacher, observationDate, observationType} = observationForm.observationDetails;
     const handleNext = (e) => {
         e.preventDefault();
@@ -275,6 +277,7 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,
     isLoading: selectIsObservationFormSubmitting,
+    observationType: selectObservationType
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
 import { submitObservationFormAsync, deleteObservationForm, saveObservationForm } from '../../redux/observation-form/observation-form.actions';
-import { selectIsObservationFormSubmitting, selectIsSavedObservation } from '../../redux/observation-form/observation-form.selectors';
+import { selectObservationType, selectIsObservationFormSubmitting, selectIsSavedObservation } from '../../redux/observation-form/observation-form.selectors';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
 import { selectCurrentYear } from '../../redux/school-year/school-year.selectors';
 import WithSpinner from '../with-spinner/with-spinner.component';
@@ -57,7 +57,7 @@ const ObservationPage = (props) => {
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = React.useState({});
 
-    const steps = getSteps();
+    const steps = getSteps(observationType);
     const totalSteps = () => {
         return steps.length;
     };
@@ -343,6 +343,7 @@ const mapStateToProps = createStructuredSelector({
     currentUser: selectCurrentUser,
     currentYear: selectCurrentYear,
     isLoading: selectIsObservationFormSubmitting,
+    observationType: selectObservationType
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -1,6 +1,5 @@
-import React,{useState} from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-
 import { 
     setObservationDetails,
     setStandardOne,
@@ -8,19 +7,21 @@ import {
     setStandardThree,
     setStandardFour,
 } from '../../redux/observation-form/observation-form.actions';
-
 import ObservationFormDetails from '../observation-form-components/observation-details/observation-details.component';
 import ObservationStandardComponent from '../observation-form-components/standards/observation-standard.component';
 import { rubric } from '../observation-form-components/observationRubric';
 import CustomTextArea from '../text-area/text-area.component';
+import StudentAchievementComponent from '../observation-form-components/standards/student-achievement.component';
 
-export function getSteps() {
+export function getSteps(observationType) {
+    if(observationType && observationType.includes('Evaluation')){
+        return ['Evaluation Details', 'Domain I', 'Domain II', 'Domain III', 'Domain IV', 'Overall Evaluation & Notes'];
+    }
     return ['Observation Details', 'Domain I', 'Domain II', 'Domain III', 'Domain IV', 'Observation Notes'];
 }
 
 function ObservationStep(props) {
     
-
     const { 
         step, 
         currentUser,
@@ -31,6 +32,7 @@ function ObservationStep(props) {
         setStandardTwo,
         setStandardThree,
         setStandardFour,
+        setStudentAchievement,
         previousObservations, 
         setPreviousObservations,
         readOnly,
@@ -113,6 +115,9 @@ function ObservationStep(props) {
         case 5: 
             return ( 
                 <div>
+                    <StudentAchievementComponent
+                        readOnly={readOnly} 
+                    />
                     <CustomTextArea 
                         readOnly={readOnly} 
                         currentUser={currentUser}

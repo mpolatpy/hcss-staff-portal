@@ -7,7 +7,7 @@ import { mapRawData } from './student-achievement-utils';
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import DoughnutChart from '../../components/charts/doughnut-chart';
 import BarChart from '../../components/charts/bar-chart';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../../components/with-spinner/spinner-component';
 import Typography from "@material-ui/core/Typography";
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
@@ -38,7 +38,7 @@ const StudentAchievementReports = ({ currentUser, data, isLoading, teachersMap, 
 
     return (
         isLoading ? (
-            <CircularProgress />
+            <Spinner />
         ) : (
             <div>
                 <Typography variant="h5">Student Achievement Report</Typography>

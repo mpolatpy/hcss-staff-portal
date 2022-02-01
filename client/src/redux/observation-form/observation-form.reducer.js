@@ -50,7 +50,14 @@ export const INITIAL_STATE = {
         e: 0,
         f: 0
     },
-    studentAchievement: '',
+    evaluationScores: {
+        overallScore: 0,
+        domainOneScore: 0,
+        domainTwoScore: 0,
+        domainThreeScore: 0,
+        domainFourScore: 0,
+        studentAchievement: 0
+    },
     observationNotes: ''
 };
 
@@ -99,10 +106,10 @@ const observationFormReducer = (state=INITIAL_STATE, action) => {
                 ...state,
                 domainFour: action.payload
             };
-        case ObservationFormActionTypes.SET_STUDENT_ACHIEVEMENT:
+        case ObservationFormActionTypes.SET_EVALUATION_SCORE:
             return {
                 ...state,
-                studentAchievement: action.payload
+                evaluationScores: action.payload
             };
         case ObservationFormActionTypes.SET_OBSERVATION_NOTES:
             return {

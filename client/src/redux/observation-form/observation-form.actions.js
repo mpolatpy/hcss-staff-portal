@@ -32,9 +32,9 @@ export const setStandardFour = standardFour => ({
     payload: standardFour
 });
 
-export const setStudentAchievement = studentAchievement => ({
-    type: ObservationFormActionTypes.SET_STUDENT_ACHIEVEMENT,
-    payload: studentAchievement
+export const setEvaluationScore = evaluationScore => ({
+    type: ObservationFormActionTypes.SET_EVALUATION_SCORE,
+    payload: evaluationScore
 });
 
 export const setObservationNotes = notes => ({
@@ -73,7 +73,7 @@ const submitObservationFormFail = errorMessage => ({
 
 export const saveObservationForm = (observationFormData) => {
     const {isSavedObservation, firestoreRef,observationDetails, 
-        domainOne, domainTwo, domainThree, domainFour, observationNotes} = observationFormData;
+        domainOne, domainTwo, domainThree, domainFour, evaluationScores, observationNotes} = observationFormData;
     const observerId = observationDetails.observer.id;
     const {observationDate, observationType, teacher} = observationDetails;
     const teacherId= teacher.id;
@@ -93,6 +93,7 @@ export const saveObservationForm = (observationFormData) => {
         domainTwo,
         domainThree,
         domainFour,
+        evaluationScores,
         observationNotes
     };
 
@@ -115,7 +116,7 @@ export const saveObservationForm = (observationFormData) => {
 
 export const submitObservationFormAsync = (observationFormData) => {
     const {isSavedObservation, observationDetails, domainOne, domainTwo, 
-        domainThree, domainFour, edited, observationNotes} = observationFormData;
+        domainThree, domainFour, edited, evaluationScores, observationNotes} = observationFormData;
     const observerId = observationDetails.observer.id;
     const {observationDate, observationType, teacher} = observationDetails;
     const teacherId= teacher.id;
@@ -138,6 +139,7 @@ export const submitObservationFormAsync = (observationFormData) => {
         domainTwo,
         domainThree,
         domainFour,
+        evaluationScores,
         observationNotes
     };
 

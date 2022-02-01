@@ -7,6 +7,10 @@ export const selectObservationFormDetails = createSelector(
     [selectObservationForm], observationForm => observationForm.observationDetails
 );
 
+export const selectObservationType = createSelector( 
+    [selectObservationFormDetails], observationDetails => observationDetails.observationType
+);
+
 export const selectTeacher = createSelector( 
     [selectObservationFormDetails], observationDetails => observationDetails.teacher
 );
@@ -31,8 +35,8 @@ export const selectStandardFour = createSelector(
     [selectObservationForm], observationForm => observationForm.domainFour
 );
 
-export const selectStudentAchievement = createSelector(
-    [selectObservationForm], observationForm => observationForm.studentAchievement
+export const selectEvaluationScore = createSelector(
+    [selectObservationForm], observationForm => observationForm.evaluationScores
 );
 
 export const selectObservationNotes = createSelector(

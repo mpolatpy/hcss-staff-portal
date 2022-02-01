@@ -4,13 +4,12 @@ import { createStructuredSelector } from 'reselect';
 import CustomSpreadSheetTable from '../../components/spreadsheet-table/custom-spreadsheet-table';
 import { selectTeacherOptions, selectTeachersObjWithNameKeys } from "../../redux/teachers/teachers.selectors";
 import CustomSelect from '../../components/custom-select/custom-select.component';
-import SimpleTabs from '../../components/tab-panels/tabs.component';
 import Typography from "@material-ui/core/Typography";
 import Box from '@material-ui/core/Box';
 import StudentAchievementBar from './achievement-chart';
 import SpreadSheetTable from '../../components/spreadsheet-table/spreadsheet-table';
 import DoughnutChart from './doughnut-chart';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../../components/with-spinner/spinner-component';
 
 const StudentAchievementPage = ({ filterProperty, spreadsheetData, isLoading, header, currentUser, currentYear, teachersOptions, teachersMap }) => {
     const [teacher, setTeacher] = useState(currentUser);
@@ -40,7 +39,7 @@ const StudentAchievementPage = ({ filterProperty, spreadsheetData, isLoading, he
     return (
 
         isLoading ?
-            (<CircularProgress />) :
+            (<Spinner />) :
             (
                 <div>
                     <Box

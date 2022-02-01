@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchSpreadSheetData } from './spreadsheet-table.utils';
 import CustomSpreadSheetTable from './custom-spreadsheet-table';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import Spinner from '../../components/with-spinner/spinner-component';
 
 const SpreadSheetTable = ({ spreadSheetInfoRef, currentUser }) => {
 
@@ -22,7 +22,7 @@ const SpreadSheetTable = ({ spreadSheetInfoRef, currentUser }) => {
 
     return (
         isLoading ? (
-            <CircularProgress />
+            <Spinner />
         ) : (
             records.length ? (
                 <CustomSpreadSheetTable

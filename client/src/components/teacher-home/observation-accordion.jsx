@@ -8,7 +8,7 @@ import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ObservationChartByType from '../observation-chart-by-type/observation-chart-by-type.component';
-import { CircularProgress } from "@material-ui/core";
+import Spinner from '../with-spinner/spinner-component';
 
 const ObservationAccordion = ({ index, teacher, observationType, currentYear }) => {
     const [observationScores, setObservationScores] = useState(null);
@@ -45,7 +45,7 @@ const ObservationAccordion = ({ index, teacher, observationType, currentYear }) 
 
     if (isLoading) {
         return (
-            <CircularProgress />
+            <Spinner />
         );
     }
 
