@@ -116,6 +116,7 @@ function ObservationStep(props) {
             return ( 
                 <div>
                     <StudentAchievementComponent
+                        previousObservations={previousObservations}
                         readOnly={readOnly} 
                     />
                     <CustomTextArea 

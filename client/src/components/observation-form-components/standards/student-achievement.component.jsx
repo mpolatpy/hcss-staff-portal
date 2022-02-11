@@ -3,27 +3,17 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { selectObservationType, selectEvaluationScore } from '../../../redux/observation-form/observation-form.selectors'
 import { setEvaluationScore } from '../../../redux/observation-form/observation-form.actions';
-import StarRating from '../../star-rating/star-rating.component';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import { makeStyles } from '@material-ui/core';
+import { selectCurrentUser } from '../../../redux/user/user.selectors';
+import StudentAchievementCard from './student-achievement.card';
 
-const useStyles = makeStyles(theme => ({
-    root: {
-        padding: theme.spacing(4),
-        marginTop: theme.spacing(2)
-    },
-    ratingContainer: {
-        marginBottom: theme.spacing(2)
-    }
-}));
 
-const StudentAchievementComponent = ({ observationType, evaluationScore, readOnly, setEvaluationScore }) => {
-    const classes = useStyles();
+const StudentAchievementComponent = ({ currentUser, observationType, previousObservations, evaluationScore, readOnly, setEvaluationScore }) => {
 
     if (!observationType.includes('Evaluation')) {
         return null;
     }
+
+    const filteredObservations = previousObservations.filter(x => x.observationType === observationType);
 
     const handleStarChange = (e) => {
         const { name, value } = e.target;
@@ -35,63 +25,26 @@ const StudentAchievementComponent = ({ observationType, evaluationScore, readOnl
 
     return (
         <>
-            <Typography variant="h5">Evalution Score</Typography>
-            <Paper className={classes.root} variant='outlined'>
-                <div className={classes.ratingContainer}>
-                    <Typography variant="subtitle1">Overall Score</Typography>
-                    <StarRating
-                        readOnly={readOnly}
-                        name="overallScore"
-                        value={evaluationScore.overallScore}
+
+            <StudentAchievementCard
+                title="Evaluation Score"
+                evaluationScore={evaluationScore}
+                readOnly={readOnly}
+                handleStarChange={handleStarChange}
+            />
+            {
+                currentUser && currentUser.role === 'superadmin' && filteredObservations.map((observation, i) => (
+                    <StudentAchievementCard
+                        key={`observation-card-${i}`}
+                        title={`Observer: ${observation.observationDetails.observer.lastFirst}`}
+                        evaluationScore={observation.evaluationScores}
+                        observationNotes={observation.observationNotes}
+                        readOnly={true}
                         handleStarChange={handleStarChange}
                     />
-                </div>
-                <div className={classes.ratingContainer}>
-                    <Typography variant="subtitle1">Domain I</Typography>
-                    <StarRating
-                        readOnly={readOnly}
-                        name="domainOneScore"
-                        value={evaluationScore.domainOneScore}
-                        handleStarChange={handleStarChange}
-                    />
-                </div>
-                <div className={classes.ratingContainer}>
-                    <Typography variant="subtitle1">Domain II</Typography>
-                    <StarRating
-                        readOnly={readOnly}
-                        name="domainTwoScore"
-                        value={evaluationScore.domainTwoScore}
-                        handleStarChange={handleStarChange}
-                    />
-                </div>
-                <div className={classes.ratingContainer}>
-                    <Typography variant="subtitle1">Domain III</Typography>
-                    <StarRating
-                        readOnly={readOnly}
-                        name="domainThreeScore"
-                        value={evaluationScore.domainThreeScore}
-                        handleStarChange={handleStarChange}
-                    />
-                </div>
-                <div className={classes.ratingContainer}>
-                    <Typography variant="subtitle1">Domain IV</Typography>
-                    <StarRating
-                        readOnly={readOnly}
-                        name="domainFourScore"
-                        value={evaluationScore.domainFourScore}
-                        handleStarChange={handleStarChange}
-                    />
-                </div>
-                <div className={classes.ratingContainer}>
-                    <Typography variant="subtitle1">Student Achievement</Typography>
-                    <StarRating
-                        readOnly={readOnly}
-                        name="studentAchievement"
-                        value={evaluationScore.studentAchievement}
-                        handleStarChange={handleStarChange}
-                    />
-                </div>
-            </Paper>
+
+                ))
+            }
         </>
     )
 
@@ -99,7 +52,8 @@ const StudentAchievementComponent = ({ observationType, evaluationScore, readOnl
 
 const mapStateToProps = createStructuredSelector({
     evaluationScore: selectEvaluationScore,
-    observationType: selectObservationType
+    observationType: selectObservationType,
+    currentUser: selectCurrentUser
 });
 
 const mapDispatchToProps = dispatch => ({
