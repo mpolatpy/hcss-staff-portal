@@ -52,7 +52,8 @@ const Content = ({teacher, submitLessonPlanCheck, observer, currentYear, teacher
                 const fetchedCourses  = response.data;
                 teacherCourses = fetchedCourses.filter ( 
                     course => 
-                    course.enrollments[0].type === 'teacher' 
+                    course.enrollments[0].type === 'teacher'
+                    && course.enrollments[0].role === 'TeacherEnrollment' 
                     && !course.name.includes('SandBox')
                     && canvasTerms.includes(course.enrollment_term_id)
                 ); 
