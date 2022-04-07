@@ -8,7 +8,6 @@ import axios from 'axios';
 import { useStyles } from '../observations/observation-template.styles';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import Loader from '../../components/with-spinner/spinner-component';
 import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -47,12 +46,21 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
         const response = await axios.post( '/canvas-courses', {
             teacherId: teacher.canvasId,
         });
-        console.log(response.data)
+        
         const courses = response.data.filter ( 
-            course => course.enrollments[0].type === 'teacher'
-            && course.enrollments[0].role === 'TeacherEnrollment'
-            && !course.name.includes('SandBox') 
-            && canvasTerms.includes(course.enrollment_term_id)
+            course => {
+                if(course.name.includes('SandBox') || (!canvasTerms.includes(course.enrollment_term_id))){
+                    return false;
+                }
+
+                for(let enrollment of course.enrollments){
+                    if(enrollment.type === 'teacher' && enrollment.role === 'TeacherEnrollment'){
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         ).map(course => ({
             name: course.name,
             id: course.id
@@ -92,9 +100,6 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
         isLoading ?
         (
             <Loader />
-            // <div className={classes.loading}>
-            //     <CircularProgress />
-            // </div>
         ):
         (showReport ?
         ( 
