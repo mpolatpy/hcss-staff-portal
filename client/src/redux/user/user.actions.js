@@ -14,3 +14,8 @@ export const setDepartmentPreference = department => ({
     type: UserActionTypes.SET_DEPARTMENT_PREFERENCE,
     payload: department
 });
+
+export const setActiveTeacherPreference = choice => ({
+    type: UserActionTypes.SET_ACTIVE_TEACHER_PREFERENCE,
+    payload: choice
+});

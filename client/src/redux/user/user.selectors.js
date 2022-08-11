@@ -16,3 +16,8 @@ export const selectDepartmentPreference = createSelector(
     [selectUser],
     user => user.departmentPreference
 );
+
+export const selectActiveTeacherPreference = createSelector(
+    [selectUser],
+    user => user.activeTeacherPreference
+);

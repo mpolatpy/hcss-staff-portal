@@ -1,17 +1,32 @@
 import { useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { selectDepartmentPreference, selectSchoolPreference } from '../../redux/user/user.selectors';
-import { setSchoolPreference, setDepartmentPreference } from '../../redux/user/user.actions';
+import {
+    selectDepartmentPreference,
+    selectSchoolPreference,
+    selectActiveTeacherPreference
+} from '../../redux/user/user.selectors';
+import {
+    setSchoolPreference,
+    setDepartmentPreference,
+    setActiveTeacherPreference
+} from '../../redux/user/user.actions';
 
 import CustomSelect from '../../components/custom-select/custom-select.component';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
-const SitePreferences = ({ schoolPreference, departmentPreference, setSchoolPreference, setDepartmentPreference }) => {
-
+const SitePreferences = ({
+    schoolPreference,
+    departmentPreference,
+    activeTeacherPreference,
+    setSchoolPreference,
+    setDepartmentPreference,
+    setActiveTeacherPreference
+}) => {
     const [showSchool, setShowSchool] = useState(false);
     const [showDepartment, setShowDepartment] = useState(false);
+    const [showActiveTeacherChoice, setShowActiveTeacherChoice] = useState(false);
 
     const handleSchoolSelect = (e) => {
         const { value } = e.target;
@@ -29,14 +44,15 @@ const SitePreferences = ({ schoolPreference, departmentPreference, setSchoolPref
         } else {
             setDepartmentPreference(value);
         }
-    }
+    } 
 
-    const handleChange = (e) => {
-        const { name } = e.target;
-        if (name === 'school') {
-            setShowSchool(!showSchool);
-        } else if (name === 'department') {
-            setShowDepartment(!showDepartment)
+    const handleActiveTeacherSelect = (e) => {
+        const { value } = e.target;
+
+        if (value === 'Active Only') {
+            setActiveTeacherPreference(true);
+        } else if (value === 'Active and Inactive') {
+            setActiveTeacherPreference(false);
         }
     }
 
@@ -48,12 +64,12 @@ const SitePreferences = ({ schoolPreference, departmentPreference, setSchoolPref
                         <Checkbox
                             size="small"
                             checked={showSchool}
-                            onChange={handleChange}
+                            onChange={() => setShowSchool(!showSchool)}
                             name="school"
                             color="primary"
                         />
                     }
-                    label={`Edit school view option for HCSS Staff Portal - Preference: ${schoolPreference ? schoolPreference : 'Both Schools'}`}
+                    label={`Edit School Preference - Current Preference: ${schoolPreference ? schoolPreference : 'Both Schools'}`}
                 />
                 {
                     showSchool &&
@@ -78,12 +94,12 @@ const SitePreferences = ({ schoolPreference, departmentPreference, setSchoolPref
                         <Checkbox
                             size="small"
                             checked={showDepartment}
-                            onChange={handleChange}
+                            onChange={() => setShowDepartment(!showDepartment)}
                             name="department"
                             color="primary"
                         />
                     }
-                    label={`Edit department view option for HCSS Staff Portal - Preference: ${departmentPreference ? departmentPreference : 'All'}`}
+                    label={`Edit Department Preference - Current Preference: ${departmentPreference ? departmentPreference : 'All'}`}
                 />
                 {
                     showDepartment &&
@@ -101,18 +117,49 @@ const SitePreferences = ({ schoolPreference, departmentPreference, setSchoolPref
                     )
                 }
             </div>
+            <div>
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            size="small"
+                            checked={showActiveTeacherChoice}
+                            onChange={() => setShowActiveTeacherChoice(!showActiveTeacherChoice)}
+                            name="activeTeacherChoice"
+                            color="primary"
+                        />
+                    }
+                    label={`Edit Teacher Selection Preference - Current Preference: ${activeTeacherPreference ? 'Active Only' : 'Active and Inactive'}`}
+                />
+                {
+                    showActiveTeacherChoice &&
+                    (
+                        <CustomSelect
+                            required
+                            label="Teacher Selection"
+                            name="school"
+                            style={{ width: '20vw', minWidth: '200px' }}
+                            value={activeTeacherPreference ?  'Active Only' : 'Active and Inactive'}
+                            handleSelect={handleActiveTeacherSelect}
+                            options={['Active Only', 'Active and Inactive']}
+                            variant="outlined"
+                        />
+                    )
+                }
+            </div>
         </div>
     );
 };
 
 const mapStateToProps = createStructuredSelector({
     schoolPreference: selectSchoolPreference,
-    departmentPreference: selectDepartmentPreference
+    departmentPreference: selectDepartmentPreference,
+    activeTeacherPreference: selectActiveTeacherPreference
 });
 
 const mapDispatchToProps = dispatch => ({
     setSchoolPreference: school => dispatch(setSchoolPreference(school)),
-    setDepartmentPreference: department => dispatch(setDepartmentPreference(department))
+    setDepartmentPreference: department => dispatch(setDepartmentPreference(department)),
+    setActiveTeacherPreference: choice => dispatch(setActiveTeacherPreference(choice))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SitePreferences);
