@@ -30,6 +30,7 @@ export const selectTeacherList = createSelector(
 
         let teacherList = Object.keys(teachers)
                 .map(key => teachers[key])
+                .filter(teacher => teacher.lastName)
                 .sort((t1, t2) => {
                     const lastName1 = t1.lastName.toLowerCase();
                     const lastName2 = t2.lastName.toLowerCase();
