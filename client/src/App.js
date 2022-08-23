@@ -15,6 +15,7 @@ import ScrollToTop from './components/scroll-to-top/scroll-to-top.component';
 import SignInForm from './pages/sign-in/sign-in.component';
 import Spinner from './components/with-spinner/spinner-component';
 import ErrorBoundary from './components/error-boundary/error-boundary.component';
+import { Button } from '@material-ui/core';
 
 const HomePage = lazy(() => import('./pages/home/home.component'));
 const NotFound = lazy(() => import('./pages/404/not-found.component'));
@@ -34,6 +35,12 @@ const GradebookCheck = lazy(() => import('./pages/grade-policy/grade-policy.rout
 const AdminReports = lazy(() => import('./pages/admin-reports/admin-reports'));
 const TestResultsPage = lazy(() => import('./pages/test-results/test-results.page'));
 
+const RoleErrorPage = () => (
+  <div style={{ margin: '20px' }}>
+    <h3>Please contact IT department to fix the issue with the account.</h3>
+    <Button onClick={() => auth.signOut()} variant="contained" color="primary">Back to Login Page</Button>
+  </div>
+);
 
 function App(props) {
 
@@ -86,7 +93,7 @@ function App(props) {
         !currentUser ?
           <Redirect to='/' /> : (
             !currentUser?.role ? (
-              <h3 style={{ margin: '20px'}}>Please contact IT department to fix the issue with the account.</h3>
+              <RoleErrorPage />
             ) : (
               <MiniDrawer handleChange={handleChange} year={currentYear}>
                 <ScrollToTop />
