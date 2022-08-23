@@ -1,5 +1,5 @@
 import './App.css';
-import { lazy, useEffect, Suspense } from 'react';
+import { lazy, useEffect, Suspense, useMemo } from 'react';
 import { Switch, Route, Redirect, useHistory } from "react-router-dom";
 import { createStructuredSelector } from 'reselect';
 import { connect } from 'react-redux';
@@ -82,38 +82,43 @@ function App(props) {
         )}
       />
 
-      {!currentUser ?
-        <Redirect to='/' /> :
-        <MiniDrawer handleChange={handleChange} year={currentYear}>
-          <ScrollToTop />
-          <ErrorBoundary>
-            <Suspense fallback={<Spinner />}>
-              <Switch>
-                <Route exact path="/directory" component={Directory} />
-                <Route exact path="/register" component={UserRegistrationPage} />
-                <Route path="/staff" component={TeacherListOverview} />
-                <Route path="/admin-reports" component={AdminReports} />
-                <Route path="/home" render={() => <HomePage currentUser={currentUser} />} />
-                <Route path="/observations" component={Observations} />
-                <Route path="/notifications" component={NotificationsPage} />
-                <Route path="/lesson-plans" component={LessonPlans} />
-                <Route path="/important-links" component={ImportantLinks} />
-                <Route path="/parent-communication" component={ParentCommunicationRoute} />
-                <Route path="/calendar" component={Calendar} />
-                <Route path="/student-achievement" component={StudentAchievement} />
-                <Route path="/test-results" component={TestResultsPage} />
-                <Route path="/grade-policy" component={GradebookCheck} />
-                <Route path="/profile"
-                  render={() => (<ProfilePage currentUser={currentUser} />)}
-                />
-                <Route path="/settings"
-                  render={() => (<SettingsPage currentUser={currentUser} />)}
-                />
-                <Route component={NotFound} />
-              </Switch>
-            </Suspense>
-          </ErrorBoundary>
-        </MiniDrawer>
+      {
+        !currentUser ?
+          <Redirect to='/' /> : (
+            !currentUser?.role ? (
+              <h3 style={{ margin: '20px'}}>Please contact IT department to fix the issue with the account.</h3>
+            ) : (
+              <MiniDrawer handleChange={handleChange} year={currentYear}>
+                <ScrollToTop />
+                <ErrorBoundary>
+                  <Suspense fallback={<Spinner />}>
+                    <Switch>
+                      <Route exact path="/directory" component={Directory} />
+                      <Route exact path="/register" component={UserRegistrationPage} />
+                      <Route path="/staff" component={TeacherListOverview} />
+                      <Route path="/admin-reports" component={AdminReports} />
+                      <Route path="/home" render={() => <HomePage currentUser={currentUser} />} />
+                      <Route path="/observations" component={Observations} />
+                      <Route path="/notifications" component={NotificationsPage} />
+                      <Route path="/lesson-plans" component={LessonPlans} />
+                      <Route path="/important-links" component={ImportantLinks} />
+                      <Route path="/parent-communication" component={ParentCommunicationRoute} />
+                      <Route path="/calendar" component={Calendar} />
+                      <Route path="/student-achievement" component={StudentAchievement} />
+                      <Route path="/test-results" component={TestResultsPage} />
+                      <Route path="/grade-policy" component={GradebookCheck} />
+                      <Route path="/profile"
+                        render={() => (<ProfilePage currentUser={currentUser} />)}
+                      />
+                      <Route path="/settings"
+                        render={() => (<SettingsPage currentUser={currentUser} />)}
+                      />
+                      <Route component={NotFound} />
+                    </Switch>
+                  </Suspense>
+                </ErrorBoundary>
+              </MiniDrawer>
+            ))
       }
     </div>
   );

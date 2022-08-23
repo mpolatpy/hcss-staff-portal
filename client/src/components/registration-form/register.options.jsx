@@ -1,24 +1,22 @@
- const options ={
+const options = {
     departmentOptions: [
-                        'ELA',
-                        'Math',
-                        'Humanities',
-                        'Science',
-                        'Special Services',
-                        'Not Applicable'
-                        ],
+        'ELA',
+        'Math',
+        'Humanities',
+        'Science',
+        'Special Services',
+        'Not Applicable'
+    ],
     schoolOptions: [
-                    'HCSS East',
-                    'HCSS West',
-                    'Central Office'
-                    ],
+        'HCSS East',
+        'HCSS West',
+        'Central Office'
+    ],
     roleOptions: [
-                    'teacher',
-                    'admin',
-                    'staff',
-                    'dci',
-                    'superadmin'
-                ]
+        'teacher',
+        'dci',
+        'superadmin'
+    ]
 };
 
 export default options;
