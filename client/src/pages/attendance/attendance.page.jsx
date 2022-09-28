@@ -11,11 +11,10 @@ import SpreadSheetTable from '../../components/spreadsheet-table/spreadsheet-tab
 import { selectTeacherOptions, selectTeachersObjWithNameKeys } from '../../redux/teachers/teachers.selectors';
 
 const AttendancePage = ({ currentUser, currentYear, teachers, teachersMap }) => {
-    const school = currentUser.school === 'HCSS West' ? 'west' : 'east';
-    const labels = ['Attendance Summary', 'Attendance Recors', 'Leave Requests'];
-    const docs = ['staffAttendance', 'staffAttendanceDetails', 'leaveRequests'];
-
     const [teacher, setTeacher] = useState(currentUser);
+    const labels = ['Attendance Summary', 'Attendance Records', 'Leave Requests'];
+    const docs = ['staffAttendance', 'staffAttendanceDetails', 'leaveRequests'];
+    const school = teacher.school === 'HCSS West' ? 'west' : 'east';
 
     const handleSelect = (e) => {
         const { value } = e.target;
