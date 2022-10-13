@@ -72,11 +72,11 @@ const TutoringPage = ({ currentUser, currentYear, teachers, teachersMap }) => {
 
     const getStudentTutoringCounts = (records) => {
         const tutoringCounts = {};
-        const tutoringTypeCounts = { 'Study Hall': 0, 'After School': 0, 'Saturday School': 0 };
+        const tutoringTypeCounts = { 'A.S.': 0, 'O.H.': 0, 'S.H.': 0, 'Sat': 0 };
 
         records.forEach(record => {
-            tutoringTypeCounts[record[11]] = (tutoringTypeCounts[record[11]] || 0) + 1; //Column for Tutoring Type
-            record.slice(1, 11).forEach(student => {
+            tutoringTypeCounts[record[6]] = (tutoringTypeCounts[record[6]] || 0) + 1; //Column for Tutoring Type
+            record.slice(1, 6).forEach(student => {
                 if (student !== '') {
                     tutoringCounts[student] = (tutoringCounts[student] || 0) + 1;
                 }
