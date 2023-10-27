@@ -13,9 +13,33 @@ const useStyles = makeStyles(theme => ({
     },
     card: {
         minWidth: '300px',
-        padding: theme.spacing(1)
-    }
+        padding: theme.spacing(1),
+    },
+    banner: {
+        background: 'lightblue',
+        padding: theme.spacing(2),
+        width: '100%',
+        textAlign: 'center',
+        fontSize: '1.5rem',
+        fontWeight: 'bold',
+    },
 }));
+const HomePage = ({ currentUser }) => {
+    const classes = useStyles();
+
+    return (
+        <div>
+            <div className={classes.banner}>
+                Welcome to the Dashboard!
+            </div>
+            <div className={classes.cardContainer}>
+                {/* Announcements: */}
+            </div>
+        </div>
+    );
+};
+
+export default HomePage;
 
 const HomePage = ({currentUser}) => {
     const classes = useStyles();
